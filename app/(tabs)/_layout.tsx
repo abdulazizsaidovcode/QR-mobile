@@ -61,11 +61,16 @@ export default function TabLayout() {
                 height: 70,
                 width: 70,
                 borderRadius: 40,
-                shadowColor: '#000',
-                shadowOffset: { width: 10, height: 10 },
-                shadowOpacity: 0.1,
-                shadowRadius: 10,
+                shadowColor: Colors[colorScheme ?? 'light'].primary,
                 paddingBottom: -10,
+                shadowOffset: {
+                  width: 0,
+                  height: 12,
+                },
+                shadowOpacity: 0.58,
+                shadowRadius: 16.00,
+
+                elevation: 24,
 
               }}
             />
