@@ -1,96 +1,88 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { StyleSheet, Image, Platform } from 'react-native';
+import { StyleSheet, Image, Platform, View, Text, Dimensions } from 'react-native';
 
 import { Collapsible } from '@/components/Collapsible';
 import { ExternalLink } from '@/components/ExternalLink';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import TransactionCard from '@/components/cards/tranzaktionCards';
+import TransactionActionCard from '@/components/cards/tranzaktionActionCards';
+import { FontAwesome5, FontAwesome6, MaterialIcons } from '@expo/vector-icons';
+import { Colors } from '@/constants/Colors';
+import { FlatList } from 'react-native';
+import TransactionActionHeadCard from '@/components/cards/tranzaktionActionCardsHead';
+import Navbar from '@/components/navbar/navbar';
 
 export default function HomeScreen() {
+  const transactions = [
+    { id: 1, title: 'Netflix Payment', date: 'Today 13.30', amount: -26.42 },
+    { id: 2, title: "YouTube Creator's", date: 'Today 07.01', amount: 3.43 },
+    { id: 3, title: 'Transfer from Alex', date: 'Yesterday 19.32', amount: 30.33 },
+    { id: 4, title: 'Transfer from Alex', date: 'Yesterday 19.32', amount: 30.33 },
+    { id: 5, title: 'Transfer from Alex', date: 'Yesterday 19.32', amount: 30.33 },
+    { id: 6, title: 'Transfer from Alex', date: 'Yesterday 19.32', amount: 30.33 },
+    { id: 7, title: 'Transfer from Alex', date: 'Yesterday 19.32', amount: 30.33 },
+    // Add more transactions as needed
+  ];
   return (
     <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={<Ionicons size={310} name="code-slash" style={styles.headerImage} />}>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Explore</ThemedText>
-      </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image source={require('@/assets/images/react-logo.png')} style={{ alignSelf: 'center' }} />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Custom fonts">
-        <ThemedText>
-          Open <ThemedText type="defaultSemiBold">app/_layout.tsx</ThemedText> to see how to load{' '}
-          <ThemedText style={{ fontFamily: 'SpaceMono' }}>
-            custom fonts such as this one.
-          </ThemedText>
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/versions/latest/sdk/font">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user's current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful <ThemedText type="defaultSemiBold">react-native-reanimated</ThemedText> library
-          to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
+      headerBackgroundColor={{ light: '#D0D0D0', dark: '#f5f5f5' }}
+      headerImage={ <Image source={require('./../../assets/images/Wallet Card.png')}  />}>
+      <View style={{ marginBottom: 40 }}>
+        <View style={{ flexDirection: 'row', gap: 5, }}>
+          <TransactionActionCard
+            title="Terminals"
+            desc='3'
+            icon={<FontAwesome5 name="calculator" size={26} color={Colors.light.primary} />} // Pass the icon as a prop
+            onPress={() => console.log('Send Money Pressed')}
+          />
+          <TransactionActionCard
+            title="Cancelled transactions"
+            desc='10'
+            icon={<MaterialIcons name="money-off" size={36} color={Colors.light.primary} />} // Another icon
+            onPress={() => console.log('Receive Money Pressed')}
+          />
+        </View>
+        <View style={{ flexDirection: 'row', gap: 5, flexWrap: 'wrap' }}>
+          <TransactionActionCard
+            title="Number of terminal users"
+            desc='47'
+            icon={<FontAwesome5 name="users" size={26} color={Colors.light.primary} />} // Pass the icon as a prop
+            onPress={() => console.log('Send Money Pressed')}
+          />
+          <TransactionActionCard
+            title="Transactions"
+            desc='1'
+            icon={<FontAwesome6 name="money-bill-transfer" size={26} color={Colors.light.primary} />} // Another icon
+            onPress={() => console.log('Receive Money Pressed')}
+          />
+          <TransactionActionHeadCard
+            title=" Overall balance"
+            desc='20,234354'
+            icon={<FontAwesome5 name="money-bill" size={36} color={Colors.light.primary} />} // Another icon
+            onPress={() => console.log('Receive Money Pressed')}
+          />
+        </View>
+        <View style={styles.header}>
+          <Text style={styles.headerText}>Latest Transactions</Text>
+          <Text style={styles.seeAll}>See All</Text>
+        </View>
+        <FlatList
+          data={transactions}
+          // keyExtractor={(item) => item.id} // Use a unique key for each item
+          renderItem={({ item }) => (
+            <TransactionCard transaction={item} />
+          )}
+        />
+      </View>
     </ParallaxScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   headerImage: {
-    color: '#808080',
+    color: Colors.dark.primary,
     bottom: -90,
     left: -35,
     position: 'absolute',
@@ -98,5 +90,19 @@ const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: 'row',
     gap: 8,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  headerText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  seeAll: {
+    fontSize: 14,
+    color: Colors.dark.primary,
   },
 });
