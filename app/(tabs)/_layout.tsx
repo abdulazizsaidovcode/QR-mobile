@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import React from 'react';
+import React, { useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import { Colors } from '@/constants/Colors';
@@ -9,6 +9,7 @@ import { AntDesign } from '@expo/vector-icons';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const [active, setActive] = useState<boolean>(false);
 
   return (
     <Tabs
@@ -31,7 +32,8 @@ export default function TabLayout() {
           shadowRadius: 20,
           paddingBottom: 10,
         },
-      })}>
+      })}
+    >
 
       <Tabs.Screen
         name="index"
@@ -39,6 +41,15 @@ export default function TabLayout() {
           title: 'Home',
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
+          ),
+          tabBarButton: (props) => (
+            <TouchableOpacity
+              {...props}
+              onPress={(e) => {
+                setActive(false); // Reset active state
+                props.onPress?.(e); // Use optional chaining
+              }}
+            />
           ),
         }}
       />
@@ -48,20 +59,21 @@ export default function TabLayout() {
         options={{
           title: '',
           tabBarIcon: ({ color, focused }) => (
-            <AntDesign name="qrcode" size={34} style={{ marginBottom: -10 }} color={color == '#ff5e2c' ? "white" : color} />
+            <AntDesign name="qrcode" size={34} style={{ marginBottom: -10 }} color={color === '#ff5e2c' ? "white" : color} />
           ),
           tabBarButton: (props) => (
             <TouchableOpacity
+              activeOpacity={0.8}
               {...props}
               style={{
-                top: -30, // Slightly raise the Home tab
+                top: -30,
                 justifyContent: 'flex-end',
                 alignItems: 'center',
-                backgroundColor: '#FF5A3A', // Change background color on focus
+                backgroundColor: '#FF5A3A',
                 height: 70,
                 width: 70,
                 borderRadius: 40,
-                shadowColor: Colors[colorScheme ?? 'light'].primary,
+                shadowColor: active ? Colors[colorScheme ?? 'light'].primary : 'white',
                 paddingBottom: -10,
                 shadowOffset: {
                   width: 0,
@@ -69,9 +81,13 @@ export default function TabLayout() {
                 },
                 shadowOpacity: 0.58,
                 shadowRadius: 16.00,
-
                 elevation: 24,
-
+              }}
+              onPress={(e) => {
+                setActive(true);
+                if (props && props.onPress) {
+                  props.onPress?.(e); // Use optional chaining
+                }
               }}
             />
           ),
@@ -84,6 +100,15 @@ export default function TabLayout() {
           title: 'Terminal',
           tabBarIcon: ({ color, focused }) => (
             <FontAwesome5 name="calculator" size={24} color={color} />
+          ),
+          tabBarButton: (props) => (
+            <TouchableOpacity
+              {...props}
+              onPress={(e) => {
+                setActive(false); // Reset active state
+                props.onPress?.(e); // Use optional chaining
+              }}
+            />
           ),
         }}
       />
