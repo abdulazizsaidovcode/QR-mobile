@@ -13,8 +13,20 @@ import { Colors } from '@/constants/Colors';
 import { FlatList } from 'react-native';
 import TransactionActionHeadCard from '@/components/cards/tranzaktionActionCardsHead';
 import Navbar from '@/components/navbar/navbar';
+import { useGlobalRequest } from '@/helpers/apifunctions/univesalFunc';
+import { useEffect } from 'react';
+import { staisticUrl } from '@/helpers/url';
 
 export default function HomeScreen() {
+
+  const { response, globalDataFunc } = useGlobalRequest(staisticUrl, "GET", 'DEFAULT')
+
+  console.log(response);
+  useEffect(() => {
+    globalDataFunc()
+  }, [])
+
+
   const transactions = [
     { id: 1, title: 'Netflix Payment', date: 'Today 13.30', amount: -26.42 },
     { id: 2, title: "YouTube Creator's", date: 'Today 07.01', amount: 3.43 },
@@ -28,7 +40,7 @@ export default function HomeScreen() {
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#D0D0D0', dark: '#f5f5f5' }}
-      headerImage={ <Image source={require('./../../assets/images/Wallet Card.png')}  />}>
+      headerImage={<Image source={require('./../../assets/images/Wallet Card.png')} />}>
       <StatusBar barStyle="dark-content" backgroundColor="#f5f5f5" />
       <View style={{ marginBottom: 40 }}>
         <View style={{ flexDirection: 'row', gap: 5, }}>

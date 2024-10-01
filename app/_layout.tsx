@@ -7,6 +7,12 @@ import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Index from './index';
+import HomeScreen from './(tabs)';
+import NotFoundScreen from './+not-found';
+import CreateQr from './(Seller)/createQr';
+import Login from './(auth)/login';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -27,15 +33,34 @@ export default function RootLayout() {
     return null;
   }
   const queryClient = new QueryClient();
+  const Stack = createNativeStackNavigator();
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <QueryClientProvider client={queryClient}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-          <Stack.Screen name="(Seller)/(createQr)" />
-        </Stack>
+        <Stack.Navigator initialRouteName="index" screenOptions={{ animation: 'none' }}>
+          <Stack.Screen
+            name="index"
+            component={Index}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="(tabs)"
+            component={HomeScreen}
+            options={{ headerShown: false }} />
+          <Stack.Screen
+            name="+not-found"
+            component={NotFoundScreen}
+          />
+          <Stack.Screen
+            component={CreateQr}
+            name="(Seller)/(createQr)" />
+          <Stack.Screen
+            component={Login}
+            name="(auth)/login" 
+            options={{ headerShown: false }}
+            />
+        </Stack.Navigator>
       </QueryClientProvider>
     </ThemeProvider>
   );
