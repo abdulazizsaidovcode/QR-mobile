@@ -1,5 +1,5 @@
 import type { PropsWithChildren, ReactElement } from 'react';
-import { SafeAreaView, StatusBar, StyleSheet, useColorScheme } from 'react-native';
+import { Platform, SafeAreaView, StatusBar, StyleSheet, useColorScheme } from 'react-native';
 import Animated, {
   interpolate,
   useAnimatedRef,
@@ -46,7 +46,6 @@ export default function ParallaxScrollView({
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView >
-      <StatusBar barStyle="dark-content" backgroundColor="#f5f5f5" />
         <Animated.ScrollView
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
@@ -71,6 +70,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5F5F5',
+    paddingVertical: Platform.OS === 'android' ? 35 : 0,
   },
   header: {
     height: 250,

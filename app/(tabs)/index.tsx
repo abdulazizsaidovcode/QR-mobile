@@ -1,5 +1,5 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { StyleSheet, Image, Platform, View, Text, Dimensions } from 'react-native';
+import { StyleSheet, Image, Platform, View, Text, Dimensions, StatusBar } from 'react-native';
 
 import { Collapsible } from '@/components/Collapsible';
 import { ExternalLink } from '@/components/ExternalLink';
@@ -29,6 +29,8 @@ export default function HomeScreen() {
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#D0D0D0', dark: '#f5f5f5' }}
       headerImage={ <Image source={require('./../../assets/images/Wallet Card.png')}  />}>
+        
+      <StatusBar barStyle="dark-content" backgroundColor="#f5f5f5" />
       <View style={{ marginBottom: 40 }}>
         <View style={{ flexDirection: 'row', gap: 5, }}>
           <TransactionActionCard
