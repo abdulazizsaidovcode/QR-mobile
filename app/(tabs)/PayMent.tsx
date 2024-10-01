@@ -1,9 +1,12 @@
-import { Keyboard, SafeAreaView, StatusBar, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
+import { Keyboard, SafeAreaView, StatusBar, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import Navbar from '@/components/navbar/navbar';
 import CreateQr from '../(Seller)/createQr';
 import { Platform } from 'react-native';
 
 export default function HomeScreen() {
+
+ 
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView style={styles.container}>

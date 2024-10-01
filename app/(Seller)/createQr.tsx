@@ -1,46 +1,69 @@
 import { Colors } from '@/constants/Colors';
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { useGlobalRequest } from '@/helpers/apifunctions/univesalFunc';
+import { createPayment } from '@/helpers/url';
+import QRCode from 'react-native-qrcode-svg'; // Import the QR code component
 
 const CreateQr = () => {
     const [amount, setAmount] = useState('');
-    const [message, setMessage] = useState('');
+    const [Messageamount, setMessageAmount] = useState('');
+    const [alertShown, setAlertShown] = useState(false);
+    const [qrValue, setQrValue] = useState(''); // State to hold the QR code value
 
-    const handleSendMoney = () => {
-        console.log(`Sending $${amount} with message: "${message}"`);
-    };
+    const paymentCreate = useGlobalRequest(createPayment, 'POST', { amount: amount }, "DEFAULT");
+
+    useEffect(() => {
+        if (paymentCreate.response && !alertShown) {
+            // alert(paymentCreate.response);
+            setMessageAmount(amount)
+            setQrValue(`${paymentCreate.response}`); // Set the QR code value to the response
+            setAlertShown(true);
+        } else if (paymentCreate.error && !alertShown) {
+            setMessageAmount("0")
+            alert(paymentCreate.error);
+            setAlertShown(true);
+        }
+    }, [paymentCreate.response, paymentCreate.error]);
+
+    // Reset alertShown when the amount changes
+    useEffect(() => {
+        setAlertShown(false);
+    }, [amount]);
 
     return (
         <View style={styles.container}>
-            {/* <View style={styles.header}>
-                <Text style={styles.headerText}>Send to George</Text>
-                <TouchableOpacity>
-                    <Text style={styles.changeText}>Change</Text>
-                </TouchableOpacity>
-            </View> */}
-            <ScrollView
-                contentContainerStyle={{}
-                }>
+            <ScrollView contentContainerStyle={{}}>
                 <Text style={styles.label}>Enter Amount</Text>
                 <TextInput
                     style={styles.amountInput}
-                    value={`$${amount}`}
+                    value={amount}
                     onChangeText={text => setAmount(text.replace(/[^0-9]/g, ''))} // Allow only numbers
                     keyboardType="numeric"
                 />
+                 {qrValue ? ( // Render QR code if qrValue is set
+                <View style={styles.qrContainer}>
+                    <View>
+                        <Text>
+                            {`QR amount: ${Messageamount}`}
+                        </Text>
+                    </View>
+                    <QRCode
+                        value={qrValue} // The value to encode in the QR code
+                        size={250} // Size of the QR code
+                        color="black" // Color of the QR code
+                        backgroundColor="white" // Background color of the QR code
+                    />
+                    <Text style={styles.qrText}>Scan this QR code to proceed</Text>
+                </View>
+            ) : null}
             </ScrollView>
-            {/* <Text style={styles.label}>Message (Optional)</Text>
-            <TextInput
-                style={styles.messageInput}
-                value={message}
-                onChangeText={setMessage}
-                maxLength={50}
-                multiline
-            /> */}
             <Text style={styles.note}>Make sure the nominal you write is correct</Text>
-            <TouchableOpacity style={styles.sendButton} onPress={handleSendMoney}>
+            <TouchableOpacity style={styles.sendButton} onPress={() => paymentCreate.globalDataFunc()}>
                 <Text style={styles.sendButtonText}>Save Money</Text>
             </TouchableOpacity>
+
+           
         </View>
     );
 };
@@ -50,18 +73,6 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 16,
         backgroundColor: '#fff',
-    },
-    header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    headerText: {
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    changeText: {
-        color: '#007bff',
     },
     label: {
         marginTop: 20,
@@ -76,22 +87,13 @@ const styles = StyleSheet.create({
         marginTop: 8,
         height: 70,
     },
-    messageInput: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 8,
-        padding: 10,
-        marginTop: 8,
-        height: 80,
-        textAlignVertical: 'top',
-    },
     sendButton: {
         backgroundColor: Colors.dark.primary,
         borderRadius: 8,
         padding: 15,
         alignItems: 'center',
         marginTop: 20,
-        marginBottom: 60
+        marginBottom: 60,
     },
     sendButtonText: {
         color: '#fff',
@@ -103,24 +105,15 @@ const styles = StyleSheet.create({
         color: 'gray',
         marginTop: 10,
     },
-    keypad: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        marginTop: 20,
-    },
-    key: {
-        width: '30%',
-        padding: 20,
+    qrContainer: {
         alignItems: 'center',
-        justifyContent: 'center',
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 8,
-        margin: '1.5%',
+        marginTop: 20,
+        paddingVertical: 30
     },
-    keyText: {
-        fontSize: 18,
-        fontWeight: 'bold',
+    qrText: {
+        marginTop: 10,
+        fontSize: 16,
+        textAlign: 'center',
     },
 });
 
