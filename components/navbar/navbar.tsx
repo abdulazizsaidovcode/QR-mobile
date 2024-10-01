@@ -13,6 +13,7 @@ const Navbar = () => {
           overlayContainerStyle={{ backgroundColor: 'lightgray' }}
           icon={{ name: 'user', type: 'font-awesome', color: 'white' }}
         />
+        
         <View style={styles.textContainer}>
           <Text style={styles.greetingText}>Hi, John!</Text>
           <Text style={styles.subText}>Good Morning</Text>
