@@ -46,13 +46,13 @@ export default function HomeScreen() {
         <View style={{ flexDirection: 'row', gap: 5, }}>
           <TransactionActionCard
             title="Terminals"
-            desc='3'
+            desc={response && response.terminalCount && response.terminalCount}
             icon={<FontAwesome5 name="calculator" size={26} color={Colors.light.primary} />} // Pass the icon as a prop
             onPress={() => console.log('Send Money Pressed')}
           />
           <TransactionActionCard
             title="Cancelled transactions"
-            desc='10'
+            desc={response && response.transactionCountCancel && response.paymentTotalBalance}
             icon={<MaterialIcons name="money-off" size={36} color={Colors.light.primary} />} // Another icon
             onPress={() => console.log('Receive Money Pressed')}
           />
@@ -60,19 +60,19 @@ export default function HomeScreen() {
         <View style={{ flexDirection: 'row', gap: 5, flexWrap: 'wrap' }}>
           <TransactionActionCard
             title="Number of terminal users"
-            desc='47'
+            desc={response && response.userCount && response.userCount}
             icon={<FontAwesome5 name="users" size={26} color={Colors.light.primary} />} // Pass the icon as a prop
             onPress={() => console.log('Send Money Pressed')}
           />
           <TransactionActionCard
             title="Transactions"
-            desc='1'
+            desc={response && response.transactionCountWaitOrCompleted && response.transactionCountWaitOrCompleted}
             icon={<FontAwesome6 name="money-bill-transfer" size={26} color={Colors.light.primary} />} // Another icon
             onPress={() => console.log('Receive Money Pressed')}
           />
           <TransactionActionHeadCard
-            title=" Overall balance"
-            desc='20,234354'
+            title=''
+            desc={response && response.paymentTotalBalance && response.paymentTotalBalance}
             icon={<FontAwesome5 name="money-bill" size={36} color={Colors.light.primary} />} // Another icon
             onPress={() => console.log('Receive Money Pressed')}
           />

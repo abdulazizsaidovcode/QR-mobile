@@ -5,7 +5,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-nati
 interface TransactionActionCardProps {
     title: string;
     icon: React.ReactNode;
-    desc: string    
+    desc: any
     onPress: () => void;
 }
 const { width, height } = Dimensions.get('window')

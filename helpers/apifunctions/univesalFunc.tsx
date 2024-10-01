@@ -5,7 +5,7 @@ import { useMutation } from "react-query";
 export interface UseGlobalResponse<T> {
     loading: boolean;
     error: any;
-    response: T | undefined;
+    response: T | any;
     globalDataFunc: () => Promise<void>;
 }
 
