@@ -10,10 +10,11 @@ import { useGlobalRequest } from '@/helpers/apifunctions/univesalFunc';
 import { loginUrl } from '@/helpers/url';
 import NavigationMenu from '@/components/navigation copy/NavigationMenu';
 import { Colors } from '@/constants/Colors';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type SettingsScreenNavigationProp = NavigationProp<
     RootStackParamList,
-    "(auth)/login"
+    "(tabs)"
 >;
 
 const Login = () => {
@@ -21,7 +22,7 @@ const Login = () => {
     const navigation = useNavigation<SettingsScreenNavigationProp>();
 
     const userData = {
-        "phone": phoneNumber,
+        "phone": `+998${phoneNumber.split(' ').join('')}`,
         "password": password
     }
     const loginUser = useGlobalRequest(`${loginUrl}`, 'POST', userData);
@@ -51,11 +52,16 @@ const Login = () => {
 
     useFocusEffect(
         useCallback(() => {
-            // setStatus(loginUser.response)
-            console.log(loginUser);
+            setStatus(loginUser.response)
+            if (loginUser.response && loginUser.response.token) {
+                AsyncStorage.setItem('token', loginUser.response.token)
+                AsyncStorage.setItem('role', loginUser.response.role)
+                navigation.navigate('(tabs)')
+            }
 
         }, [loginUser.response])
     )
+    console.log(loginUser.response);
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -96,7 +102,7 @@ const Login = () => {
                     <View style={{ position: 'absolute', width: '100%', bottom: 0, marginBottom: 25, alignSelf: 'center' }}>
                         <Buttons
                             title="Login"
-                        onPress={() => login()}
+                            onPress={() => login()}
                         // loading={sendCode.loading || userFound.loading}
                         />
 

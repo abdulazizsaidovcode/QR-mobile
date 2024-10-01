@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import Welcome from './(welcome)/welcome'
-import HomeScreen from './(tabs)'
+import HomeScreen from './(tabs)/home'
 
 const Index = () => {
   const [role, setRole] = useState<string | null>('')
