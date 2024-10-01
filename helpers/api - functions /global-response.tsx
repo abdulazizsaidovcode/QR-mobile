@@ -1,6 +1,6 @@
-import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { getConfig, getConfigImg } from "../token";
+import { useMutation } from "react-query";
 
 export interface UseGlobalResponse<T> {
     loading: boolean;
@@ -47,7 +47,7 @@ export function useGlobalRequest<T>(
     });
 
     return {
-        loading: mutation.status === 'loading',
+        loading: mutation.status === 'loading', 
         error: mutation.error,
         response: mutation.data,
         globalDataFunc: mutation.mutateAsync,
