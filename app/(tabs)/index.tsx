@@ -29,7 +29,6 @@ export default function HomeScreen() {
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#D0D0D0', dark: '#f5f5f5' }}
       headerImage={ <Image source={require('./../../assets/images/Wallet Card.png')}  />}>
-        
       <StatusBar barStyle="dark-content" backgroundColor="#f5f5f5" />
       <View style={{ marginBottom: 40 }}>
         <View style={{ flexDirection: 'row', gap: 5, }}>
