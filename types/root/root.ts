@@ -21,5 +21,6 @@ export interface RootStackParamList {
     "(pages)/(master)/(order)/orderDetail": undefined
     "(auth)/login": undefined
     "(tabs)": undefined
+    "(Seller)/(transactionsDetail)/transactionDetail": undefined
 
 }

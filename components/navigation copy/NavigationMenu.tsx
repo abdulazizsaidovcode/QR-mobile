@@ -11,7 +11,7 @@ const NavigationMenu = ({ toggleModal, name, deleteIcon, all = false, delOnPress
         <View style={styles.container}>
             <Feather name="chevron-left" size={30} color="#000" onPress={navigate ? navigate : () => navigation.goBack()} />
             <Text style={styles.title}>{name}</Text>
-            {deleteIcon
+            {/* {deleteIcon
                 ? <MaterialIcons name="delete" size={25} color="white" onPress={toggleModal} />
                 : <Text style={{}}></Text>
             }
@@ -20,7 +20,7 @@ const NavigationMenu = ({ toggleModal, name, deleteIcon, all = false, delOnPress
                     <Ionicons name="add-circle-outline" size={25} color="white" onPress={addOnPress} />
                     <AntDesign name="edit" size={25} color="white" onPress={editOnPress} />
                     <MaterialIcons name="delete" size={25} color="white" onPress={delOnPress} />
-                </View> : ''}
+                </View> : ''} */}
         </View>
     );
 };
