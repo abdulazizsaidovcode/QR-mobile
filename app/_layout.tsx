@@ -13,6 +13,7 @@ import HomeScreen from './(tabs)/home';
 import NotFoundScreen from './+not-found';
 import CreateQr from './(Seller)/createQr';
 import Login from './(auth)/login';
+import TransactionDeatail from './(Seller)/(transactionsDetail)/transactionDetail';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -58,6 +59,11 @@ export default function RootLayout() {
           <Stack.Screen
             component={Login}
             name="(auth)/login" 
+            options={{ headerShown: false }}
+            />
+            <Stack.Screen
+            component={TransactionDeatail}
+            name="(Seller)/(transactionsDetail)/transactionDetail" 
             options={{ headerShown: false }}
             />
         </Stack.Navigator>

@@ -43,9 +43,9 @@ const CreateQr = () => {
                 />
                  {qrValue ? ( // Render QR code if qrValue is set
                 <View style={styles.qrContainer}>
-                    <View>
-                        <Text>
-                            {`QR amount: ${Messageamount}`}
+                    <View style={{paddingVertical: 10}}>
+                        <Text style={styles.qrTextTop}>
+                            {`QR amount: ${Messageamount} UZS`}
                         </Text>
                     </View>
                     <QRCode
@@ -113,6 +113,11 @@ const styles = StyleSheet.create({
     qrText: {
         marginTop: 10,
         fontSize: 16,
+        textAlign: 'center',
+    },
+    qrTextTop: {
+        marginTop: 10,
+        fontSize: 26,
         textAlign: 'center',
     },
 });

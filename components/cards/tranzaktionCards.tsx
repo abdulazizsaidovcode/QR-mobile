@@ -1,66 +1,103 @@
 // TransactionCard.js
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import OrderStore from "@/helpers/stores/order/orderStore";
+import { RootStackParamList } from "@/types/root/root";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
-interface TransactionCardProps {
+type SettingsScreenNavigationProp = NavigationProp<
+    RootStackParamList,
+    "(tabs)"
+>;
+
+export interface TransactionCardProps {
     transaction: {
-        title: string;
-        date: string;
-        amount: number;
-    };
+        add: any,
+        at: any,
+        chequeAmount: number,
+        chequeCurrency: number,
+        cheque_created_at: string,
+        ext_id: number,
+        local_qrc_id: string,
+        locked: boolean,
+        merchant_id: string,
+        partner: string,
+        pay_status: any,
+        pay_trx_id: any,
+        paymentStatus: string,
+        purpose: string | null,
+        qrAmount: number,
+        qrCurrency: number,
+        qrc_id: string,
+        rate: number,
+        redirect_url: string | null,
+        snd_pam: any,
+        snd_phone_masked: any,
+        status: string,
+        trx_id: any,
+        trx_time: string | null,
+        updated_at: string | null,
+        url: string | null
+    }
 }
 
 const TransactionCard = ({ transaction }: TransactionCardProps) => {
-    if (!transaction) return null; // If no transaction data, return null
+  if (!transaction) return null; // If no transaction data, return null
+  const navigation = useNavigation<SettingsScreenNavigationProp>();
+  
+  const {setPaymentDetail} = OrderStore()
 
-    return (
-        <View style={styles.card}>
-            <Icon name="attach-money" size={24} color={transaction.amount < 0 ? 'red' : 'green'} />
-            <View style={styles.textContainer}>
-                <View>
-                    <Text style={styles.title}>{transaction.title}</Text>
-                    <Text style={styles.date}>{transaction.date}</Text>
-                </View>
-                <Text style={{ color: transaction.amount <= 0 ? "red" : 'green' }}>
-                    {transaction.amount < 0 ? '-' : '+'}${Math.abs(transaction.amount).toFixed(2)}
-                </Text>
-            </View>
+  return (
+    <TouchableOpacity activeOpacity={.7} onPress={() => {
+        setPaymentDetail({transaction})
+        navigation.navigate("(Seller)/(transactionsDetail)/transactionDetail")
+    }}>
+      <View style={styles.card}>
+        <View style={styles.textContainer}>
+          <View>
+            <Text style={styles.title}>{transaction.partner}</Text>
+            <Text style={styles.date}>{transaction.cheque_created_at}</Text>
+          </View>
+          <Text style={{ color: transaction.chequeAmount <= 0 ? "red" : "green" }}>
+            {Math.abs(transaction.chequeAmount).toFixed(2)} UZS
+          </Text>
         </View>
-    );
+      </View>
+    </TouchableOpacity>
+  );
 };
 
 const styles = StyleSheet.create({
-    card: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 16,
-        marginBottom: 12,
-        borderRadius: 8,
-        backgroundColor: '#fff',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.2,
-        shadowRadius: 1.5,
-        elevation: 3,
-    },
-    textContainer: {
-        marginLeft: 10, // Space between icon and text
-        flexDirection: 'row',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        width: '95%',
-        paddingRight: 10
-    },
-    title: {
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
-    date: {
-        fontSize: 12,
-        color: 'gray',
-    },
+  card: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 16,
+    marginBottom: 12,
+    borderRadius: 8,
+    backgroundColor: "#fff",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.5,
+    elevation: 3,
+  },
+  textContainer: {
+    marginLeft: 10, // Space between icon and text
+    flexDirection: "row",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "95%",
+    paddingRight: 10,
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  date: {
+    fontSize: 12,
+    color: "gray",
+  },
 });
 
 export default TransactionCard;

@@ -44,7 +44,7 @@ export function useGlobalRequest<T>(
 
             // Check for errors in the response
             if (res.data.error) {
-                console.log(res.data.error);
+                // console.log(res.data.error);
                 throw new Error(res.data.error.message);
             }
 

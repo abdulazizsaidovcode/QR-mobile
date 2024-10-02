@@ -8,3 +8,5 @@ export const createPayment = `${apiLink}payment/create`
 export const SellerGet = `${apiLink}terminal/list`
 
 export const SellerEdit = `${apiLink}terminal/update/`
+export const payment_get_seller = `${apiLink}payment/list/for/seller`
+export const payment_get_terminal = `${apiLink}payment/list/for/terminal`

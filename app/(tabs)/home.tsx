@@ -1,80 +1,122 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { StyleSheet, Image, Platform, View, Text, Dimensions, StatusBar } from 'react-native';
+import Ionicons from "@expo/vector-icons/Ionicons";
+import {
+  StyleSheet,
+  Image,
+  Platform,
+  View,
+  Text,
+  Dimensions,
+  StatusBar,
+} from "react-native";
 
-import { Collapsible } from '@/components/Collapsible';
-import { ExternalLink } from '@/components/ExternalLink';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import TransactionCard from '@/components/cards/tranzaktionCards';
-import TransactionActionCard from '@/components/cards/tranzaktionActionCards';
-import { FontAwesome5, FontAwesome6, MaterialIcons } from '@expo/vector-icons';
-import { Colors } from '@/constants/Colors';
-import { FlatList } from 'react-native';
-import TransactionActionHeadCard from '@/components/cards/tranzaktionActionCardsHead';
-import Navbar from '@/components/navbar/navbar';
-import { useGlobalRequest } from '@/helpers/apifunctions/univesalFunc';
-import { useEffect } from 'react';
-import { staisticUrl } from '@/helpers/url';
+import ParallaxScrollView from "@/components/ParallaxScrollView";
+import TransactionCard from "@/components/cards/tranzaktionCards";
+import TransactionActionCard from "@/components/cards/tranzaktionActionCards";
+import { FontAwesome5, FontAwesome6, MaterialIcons } from "@expo/vector-icons";
+import { Colors } from "@/constants/Colors";
+import { FlatList } from "react-native";
+import TransactionActionHeadCard from "@/components/cards/tranzaktionActionCardsHead";
+import { useGlobalRequest } from "@/helpers/apifunctions/univesalFunc";
+import { useEffect } from "react";
+import { payment_get_seller, staisticUrl } from "@/helpers/url";
 
 export default function HomeScreen() {
+  const { response, globalDataFunc } = useGlobalRequest(
+    staisticUrl,
+    "GET",
+    "DEFAULT"
+  );
+  const transactionGet = useGlobalRequest(payment_get_seller, "GET", "DEFAULT");
 
-  const { response, globalDataFunc } = useGlobalRequest(staisticUrl, "GET", 'DEFAULT')
-
-  console.log(response);
+  console.log(transactionGet.response?.object[1]);
   useEffect(() => {
-    globalDataFunc()
-  }, [])
+    globalDataFunc();
+    transactionGet.globalDataFunc();
+  }, []);
 
-
-  const transactions = [
-    { id: 1, title: 'Netflix Payment', date: 'Today 13.30', amount: -26.42 },
-    { id: 2, title: "YouTube Creator's", date: 'Today 07.01', amount: 3.43 },
-    { id: 3, title: 'Transfer from Alex', date: 'Yesterday 19.32', amount: 30.33 },
-    { id: 4, title: 'Transfer from Alex', date: 'Yesterday 19.32', amount: 30.33 },
-    { id: 5, title: 'Transfer from Alex', date: 'Yesterday 19.32', amount: 30.33 },
-    { id: 6, title: 'Transfer from Alex', date: 'Yesterday 19.32', amount: 30.33 },
-    { id: 7, title: 'Transfer from Alex', date: 'Yesterday 19.32', amount: 30.33 },
-    // Add more transactions as needed
-  ];
   return (
     <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#f5f5f5' }}
-      headerImage={<Image source={require('./../../assets/images/Wallet Card.png')} />}>
+      headerBackgroundColor={{ light: "#D0D0D0", dark: "#f5f5f5" }}
+      headerImage={
+        <Image source={require("./../../assets/images/Wallet Card.png")} />
+      }
+    >
       <StatusBar barStyle="dark-content" backgroundColor="#f5f5f5" />
       <View style={{ marginBottom: 40 }}>
-        <View style={{ flexDirection: 'row', gap: 5, }}>
+        <View style={{ flexDirection: "row", gap: 5 }}>
           <TransactionActionCard
             title="Terminals"
             desc={response && response.terminalCount && response.terminalCount}
-            icon={<FontAwesome5 name="calculator" size={26} color={Colors.light.primary} />} // Pass the icon as a prop
-            onPress={() => console.log('Send Money Pressed')}
+            icon={
+              <FontAwesome5
+                name="calculator"
+                size={26}
+                color={Colors.light.primary}
+              />
+            } // Pass the icon as a prop
+            onPress={() => console.log("Send Money Pressed")}
           />
           <TransactionActionCard
             title="Cancelled transactions"
-            desc={response && response.transactionCountCancel && response.paymentTotalBalance}
-            icon={<MaterialIcons name="money-off" size={36} color={Colors.light.primary} />} // Another icon
-            onPress={() => console.log('Receive Money Pressed')}
+            desc={
+              response &&
+              response.transactionCountCancel &&
+              response.paymentTotalBalance
+            }
+            icon={
+              <MaterialIcons
+                name="money-off"
+                size={36}
+                color={Colors.light.primary}
+              />
+            } // Another icon
+            onPress={() => console.log("Receive Money Pressed")}
           />
         </View>
-        <View style={{ flexDirection: 'row', gap: 5, flexWrap: 'wrap' }}>
+        <View style={{ flexDirection: "row", gap: 5, flexWrap: "wrap" }}>
           <TransactionActionCard
             title="Number of terminal users"
             desc={response && response.userCount && response.userCount}
-            icon={<FontAwesome5 name="users" size={26} color={Colors.light.primary} />} // Pass the icon as a prop
-            onPress={() => console.log('Send Money Pressed')}
+            icon={
+              <FontAwesome5
+                name="users"
+                size={26}
+                color={Colors.light.primary}
+              />
+            } // Pass the icon as a prop
+            onPress={() => console.log("Send Money Pressed")}
           />
           <TransactionActionCard
             title="Transactions"
-            desc={response && response.transactionCountWaitOrCompleted && response.transactionCountWaitOrCompleted}
-            icon={<FontAwesome6 name="money-bill-transfer" size={26} color={Colors.light.primary} />} // Another icon
-            onPress={() => console.log('Receive Money Pressed')}
+            desc={
+              response &&
+              response.transactionCountWaitOrCompleted &&
+              response.transactionCountWaitOrCompleted
+            }
+            icon={
+              <FontAwesome6
+                name="money-bill-transfer"
+                size={26}
+                color={Colors.light.primary}
+              />
+            } // Another icon
+            onPress={() => console.log("Receive Money Pressed")}
           />
           <TransactionActionHeadCard
-            title=''
-            desc={response && response.paymentTotalBalance && response.paymentTotalBalance}
-            icon={<FontAwesome5 name="money-bill" size={36} color={Colors.light.primary} />} // Another icon
-            onPress={() => console.log('Receive Money Pressed')}
+            title=""
+            desc={
+              response &&
+              response.paymentTotalBalance &&
+              response.paymentTotalBalance
+            }
+            icon={
+              <FontAwesome5
+                name="money-bill"
+                size={36}
+                color={Colors.light.primary}
+              />
+            } // Another icon
+            onPress={() => console.log("Receive Money Pressed")}
           />
         </View>
         <View style={styles.header}>
@@ -82,11 +124,9 @@ export default function HomeScreen() {
           <Text style={styles.seeAll}>See All</Text>
         </View>
         <FlatList
-          data={transactions}
+          data={transactionGet?.response?.object}
           // keyExtractor={(item) => item.id} // Use a unique key for each item
-          renderItem={({ item }) => (
-            <TransactionCard transaction={item} />
-          )}
+          renderItem={({ item }) => <TransactionCard transaction={item} />}
         />
       </View>
     </ParallaxScrollView>
@@ -98,21 +138,21 @@ const styles = StyleSheet.create({
     color: Colors.dark.primary,
     bottom: -90,
     left: -35,
-    position: 'absolute',
+    position: "absolute",
   },
   titleContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 8,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 16,
   },
   headerText: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   seeAll: {
     fontSize: 14,
