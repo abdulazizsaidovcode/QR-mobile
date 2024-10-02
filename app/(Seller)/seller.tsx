@@ -13,6 +13,7 @@ import { useGlobalRequest } from "@/helpers/apifunctions/univesalFunc";
 import { SellerEdit, SellerGet } from "@/helpers/url";
 import CenteredModal from "@/components/modal/modal-centered";
 import { useFocusEffect } from "expo-router";
+import { Colors } from "@/constants/Colors";
 
 interface Terminal {
   id: number;
@@ -50,7 +51,7 @@ const Seller: React.FC = () => {
   );
 
   const {
-    loading: loadingTerminals, 
+    loading: loadingTerminals,
     error: errorTerminals,
     response: terminalList,
     globalDataFunc: fetchTerminalList,
@@ -227,37 +228,71 @@ const Seller: React.FC = () => {
 
           {terminalNewUsers?.map((user, index) => (
             <View key={index} style={styles.phoneRow}>
-              <Text style={styles.phoneCode}>+998</Text>
-              <TextInput
-                style={styles.phoneInput}
-                placeholder={`Telefon raqam ${index + 1}`}
-                keyboardType="numeric"
-                value={user.phone}
-                onChangeText={(text) => {
-                  const updatedUsers = [...terminalNewUsers];
-                  updatedUsers[index].phone = text;
-                  setTerminalNewUsers(updatedUsers);
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  marginTop: 20,
                 }}
-              />
-              <Text>Password</Text>
-              <TextInput
-                style={styles.passwordInput}
-                placeholder={`Parol ${index + 1}`}
-                secureTextEntry
-                value={user.password}
-                onChangeText={(text) => {
-                  const updatedUsers = [...terminalNewUsers];
-                  updatedUsers[index].password = text;
-                  setTerminalNewUsers(updatedUsers);
+              >
+                <View style={styles.phoneCard}>
+                  {/* <Image source={require('../../../../assets/images/uzb.png')} /> */}
+                  <Text style={{ fontSize: 17, color: "gray" }}>+998</Text>
+                </View>
+                <View style={{ width: "69%" }}>
+                  <TextInput
+                    style={styles.phoneInput}
+                    placeholder={`Telefon raqam ${index + 1}`}
+                    value={user.phone}
+                    keyboardType="numeric"
+                    onChangeText={(text) => {
+                      const updatedUsers = [...terminalNewUsers];
+                      updatedUsers[index].phone = text;
+                      setTerminalNewUsers(updatedUsers);
+                    }}
+                    maxLength={12}
+                    placeholderTextColor={"gray"}
+                  />
+                </View>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  marginTop: 20,
                 }}
-              />
-              {index > 0 && (
-                <TouchableOpacity
-                  onPress={() => handleRemovePhoneNumber(index)}
-                >
-                  <AntDesign name="minuscircle" size={24} color="black" />
-                </TouchableOpacity>
-              )}
+              >
+                <View style={{ width: "85%" }}>
+                  <TextInput
+                    style={styles.passwordInput}
+                    placeholder={`Parol ${index + 1}`}
+                    secureTextEntry
+                    value={user.password}
+                    onChangeText={(text) => {
+                      const updatedUsers = [...terminalNewUsers];
+                      updatedUsers[index].password = text;
+                      setTerminalNewUsers(updatedUsers);
+                    }}
+                  />
+                </View>
+                {index > 0 && (
+                  <TouchableOpacity
+                    onPress={() => handleRemovePhoneNumber(index)}
+                  >
+                    <View
+                      style={{
+                        alignItems: "center",
+                        justifyContent: "center",
+                        marginLeft: 5,
+                        marginTop: 15,
+                      }}
+                    >
+                      {/* <Image source={require('../../../../assets/images/uzb.png')} /> */}
+                      <AntDesign name="minuscircle" size={24} color="black" />
+                    </View>
+                  </TouchableOpacity>
+                )}
+              </View>
             </View>
           ))}
         </ScrollView>
@@ -281,7 +316,26 @@ const styles = StyleSheet.create({
   },
   cardTitle: { fontSize: 18, fontWeight: "bold" },
   cardText: { fontSize: 14, marginBottom: 5 },
-  input: { borderBottomWidth: 1, marginBottom: 10, padding: 8 },
+  input: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: Colors.dark.primary,
+    paddingVertical: 15,
+    paddingHorizontal: 15,
+    marginVertical: 10,
+    color: "#000",
+    fontSize: 17,
+    shadowColor: Colors.dark.primary,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
+
+    elevation: 8,
+  },
   errorText: { color: "red", marginBottom: 10 },
   addPhoneSection: {
     flexDirection: "row",
@@ -291,12 +345,64 @@ const styles = StyleSheet.create({
   },
   phoneRow: { alignItems: "center", marginBottom: 15 },
   phoneCode: { marginRight: 10 },
-  phoneInput: { borderBottomWidth: 1, width: 100, padding: 8, marginRight: 5 },
+  phoneInput: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: Colors.dark.primary,
+    paddingVertical: 15,
+    paddingHorizontal: 15,
+    color: "#000",
+    fontSize: 17,
+    shadowColor: Colors.dark.primary,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
+
+    elevation: 8,
+  },
   passwordInput: {
-    borderBottomWidth: 1,
-    width: 100,
-    padding: 8,
-    marginRight: 5,
+    width: "100%",
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: Colors.dark.primary,
+    paddingVertical: 15,
+    paddingHorizontal: 15,
+    color: "#000",
+    fontSize: 17,
+    shadowColor: Colors.dark.primary,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
+
+    elevation: 8,
+  },
+  phoneCard: {
+    backgroundColor: "#fff",
+    padding: 15,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: Colors.dark.primary,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    width: "29%",
+    shadowColor: Colors.dark.primary,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
+
+    elevation: 8,
   },
 });
 
