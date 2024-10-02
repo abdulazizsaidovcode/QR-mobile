@@ -29,7 +29,7 @@ const Index = () => {
   }, []);
   if (token) {
     navigation.navigate('(tabs)')
-    
+
   } else {
     return <Welcome />
   }
