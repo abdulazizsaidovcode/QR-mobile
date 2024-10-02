@@ -8,15 +8,43 @@ import {
   Text,
   View,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import QRCode from "react-native-qrcode-svg";
 import OrderStore from "@/helpers/stores/order/orderStore";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import CenteredModal from "@/components/modal/modal-centered";
+import { useGlobalRequest } from "@/helpers/apifunctions/univesalFunc";
+import { cancel_payment } from "@/helpers/url";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { RootStackParamList } from "@/types/root/root";
 // import NavigationMenu from "../../../components/navigation copy/NavigationMenu";
+type SettingsScreenNavigationProp = NavigationProp<
+  RootStackParamList,
+  "(tabs)"
+>;
 
 const TransactionDeatail = () => {
   const { paymentDetail } = OrderStore();
-  console.log("deteeekleekkekkekekekekekekek", paymentDetail);
+  const [modal, isModal] = useState(false);
+  const paymentCancel = useGlobalRequest(
+    `${cancel_payment}?ext_id=${paymentDetail?.transaction?.ext_id}`,
+    "POST",
+    {},
+    "DEFAULT"
+  );
+  const navigation = useNavigation<SettingsScreenNavigationProp>();
+
+  const openModal = () => isModal(true);
+  const closeModal = () => isModal(false);
+
+  useEffect(() => {
+    if (paymentCancel.response) {
+      // alert(paymentCreate.response);
+      navigation.goBack();
+    } else if (paymentCancel.error) {
+      alert(paymentCancel.error);
+    }
+  }, [paymentCancel.error, paymentCancel.response]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -110,8 +138,7 @@ const TransactionDeatail = () => {
             />
             <Text style={styles.qrText}>Scan this QR code to proceed</Text>
           </View>
-          <Pressable onPress={() => console.log("check onpress")
-          }>
+          <Pressable onPress={() => openModal()}>
             <View style={styles.detailCardIn}>
               <Text style={{ color: "red", fontSize: 17 }}>
                 To'lovni bekor qilish
@@ -119,6 +146,32 @@ const TransactionDeatail = () => {
             </View>
           </Pressable>
         </View>
+      <CenteredModal
+        btnRedText="Close"
+        btnWhiteText="Ok"
+        isFullBtn={true}
+        isModal={modal}
+        onConfirm={() => {
+          paymentCancel.globalDataFunc()
+          closeModal()
+        }}
+        toggleModal={() => closeModal()}
+      >
+        <View
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            marginBottom: 10,
+            backgroundColor: "#f8f9fa",
+            padding: 15,
+            gap: 10,
+          }}
+        >
+          <Text style={{ fontSize: 18, color: "#000", textAlign: "center" }}>
+            Haqiqiatdan ham siz bu to'lovni bekor qilasizmi?
+          </Text>
+        </View>
+      </CenteredModal>
       </View>
     </View>
   );
