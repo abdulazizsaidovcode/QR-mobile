@@ -5,10 +5,12 @@ import { useGlobalRequest } from '@/helpers/apifunctions/univesalFunc';
 import { SellerEdit, SellerGet } from '@/helpers/url';
 
 interface Terminal {
-  id: string; // Assuming there is an 'id' field
+  id: string;
   name: string;
   account: string;
   filial_code: string;
+  inn?: string;
+  terminalSerialCode?: string;
   phones: string[];
 }
 
@@ -33,7 +35,10 @@ const Seller: React.FC = () => {
     loading: loadingUpdate,
     error: errorUpdate,
     globalDataFunc: updateTerminal,
-  } = useGlobalRequest(selectedTerminal ? `${SellerEdit}${selectedTerminal?.id}` : '', 'PUT', selectedTerminal);
+  } = useGlobalRequest(selectedTerminal ? `${SellerEdit}${selectedTerminal.id}` : '', 'PUT', {
+    ...selectedTerminal,
+    phones: terminalNewUsers.map(user => user.phone), // Send updated phones
+  });
 
   useEffect(() => {
     fetchTerminalList();
@@ -55,10 +60,7 @@ const Seller: React.FC = () => {
   };
 
   const handleTerminalChange = (name: keyof Terminal, value: string) => {
-    setSelectedTerminal((prev) => ({
-      ...prev!,
-      [name]: value,
-    }));
+    setSelectedTerminal((prev) => (prev ? { ...prev, [name]: value } : null));
   };
 
   const handleSubmit = async () => {
@@ -73,10 +75,12 @@ const Seller: React.FC = () => {
 
   const toggleModal = (terminal: Terminal) => {
     setSelectedTerminal(terminal);
+    setTerminalNewUsers(terminal.phones.map(phone => ({ phone, password: '' }))); // Initialize phone numbers
     setModalVisible(true);
   };
 
   if (errorTerminals) return <Text>Error: {errorTerminals.message}</Text>;
+
   return (
     <View>
       <Text style={styles.title}>Terminals</Text>
@@ -98,33 +102,45 @@ const Seller: React.FC = () => {
         <Modal visible={isModalVisible} transparent={true} animationType="slide">
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Edit Terminal</Text>
+              <Text style={styles.modalTitle}>Terminalni taxrirlash</Text>
 
               <TextInput
                 value={selectedTerminal.name}
                 onChangeText={(text) => handleTerminalChange('name', text)}
-                placeholder="Name"
+                placeholder="Ism"
                 style={styles.input}
               />
 
               <TextInput
                 value={selectedTerminal.account}
                 onChangeText={(text) => handleTerminalChange('account', text)}
-                placeholder="Account"
+                placeholder="Hisob"
                 style={styles.input}
               />
 
               <TextInput
-                value={selectedTerminal?.phones?.[0] || ''}
-                onChangeText={(text) => handleTerminalChange('phones', [text])}
-                placeholder="Phone"
+                value={selectedTerminal.filial_code}
+                onChangeText={(text) => handleTerminalChange('filial_code', text)}
+                placeholder="Filial kodi"
                 style={styles.input}
               />
 
-              <Button title="Update Terminal" onPress={handleSubmit} disabled={loadingUpdate} />
-              {errorUpdate && <Text>Error updating terminal: {errorUpdate.message}</Text>}
+              <TextInput
+                value={selectedTerminal.inn}
+                onChangeText={(text) => handleTerminalChange('inn', text)}
+                placeholder="Inn raqami"
+                style={styles.input}
+              />
+
+              <TextInput
+                value={selectedTerminal.terminalSerialCode}
+                onChangeText={(text) => handleTerminalChange('terminalSerialCode', text)}
+                placeholder="Terminalning seriya kodi (ixtiyory)"
+                style={styles.input}
+              />
+
               <View style={styles.addPhoneSection}>
-                <Text>Phone</Text>
+                <Text>Telefon raqam</Text>
                 <TouchableOpacity onPress={handleAddPhoneNumber}>
                   <AntDesign name="pluscircle" size={24} color="black" />
                 </TouchableOpacity>
@@ -135,14 +151,15 @@ const Seller: React.FC = () => {
                   <Text style={styles.phoneCode}>+998</Text>
                   <TextInput
                     style={styles.phoneInput}
-                    placeholder={`Phone ${index + 1}`}
+                    placeholder={`Telefon raqam ${index + 1}`}
                     keyboardType="numeric"
                     value={user.phone}
                     onChangeText={(text) => handleList('phone', text, index)}
                   />
+                  <Text>Password</Text>
                   <TextInput
                     style={styles.passwordInput}
-                    placeholder={`Password ${index + 1}`}
+                    placeholder={`Parol ${index + 1}`}
                     secureTextEntry
                     value={user.password}
                     onChangeText={(text) => handleList('password', text, index)}
@@ -154,7 +171,11 @@ const Seller: React.FC = () => {
                   )}
                 </View>
               ))}
-              <Button title="Close" onPress={() => setModalVisible(false)} />
+
+              <Button title="Saqlash" onPress={handleSubmit} disabled={loadingUpdate} />
+              {errorUpdate && <Text>Error updating terminal: {errorUpdate.message}</Text>}
+
+              <Button title="Bekor qilish" onPress={() => setModalVisible(false)} />
             </View>
           </View>
         </Modal>
@@ -162,7 +183,6 @@ const Seller: React.FC = () => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   title: {
     fontSize: 24,
@@ -211,6 +231,7 @@ const styles = StyleSheet.create({
   input: {
     borderBottomWidth: 1,
     marginBottom: 10,
+    padding: 8,
   },
   addPhoneSection: {
     flexDirection: 'row',
