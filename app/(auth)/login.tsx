@@ -44,7 +44,6 @@ const Login = () => {
     };
 
     function login() {
-
         if (isPhoneNumberComplete && password.length > 0) {
             loginUser.globalDataFunc();
         }
