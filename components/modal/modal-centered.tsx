@@ -13,6 +13,7 @@ const CenteredModal: React.FC<ICenteredModalProps> = (props) => {
         btnRedText,
         isFullBtn,
         isModal,
+        
         toggleModal,
         onConfirm,
         oneBtn
