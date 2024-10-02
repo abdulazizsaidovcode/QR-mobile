@@ -61,7 +61,6 @@ const Login = () => {
 
         }, [loginUser.response])
     )
-    console.log(loginUser.response);
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

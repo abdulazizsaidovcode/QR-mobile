@@ -1,4 +1,5 @@
 // TransactionCard.js
+import OrderStore from "@/helpers/stores/order/orderStore";
 import { RootStackParamList } from "@/types/root/root";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import React from "react";
@@ -9,7 +10,7 @@ type SettingsScreenNavigationProp = NavigationProp<
     "(tabs)"
 >;
 
-interface TransactionCardProps {
+export interface TransactionCardProps {
     transaction: {
         add: any,
         at: any,
@@ -43,10 +44,12 @@ interface TransactionCardProps {
 const TransactionCard = ({ transaction }: TransactionCardProps) => {
   if (!transaction) return null; // If no transaction data, return null
   const navigation = useNavigation<SettingsScreenNavigationProp>();
+  
+  const {setPaymentDetail} = OrderStore()
 
   return (
     <TouchableOpacity activeOpacity={.7} onPress={() => {
-        console.log(transaction)
+        setPaymentDetail({transaction})
         navigation.navigate("(Seller)/(transactionsDetail)/transactionDetail")
     }}>
       <View style={styles.card}>
