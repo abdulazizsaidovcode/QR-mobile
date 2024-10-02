@@ -77,7 +77,6 @@ const Seller: React.FC = () => {
   };
 
   if (errorTerminals) return <Text>Error: {errorTerminals.message}</Text>;
-
   return (
     <View>
       <Text style={styles.title}>Terminals</Text>
@@ -117,7 +116,7 @@ const Seller: React.FC = () => {
 
               <TextInput
                 value={selectedTerminal?.phones?.[0] || ''}
-                onChangeText={(text: string) => handleTerminalChange('phones', [text])}
+                onChangeText={(text) => handleTerminalChange('phones', [text])}
                 placeholder="Phone"
                 style={styles.input}
               />
