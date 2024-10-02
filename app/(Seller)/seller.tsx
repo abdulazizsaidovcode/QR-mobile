@@ -15,11 +15,11 @@ import CenteredModal from "@/components/modal/modal-centered";
 import { useFocusEffect } from "expo-router";
 
 interface Terminal {
-  id: string;
-  name: string;
-  account: string;
-  filial_code: string;
-  inn?: string;
+  id: number;
+  name: string | null;
+  account: string | null;
+  filial_code: string | null;
+  inn?: string | null;
   terminalSerialCode?: string;
   phones: string[];
 }
@@ -34,7 +34,7 @@ const Seller: React.FC = () => {
     { phone: "", password: "" },
   ]);
   const [isModalVisible, setModalVisible] = useState<boolean>(false);
-  
+
   const [formData, setFormData] = useState({
     ism: "",
     hisob: "",
@@ -43,27 +43,45 @@ const Seller: React.FC = () => {
     terminalSeriyaKodu: "", // Not required for validation
   });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  
+  const [TerminalId, setTerminalId] = useState<number | null>(null);
+
+  const isEmptyNewUsers = terminalNewUsers.every(
+    (user: any) => !user.phone && !user.password
+  );
+
   const {
-    loading: loadingTerminals,
+    loading: loadingTerminals, 
     error: errorTerminals,
     response: terminalList,
     globalDataFunc: fetchTerminalList,
   } = useGlobalRequest<{ object: Terminal[] }>(SellerGet, "GET");
 
-  const {
-    loading: loadingUpdate,
-    error: errorUpdate,
-    globalDataFunc: updateTerminal,
-  } = useGlobalRequest(true ? `${SellerEdit}` : "", "PUT", {
-    phones: terminalNewUsers.map((user) => user.phone),
-  });
+  const editTerminal = useGlobalRequest(
+    `${SellerEdit}${TerminalId ? TerminalId : 0}`,
+    "PUT",
+    {
+      account: formData.hisob,
+      filialCode: formData.filialKod,
+      inn: formData.inn,
+      name: formData.ism,
+      terminalSerialCode: formData.terminalSeriyaKodu,
+      terminalNewUsers: isEmptyNewUsers ? null : terminalNewUsers,
+    }
+  );
 
   useFocusEffect(
     useCallback(() => {
       fetchTerminalList();
     }, [])
   );
+
+  useEffect(() => {
+    if (editTerminal?.response) {
+      alert("Terminal muvafaqqiyatli tahrirlandi!");
+    } else if (editTerminal?.error) {
+      alert(editTerminal?.error);
+    }
+  }, [editTerminal.response, editTerminal.error]);
 
   const handleAddPhoneNumber = () => {
     setTerminalNewUsers((prev) => [...prev, { phone: "", password: "" }]);
@@ -93,7 +111,16 @@ const Seller: React.FC = () => {
   const handleSubmit = () => {
     if (validateForm()) {
       // Handle form submission here
-      console.log("Form submitted:", { ...formData, terminalNewUsers });
+      // console.log("Form submitted:", { ...formData, terminalNewUsers });
+      console.log("Form submitted:", {
+        account: formData.hisob,
+        filialCode: formData.filialKod,
+        inn: formData.inn,
+        name: formData.ism,
+        terminalSerialCode: formData.terminalSeriyaKodu,
+        terminalNewUsers: isEmptyNewUsers ? null : terminalNewUsers,
+      });
+      editTerminal.globalDataFunc();
       // Add your update terminal logic here
     }
   };
@@ -117,7 +144,7 @@ const Seller: React.FC = () => {
       inn: "",
       terminalSeriyaKodu: "",
     });
-    setTerminalNewUsers([{ phone: "", password: "" }])
+    setTerminalNewUsers([{ phone: "", password: "" }]);
   };
 
   if (errorTerminals) return <Text>Error: {errorTerminals.message}</Text>;
@@ -128,17 +155,28 @@ const Seller: React.FC = () => {
 
       {loadingTerminals ? (
         <ActivityIndicator size="large" color="#0000ff" />
-      ) : terminalList?.object.length > 0 ? (
-        terminalList.object.map((terminal: Terminal, index: number) => (
+      ) : terminalList?.object?.length > 0 ? (
+        terminalList?.object?.map((terminal: Terminal, index: number) => (
           <TouchableOpacity
             key={index}
             style={styles.card}
-            onPress={() => toggleModal(terminal)} // Handle card press to open modal
+            onPress={() => {
+              setTerminalId(terminal?.id);
+              toggleModal(terminal);
+            }} // Handle card press to open modal
           >
-            <Text style={styles.cardTitle}>{terminal.account}</Text>
-            <Text style={styles.cardText}>Name: {terminal.name}</Text>
-            <Text style={styles.cardText}>Filial Code: {terminal.filial_code}</Text>
-            <Text style={styles.cardText}>Phone: {terminal.phones[0]}</Text>
+            <Text style={styles.cardTitle}>{terminal.account || "-"}</Text>
+            <Text style={styles.cardText}>Name: {terminal.name || "-"}</Text>
+            <Text style={styles.cardText}>
+              Account: {terminal.account || "-"}
+            </Text>
+            <Text style={styles.cardText}>
+              Filial Code: {terminal.filial_code || "-"}
+            </Text>
+            <Text style={styles.cardText}>
+              Phone: {terminal.phones[0] || "-"}
+            </Text>
+            <Text style={styles.cardText}>Inn: {terminal.inn || "-"}</Text>
           </TouchableOpacity>
         ))
       ) : (
@@ -162,14 +200,19 @@ const Seller: React.FC = () => {
             { key: "hisob", label: "Hisob" },
             { key: "filialKod", label: "Filial kodi" },
             { key: "inn", label: "Inn raqami" },
-            { key: "terminalSeriyaKodu", label: "Terminalning seriya kodi (ixtiyory)" }, // Optional
+            {
+              key: "terminalSeriyaKodu",
+              label: "Terminalning seriya kodi (ixtiyory)",
+            }, // Optional
           ].map(({ key, label }) => (
             <TextInput
               key={key}
               placeholder={label}
               style={styles.input}
               value={formData[key as keyof typeof formData]}
-              onChangeText={(text) => handleInputChange(key as keyof typeof formData, text)}
+              onChangeText={(text) =>
+                handleInputChange(key as keyof typeof formData, text)
+              }
             />
           ))}
 
@@ -182,7 +225,7 @@ const Seller: React.FC = () => {
             </TouchableOpacity>
           </View>
 
-          {terminalNewUsers.map((user, index) => (
+          {terminalNewUsers?.map((user, index) => (
             <View key={index} style={styles.phoneRow}>
               <Text style={styles.phoneCode}>+998</Text>
               <TextInput
@@ -209,7 +252,9 @@ const Seller: React.FC = () => {
                 }}
               />
               {index > 0 && (
-                <TouchableOpacity onPress={() => handleRemovePhoneNumber(index)}>
+                <TouchableOpacity
+                  onPress={() => handleRemovePhoneNumber(index)}
+                >
                   <AntDesign name="minuscircle" size={24} color="black" />
                 </TouchableOpacity>
               )}
@@ -237,12 +282,22 @@ const styles = StyleSheet.create({
   cardTitle: { fontSize: 18, fontWeight: "bold" },
   cardText: { fontSize: 14, marginBottom: 5 },
   input: { borderBottomWidth: 1, marginBottom: 10, padding: 8 },
-  errorText: { color: 'red', marginBottom: 10 },
-  addPhoneSection: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 20 },
+  errorText: { color: "red", marginBottom: 10 },
+  addPhoneSection: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 20,
+  },
   phoneRow: { alignItems: "center", marginBottom: 15 },
   phoneCode: { marginRight: 10 },
   phoneInput: { borderBottomWidth: 1, width: 100, padding: 8, marginRight: 5 },
-  passwordInput: { borderBottomWidth: 1, width: 100, padding: 8, marginRight: 5 },
+  passwordInput: {
+    borderBottomWidth: 1,
+    width: 100,
+    padding: 8,
+    marginRight: 5,
+  },
 });
 
 export default Seller;

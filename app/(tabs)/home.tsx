@@ -131,7 +131,7 @@ export default function HomeScreen() {
           renderItem={({ item }) => <TransactionCard transaction={item} />}
         />
       </View>
-      {/* <Seller /> */}
+      <Seller />
       <UserTerminal />
     </ParallaxScrollView>
   );
