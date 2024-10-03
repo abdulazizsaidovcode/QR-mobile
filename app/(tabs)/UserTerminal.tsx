@@ -110,7 +110,6 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#F5F5F5',
         paddingVertical: Platform.OS === 'android' ? 35 : 0,
-        marginBottom: 12,
     },
     card: {
         backgroundColor: '#fff',
