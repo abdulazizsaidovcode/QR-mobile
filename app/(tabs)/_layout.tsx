@@ -70,39 +70,20 @@ const Tab = createBottomTabNavigator();
           name="PayMent"
           component={PaymentQr}
           options={{
-            title: "",
+            title: "Payment",
             tabBarIcon: ({ color, focused }) => (
               <AntDesign
                 name="qrcode"
                 size={34}
                 style={{ marginBottom: -10 }}
-                color={color === "#ff5e2c" ? "white" : color}
+                color={color}
               />
             ),
             tabBarButton: (props) => (
               <TouchableOpacity
                 activeOpacity={0.8}
                 {...props}
-                style={{
-                  top: -30,
-                  justifyContent: "flex-end",
-                  alignItems: "center",
-                  backgroundColor: "#FF5A3A",
-                  height: 70,
-                  width: 70,
-                  borderRadius: 40,
-                  shadowColor: active
-                    ? Colors[colorScheme ?? "light"].primary
-                    : "white",
-                  paddingBottom: -10,
-                  shadowOffset: {
-                    width: 0,
-                    height: 12,
-                  },
-                  shadowOpacity: 0.58,
-                  shadowRadius: 16.0,
-                  elevation: 24,
-                }}
+                
                 onPress={(e) => {
                   setActive(true);
                   if (props && props.onPress) {
