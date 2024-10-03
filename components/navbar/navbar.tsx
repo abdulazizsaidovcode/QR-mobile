@@ -15,14 +15,12 @@ type SettingsScreenNavigationProp = NavigationProp<
 
 const Navbar = () => {
   const navigation = useNavigation<SettingsScreenNavigationProp>();
-  const [role, setRole] = useState<string | null>(null);
   const [url, setUrl] = useState("");
 
   useFocusEffect(
     useCallback(() => {
       const fetchRole = async () => {
         const storedRole = await AsyncStorage.getItem("role");
-        setRole(storedRole);
         if (storedRole === "ROLE_SELLER") {
           setUrl(seller_notification_count);
         } else if (storedRole === "ROLE_TERMINAL") {

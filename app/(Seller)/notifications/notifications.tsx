@@ -54,16 +54,22 @@ const Notifications = () => {
       }
     }, [url])
   )
-
+  
   useEffect(() => {
     if (isReadNotification.response) {
       globalDataFunc()
-    } else if (deleteNotification.response) {
+    }
+  }, [isReadNotification.response])
+
+  useEffect(() => {
+   if (deleteNotification.response) {
       globalDataFunc()
       alert("Bildirishnomalar tozalandi.")
+      console.log(deleteNotification.response);
+      
       setModalVisible(false)
     }
-  }, [isReadNotification.response , deleteNotification.response])
+  }, [ deleteNotification.response])
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -99,18 +105,17 @@ const Notifications = () => {
 
     if (response?.object) {
       const ids = await response?.object.map((item: any) => item.id);
-      console.log("idsssss", ids);
 
       if (ids && ids.length > 0) {
         await setSelectedIds(ids);
         await deleteNotification.globalDataFunc();
-        console.log("alert ishlamadi");
       } else {
-        console.log("alert ishladi");
         alert("Sizda bildirishnoma yo'q.");
       }
     }
   };
+
+
 
   return (
     <View style={styles.container}>
