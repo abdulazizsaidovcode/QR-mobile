@@ -19,8 +19,6 @@ import TransactionActionHeadCard from "@/components/cards/tranzaktionActionCards
 import { useGlobalRequest } from "@/helpers/apifunctions/univesalFunc";
 import { useEffect } from "react";
 import { payment_get_seller, staisticUrl } from "@/helpers/url";
-import Seller from "../(Seller)/seller";
-import UserTerminal from "./UserTerminal";
 
 export default function HomeScreen() {
   const { response, globalDataFunc } = useGlobalRequest(
@@ -131,8 +129,6 @@ export default function HomeScreen() {
           renderItem={({ item }) => <TransactionCard transaction={item} />}
         />
       </View>
-      <Seller />
-      <UserTerminal />
     </ParallaxScrollView>
   );
 }

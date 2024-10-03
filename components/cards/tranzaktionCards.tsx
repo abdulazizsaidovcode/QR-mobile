@@ -7,7 +7,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
 type SettingsScreenNavigationProp = NavigationProp<
     RootStackParamList,
-    "(tabs)"
+    "(Seller)/(transactionsDetail)/transactionDetail"
 >;
 
 export interface TransactionCardProps {

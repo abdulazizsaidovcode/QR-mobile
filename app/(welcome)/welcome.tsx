@@ -57,7 +57,7 @@ const Welcome: React.FC = () => {
             </View>
             <Text style={styles.title}>Qr</Text>
             <Text style={styles.welcome}> </Text>
-            <Text style={styles.selectLanguage}>Buu app orqali o'zngizga yoqan stadion...</Text>
+            <Text style={styles.selectLanguage}>Buu app orqali o'zngizga yoqan ...</Text>
             <View style={styles.button}>
                 <Buttons
                     title="Kirish"

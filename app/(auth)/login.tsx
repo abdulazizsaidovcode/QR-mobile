@@ -14,7 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type SettingsScreenNavigationProp = NavigationProp<
     RootStackParamList,
-    "(tabs)"
+    "(auth)/login"
 >;
 
 const Login = () => {

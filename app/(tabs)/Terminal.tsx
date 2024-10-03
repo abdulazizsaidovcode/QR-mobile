@@ -1,70 +1,456 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ActivityIndicator,
+  StyleSheet,
+  ScrollView,
+  SafeAreaView,
+  Platform,
+} from "react-native";
+import { AntDesign } from "@expo/vector-icons";
+import { useGlobalRequest } from "@/helpers/apifunctions/univesalFunc";
+import { SellerEdit, SellerGet } from "@/helpers/url";
+import CenteredModal from "@/components/modal/modal-centered";
+import { useFocusEffect } from "expo-router";
+import { Colors } from "@/constants/Colors";
+import Navbar from "@/components/navbar/navbar";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-
-export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
-  );
+interface Terminal {
+  id: number;
+  name: string | null;
+  account: string | null;
+  filial_code: string | null;
+  inn?: string | null;
+  terminalSerialCode?: string;
+  phones: string[];
 }
 
+interface TerminalNewUser {
+  phone: string;
+  password: string;
+}
+
+const Terminal: React.FC = () => {
+  const [terminalNewUsers, setTerminalNewUsers] = useState<TerminalNewUser[]>([
+    { phone: "", password: "" },
+  ]);
+  const [isModalVisible, setModalVisible] = useState<boolean>(false);
+
+  const [formData, setFormData] = useState({
+    ism: "",
+    hisob: "",
+    filialKod: "",
+    inn: "",
+    terminalSeriyaKodu: "", // Not required for validation
+  });
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [TerminalId, setTerminalId] = useState<number | null>(null);
+
+  const isEmptyNewUsers = terminalNewUsers.every(
+    (user: any) => !user.phone && !user.password
+  );
+
+  const {
+    loading: loadingTerminals,
+    error: errorTerminals,
+    response: terminalList,
+    globalDataFunc: fetchTerminalList,
+  } = useGlobalRequest<{ object: Terminal[] }>(SellerGet, "GET");
+
+  const editTerminal = useGlobalRequest(
+    `${SellerEdit}${TerminalId ? TerminalId : 0}`,
+    "PUT",
+    {
+      account: formData.hisob,
+      filialCode: formData.filialKod,
+      inn: formData.inn,
+      name: formData.ism,
+      terminalSerialCode: formData.terminalSeriyaKodu,
+      terminalNewUsers: isEmptyNewUsers ? null : terminalNewUsers,
+    }
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchTerminalList();
+    }, [])
+  );
+
+  useEffect(() => {
+    if (editTerminal?.response) {
+      alert("Terminal muvafaqqiyatli tahrirlandi!");
+    } else if (editTerminal?.error) {
+      alert(editTerminal?.error);
+    }
+  }, [editTerminal.response, editTerminal.error]);
+
+  const handleAddPhoneNumber = () => {
+    setTerminalNewUsers((prev) => [...prev, { phone: "", password: "" }]);
+  };
+
+  const handleRemovePhoneNumber = (index: number) => {
+    setTerminalNewUsers((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleInputChange = (name: keyof typeof formData, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const validateForm = () => {
+    const { ism, hisob, filialKod, inn } = formData;
+    if (!ism || !hisob || !filialKod || !inn) {
+      setErrorMessage("Iltimos, barcha majburiy maydonlarni to'ldiring.");
+      return false;
+    }
+    setErrorMessage(null);
+    return true;
+  };
+
+  const handleSubmit = () => {
+    if (validateForm()) {
+      // Handle form submission here
+      // console.log("Form submitted:", { ...formData, terminalNewUsers });
+      console.log("Form submitted:", {
+        account: formData.hisob,
+        filialCode: formData.filialKod,
+        inn: formData.inn,
+        name: formData.ism,
+        terminalSerialCode: formData.terminalSeriyaKodu,
+        terminalNewUsers: isEmptyNewUsers ? null : terminalNewUsers.map((item) => ({
+          phone: `+998${item.phone}`,
+          password: item.password
+        })),
+      });
+      editTerminal.globalDataFunc();
+      // Add your update terminal logic here
+    }
+  };
+
+  const toggleModal = (terminal: Terminal) => {
+    setFormData({
+      ism: terminal.name || "",
+      hisob: terminal.account || "",
+      filialKod: terminal.filial_code || "",
+      inn: terminal.inn || "",
+      terminalSeriyaKodu: terminal.terminalSerialCode || "",
+    });
+    setModalVisible(true);
+  };
+
+  const resetFormData = () => {
+    setFormData({
+      ism: "",
+      hisob: "",
+      filialKod: "",
+      inn: "",
+      terminalSeriyaKodu: "",
+    });
+    setTerminalNewUsers([{ phone: "", password: "" }]);
+  };
+
+  if (errorTerminals) return <Text>Error: {errorTerminals.message}</Text>;
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <Navbar />
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingHorizontal: 16, marginBottom: 10 }}
+      >
+        <View>
+          <Text style={styles.title}>Terminals</Text>
+          {loadingTerminals ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : terminalList?.object?.length > 0 ? (
+            terminalList?.object?.map((terminal: Terminal, index: number) => (
+              <TouchableOpacity
+                key={index}
+                activeOpacity={.9}
+                style={styles.card}
+                onPress={() => {
+                  setTerminalId(terminal?.id);
+                  toggleModal(terminal);
+                }}
+              >
+                <Text style={styles.cardTitle}>{terminal.account || "-"}</Text>
+                <View style={styles.row}>
+                    <Text style={styles.boldText}>Phone:</Text>
+                    <Text style={styles.cardDetail}>{terminal.name || "-"}</Text>
+                </View>
+                <View style={styles.row}>
+                    <Text style={styles.boldText}>Account:</Text>
+                    <Text style={styles.cardDetail}> {terminal.account || "-"}
+                  </Text>
+                </View>
+                <View style={styles.row}>
+                    <Text style={styles.boldText}>Filial Code:</Text>
+                    <Text style={styles.cardDetail}> {terminal.filial_code || "-"}
+                  </Text>
+                </View>
+                <View style={styles.row}>
+                    <Text style={styles.boldText}>Phone:</Text>
+                    <Text style={styles.cardDetail}> {terminal.phones[0] || "-"}</Text>
+                </View>
+                <View style={styles.row}>
+                <Text style={styles.boldText}>Inn:</Text>
+                  <Text style={styles.cardDetail}>{terminal.inn || "-"}</Text>
+                </View>
+              </TouchableOpacity>
+            ))
+          ) : (
+            <Text>No Terminals Found</Text>
+          )}
+
+          <CenteredModal
+            btnRedText="Close"
+            btnWhiteText="Edit"
+            isFullBtn
+            isModal={isModalVisible}
+            toggleModal={() => {
+              setModalVisible(false);
+              resetFormData();
+            }}
+            onConfirm={handleSubmit}
+          >
+            <ScrollView>
+              {[
+                { key: "ism", label: "Ism" },
+                { key: "hisob", label: "Hisob" },
+                { key: "filialKod", label: "Filial kodi" },
+                { key: "inn", label: "Inn raqami" },
+                {
+                  key: "terminalSeriyaKodu",
+                  label: "Terminalning seriya kodi (ixtiyory)",
+                }, // Optional
+              ].map(({ key, label }) => (
+                <TextInput
+                  key={key}
+                  placeholder={label}
+                  style={styles.input}
+                  value={formData[key as keyof typeof formData]}
+                  onChangeText={(text) =>
+                    handleInputChange(key as keyof typeof formData, text)
+                  }
+                />
+              ))}
+
+              {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
+
+              <View style={styles.addPhoneSection}>
+                <Text>Telefon raqam</Text>
+                <TouchableOpacity onPress={handleAddPhoneNumber}>
+                  <AntDesign name="pluscircle" size={24} color="black" />
+                </TouchableOpacity>
+              </View>
+
+              {terminalNewUsers?.map((user, index) => (
+                <View key={index} style={styles.phoneRow}>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      marginTop: 20,
+                    }}
+                  >
+                    <View style={styles.phoneCard}>
+                      {/* <Image source={require('../../../../assets/images/uzb.png')} /> */}
+                      <Text style={{ fontSize: 17, color: "gray" }}>+998</Text>
+                    </View>
+                    <View style={{ width: "69%" }}>
+                      <TextInput
+                        style={styles.phoneInput}
+                        placeholder={`Telefon raqam ${index + 1}`}
+                        value={user.phone}
+                        keyboardType="numeric"
+                        onChangeText={(text) => {
+                          const updatedUsers = [...terminalNewUsers];
+                          updatedUsers[index].phone = text;
+                          setTerminalNewUsers(updatedUsers);
+                        }}
+                        maxLength={12}
+                        placeholderTextColor={"gray"}
+                      />
+                    </View>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      marginTop: 20,
+                    }}
+                  >
+                    <View style={{ width: "85%" }}>
+                      <TextInput
+                        style={styles.passwordInput}
+                        placeholder={`Parol ${index + 1}`}
+                        secureTextEntry
+                        value={user.password}
+                        onChangeText={(text) => {
+                          const updatedUsers = [...terminalNewUsers];
+                          updatedUsers[index].password = text;
+                          setTerminalNewUsers(updatedUsers);
+                        }}
+                      />
+                    </View>
+                    {index > 0 && (
+                      <TouchableOpacity
+                        onPress={() => handleRemovePhoneNumber(index)}
+                      >
+                        <View
+                          style={{
+                            alignItems: "center",
+                            justifyContent: "center",
+                            marginLeft: 5,
+                            marginTop: 15,
+                          }}
+                        >
+                          {/* <Image source={require('../../../../assets/images/uzb.png')} /> */}
+                          <AntDesign name="minuscircle" size={24} color="black" />
+                        </View>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                </View>
+              ))}
+            </ScrollView>
+          </CenteredModal>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+
+  );
+};
+
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
+    flex: 1,
+    backgroundColor: '#F5F5F5',
+    paddingVertical: Platform.OS === 'android' ? 35 : 0,
+    marginBottom: 12,
+  },
+
+  title: { fontSize: 24, marginBottom: 10 },
+  card: {
+    padding: 15,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    marginBottom: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+
+  row: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+    justifyContent: 'space-between',
+    marginVertical: 5,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  cardTitle: { fontSize: 18, fontWeight: "bold" },
+
+  cardDetail: {
+    fontSize: 16,
+    color: '#666',
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  input: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: Colors.dark.primary,
+    paddingVertical: 15,
+    paddingHorizontal: 15,
+    marginVertical: 10,
+    color: "#000",
+    fontSize: 17,
+    shadowColor: Colors.dark.primary,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
+
+    elevation: 8,
+  },
+  boldText: {
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  errorText: { color: "red", marginBottom: 10 },
+  addPhoneSection: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 20,
+  },
+  phoneRow: { alignItems: "center", marginBottom: 15 },
+  phoneCode: { marginRight: 10 },
+  phoneInput: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: Colors.dark.primary,
+    paddingVertical: 15,
+    paddingHorizontal: 15,
+    color: "#000",
+    fontSize: 17,
+    shadowColor: Colors.dark.primary,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
+
+    elevation: 8,
+  },
+  passwordInput: {
+    width: "100%",
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: Colors.dark.primary,
+    paddingVertical: 15,
+    paddingHorizontal: 15,
+    color: "#000",
+    fontSize: 17,
+    shadowColor: Colors.dark.primary,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
+
+    elevation: 8,
+  },
+  phoneCard: {
+    backgroundColor: "#fff",
+    padding: 15,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: Colors.dark.primary,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    width: "29%",
+    shadowColor: Colors.dark.primary,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
+
+    elevation: 8,
   },
 });
+
+export default Terminal;

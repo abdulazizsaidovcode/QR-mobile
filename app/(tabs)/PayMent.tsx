@@ -3,7 +3,7 @@ import Navbar from '@/components/navbar/navbar';
 import CreateQr from '../(Seller)/createQr';
 import { Platform } from 'react-native';
 
-export default function HomeScreen() {
+export default function PaymentQr() {
 
  
 

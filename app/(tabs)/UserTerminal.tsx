@@ -1,7 +1,8 @@
+import Navbar from '@/components/navbar/navbar';
 import { useGlobalRequest } from '@/helpers/apifunctions/univesalFunc';
 import { UserTerminalGet } from '@/helpers/url';
 import React, { useEffect } from 'react';
-import { Text, View, ActivityIndicator, StyleSheet } from 'react-native';
+import { Text, View, ActivityIndicator, StyleSheet, SafeAreaView, Platform, ScrollView } from 'react-native';
 
 interface UserTerminal {
     id: number;
@@ -27,11 +28,9 @@ export default function UserTerminal() {
     );
 
     useEffect(() => {
-        // Call the fetch function when the component mounts
         globalDataFunc();
     }, [globalDataFunc]);
 
-    // Handle loading state
     if (loading) {
         return (
             <View style={styles.loader}>
@@ -40,7 +39,6 @@ export default function UserTerminal() {
         );
     }
 
-    // Handle error state
     if (error) {
         return (
             <View style={styles.errorContainer}>
@@ -50,46 +48,74 @@ export default function UserTerminal() {
     }
 
     return (
-        <View>
-            <Text style={styles.title}>
-                User Terminals ({response && response?.object?.length})
-            </Text>
-            {response && response?.object?.length > 0 ? (
-                response?.object?.map((item: {
-                    id: number;
-                    name: string;
-                    address: string;
-                    phone: string;
-                    lastName: string;
-                    firstName: string;
-                    email: string;
-                    terminalName: string | null;
-                    inn: string | null;
-                    filialCode: string | null;
-                }) => (
-                    <View key={item.id} style={styles.card}>
-                        <Text style={styles.cardTitle}>{item.name}</Text>
-                        <Text style={styles.cardDetail}>Phone: {item.phone || '-'}</Text>
-                        <Text style={styles.cardDetail}>Terminal: {item.terminalName || '-'}</Text>
-                        <Text style={styles.cardDetail}>Last Name: {item.lastName || '-'}</Text>
-                        <Text style={styles.cardDetail}>First Name: {item.firstName || '-'}</Text>
-                        <Text style={styles.cardDetail}>Email: {item.email || '-'}</Text>
-                        <Text style={styles.cardDetail}>INN: {item.inn || '-'}</Text>
-                        <Text style={styles.cardDetail}>Filial Code: {item.filialCode || '-'}</Text>
-                    </View>
-                ))
-            ) : (
-                <Text style={styles.noDataText}>No user terminals found.</Text>
-            )}
-        </View>
+        <SafeAreaView style={styles.container}>
+            <Navbar />
+            <ScrollView
+                showsVerticalScrollIndicator={true}
+                contentContainerStyle={{ paddingHorizontal: 16, marginBottom: 10 }}
+            >
+                <View>
+                    <Text style={styles.title}>
+                        User Terminals ({response && response?.object?.length})
+                    </Text>
+                    {response && response?.object?.length > 0 ? (
+                        response?.object?.map((item:any) => (
+                            <View key={item.id} style={styles.card}>
+                                <View style={styles.row}>
+                                    <Text style={styles.boldText}>Name:</Text>
+                                    <Text style={styles.cardDetail}>{item.name || '-'}</Text>
+                                </View>
+                                <View style={styles.row}>
+                                    <Text style={styles.boldText}>Phone:</Text>
+                                    <Text style={styles.cardDetail}>{item.phone || '-'}</Text>
+                                </View>
+                                <View style={styles.row}>
+                                    <Text style={styles.boldText}>Terminal:</Text>
+                                    <Text style={styles.cardDetail}>{item.terminalName || '-'}</Text>
+                                </View>
+                                <View style={styles.row}>
+                                    <Text style={styles.boldText}>Last Name:</Text>
+                                    <Text style={styles.cardDetail}>{item.lastName || '-'}</Text>
+                                </View>
+                                <View style={styles.row}>
+                                    <Text style={styles.boldText}>First Name:</Text>
+                                    <Text style={styles.cardDetail}>{item.firstName || '-'}</Text>
+                                </View>
+                                <View style={styles.row}>
+                                    <Text style={styles.boldText}>Email:</Text>
+                                    <Text style={styles.cardDetail}>{item.email || '-'}</Text>
+                                </View>
+                                <View style={styles.row}>
+                                    <Text style={styles.boldText}>INN:</Text>
+                                    <Text style={styles.cardDetail}>{item.inn || '-'}</Text>
+                                </View>
+                                <View style={styles.row}>
+                                    <Text style={styles.boldText}>Filial Code:</Text>
+                                    <Text style={styles.cardDetail}>{item.filialCode || '-'}</Text>
+                                </View>
+                                <View style={styles.separator} />
+                            </View>
+                        ))
+                    ) : (
+                        <Text style={styles.noDataText}>No user terminals found.</Text>
+                    )}
+                </View>
+            </ScrollView>
+        </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#F5F5F5',
+        paddingVertical: Platform.OS === 'android' ? 35 : 0,
+        marginBottom: 12,
+    },
     card: {
         backgroundColor: '#fff',
         borderRadius: 10,
-        padding: 15,
+        padding: 30,
         marginVertical: 10,
         shadowColor: '#000',
         shadowOffset: {
@@ -106,15 +132,23 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         color: '#333',
     },
-    cardTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#333',
+    row: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginVertical: 5,
     },
     cardDetail: {
         fontSize: 16,
         color: '#666',
-        marginTop: 5,
+    },
+    boldText: {
+        fontWeight: 'bold',
+        color: '#333',
+    },
+    separator: {
+        height: 1,
+        backgroundColor: '#ccc',
+        marginVertical: 10,
     },
     noDataText: {
         fontSize: 16,
