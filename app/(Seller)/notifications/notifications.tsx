@@ -34,7 +34,6 @@ const Notifications = () => {
 
   useFocusEffect(
     useCallback(() => {
-      console.log("urlllllllll", url);
       const fetchRole = async () => {
         const storedRole = await AsyncStorage.getItem("role");
         setRole(storedRole);
@@ -264,25 +263,5 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#fff",
     textAlign: "center",
-  },
-  modalView: {
-    flex: 1,
-    justifyContent: "center", // Center modal content vertically
-    alignItems: "center", // Center modal content horizontally
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Transparent background for modal overlay
-  },
-  modalContent: {
-    width: "80%", // Set a width for the modal content
-    backgroundColor: "white",
-    borderRadius: 10,
-    padding: 20,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
   },
 });

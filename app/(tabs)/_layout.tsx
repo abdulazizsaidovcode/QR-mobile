@@ -1,23 +1,34 @@
 import { Tabs } from "expo-router";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { TouchableOpacity } from "react-native";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { AntDesign } from "@expo/vector-icons";
-import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Terminal from "./Terminal";
 import PaymentQr from "./PayMent";
 import HomeScreen from "./home";
 import UserTerminal from "./UserTerminal";
+import { useFocusEffect } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const [active, setActive] = useState<boolean>(false);
+  const [role, setRole] = useState<string>("");
 
-  
-const Tab = createBottomTabNavigator();
+  useFocusEffect(
+    useCallback(() => {
+      const fetchRole = async () => {
+        const storedRole = await AsyncStorage.getItem("role");
+        setRole(storedRole ? storedRole : "");
+      };
+      fetchRole();
+    }, [])
+  );
+
+  const Tab = createBottomTabNavigator();
 
   return (
     <>
@@ -43,28 +54,29 @@ const Tab = createBottomTabNavigator();
           },
         })}
       >
-        <Tab.Screen
-          name="home"
-          component={HomeScreen}
-          options={{
-            title: "Home",
-            tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon
-                name={focused ? "home" : "home-outline"}
-                color={color}
-              />
-            ),
-            tabBarButton: (props) => (
-              <TouchableOpacity
-                {...props}
-                onPress={(e) => {
-                  setActive(false); // Reset active state
-                  props.onPress?.(e); // Use optional chaining
-                }}
-              />
-            ),
-          }}
-        />
+        {role === "ROLE_SELLER" && (
+          <Tab.Screen
+            name="home"
+            component={HomeScreen}
+            options={{
+              title: "Home",
+              tabBarIcon: ({ color, focused }) => (
+                <TabBarIcon
+                  name={focused ? "home" : "home-outline"}
+                  color={color}
+                />
+              ),
+              tabBarButton: (props) => (
+                <TouchableOpacity
+                  {...props}
+                  onPress={(e) => {
+                    props.onPress?.(e); // Use optional chaining
+                  }}
+                />
+              ),
+            }}
+          />
+        )}
 
         <Tab.Screen
           name="PayMent"
@@ -72,19 +84,13 @@ const Tab = createBottomTabNavigator();
           options={{
             title: "Payment",
             tabBarIcon: ({ color, focused }) => (
-              <AntDesign
-                name="qrcode"
-                size={34}
-                color={color}
-              />
+              <AntDesign name="qrcode" size={34} color={color} />
             ),
             tabBarButton: (props) => (
               <TouchableOpacity
                 activeOpacity={0.8}
                 {...props}
-                
                 onPress={(e) => {
-                  setActive(true);
                   if (props && props.onPress) {
                     props.onPress?.(e); // Use optional chaining
                   }
@@ -94,44 +100,47 @@ const Tab = createBottomTabNavigator();
           }}
         />
 
-        <Tab.Screen
-          name="Terminal"
-          component={Terminal}
-          options={{
-            title: "Terminal",
-            tabBarIcon: ({ color, focused }) => (
-              <FontAwesome5 name="calculator" size={24} color={color} />
-            ),
-            tabBarButton: (props) => (
-              <TouchableOpacity
-                {...props}
-                onPress={(e) => {
-                  setActive(false); // Reset active state
-                  props.onPress?.(e); // Use optional chaining
-                }}
-              />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="Terminal users"
-          component={UserTerminal}
-          options={{
-            title: "Terminal users",
-            tabBarIcon: ({ color, focused }) => (
-              <FontAwesome5 name="users" size={24} color={color} />
-            ),
-            tabBarButton: (props) => (
-              <TouchableOpacity
-                {...props}
-                onPress={(e) => {
-                  setActive(false); // Reset active state
-                  props.onPress?.(e); // Use optional chaining
-                }}
-              />
-            ),
-          }}
-        />
+        {role === "ROLE_SELLER" && (
+          <Tab.Screen
+            name="Terminal"
+            component={Terminal}
+            options={{
+              title: "Terminal",
+              tabBarIcon: ({ color, focused }) => (
+                <FontAwesome5 name="calculator" size={24} color={color} />
+              ),
+              tabBarButton: (props) => (
+                <TouchableOpacity
+                  {...props}
+                  onPress={(e) => {
+                    props.onPress?.(e); // Use optional chaining
+                  }}
+                />
+              ),
+            }}
+          />
+        )}
+
+        {role === "ROLE_SELLER" && (
+          <Tab.Screen
+            name="Terminal users"
+            component={UserTerminal}
+            options={{
+              title: "Terminal users",
+              tabBarIcon: ({ color, focused }) => (
+                <FontAwesome5 name="users" size={24} color={color} />
+              ),
+              tabBarButton: (props) => (
+                <TouchableOpacity
+                  {...props}
+                  onPress={(e) => {
+                    props.onPress?.(e); // Use optional chaining
+                  }}
+                />
+              ),
+            }}
+          />
+        )}
       </Tab.Navigator>
     </>
   );

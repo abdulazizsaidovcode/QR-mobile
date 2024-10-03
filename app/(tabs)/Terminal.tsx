@@ -128,6 +128,7 @@ const Terminal: React.FC = () => {
         })),
       });
       editTerminal.globalDataFunc();
+      // Add your update terminal logic here
     }
   };
 
@@ -179,7 +180,6 @@ const Terminal: React.FC = () => {
               >
                 <Text style={styles.cardTitle}>{terminal.account || "-"}</Text>
                 <View style={styles.row}>
-                  
                     <Text style={styles.boldText}>Phone:</Text>
                     <Text style={styles.cardDetail}>{terminal.name || "-"}</Text>
                 </View>
@@ -332,6 +332,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5F5F5',
     paddingVertical: Platform.OS === 'android' ? 35 : 0,
+    marginBottom: 12,
   },
 
   title: { fontSize: 24, marginBottom: 10 },
@@ -339,7 +340,7 @@ const styles = StyleSheet.create({
     padding: 15,
     backgroundColor: "#fff",
     borderRadius: 10,
-    marginBottom: 15,
+    marginBottom: 50,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
