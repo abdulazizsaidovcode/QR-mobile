@@ -53,11 +53,11 @@ const Welcome: React.FC = () => {
         <SafeAreaView style={styles.container}>
             <StatusBar style='light' />
             <View style={styles.logo}>
-                <FontAwesome name="soccer-ball-o" size={50} color="black" />
+                <FontAwesome name="qrcode" size={50} color="black" />
             </View>
-            <Text style={styles.title}>Qr</Text>
+            <Text style={styles.title}>SBP mobile</Text>
             <Text style={styles.welcome}> </Text>
-            <Text style={styles.selectLanguage}>Buu app orqali o'zngizga yoqan ...</Text>
+            {/* <Text style={styles.selectLanguage}>Buu app orqali o'zngizga yoqan ...</Text> */}
             <View style={styles.button}>
                 <Buttons
                     title="Kirish"

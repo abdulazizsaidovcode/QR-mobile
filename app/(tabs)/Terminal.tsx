@@ -66,10 +66,13 @@ const Terminal: React.FC = () => {
     {
       account: formData.hisob,
       filialCode: formData.filialKod,
-      inn: formData.inn,
-      name: formData.ism,
-      terminalSerialCode: formData.terminalSeriyaKodu,
-      terminalNewUsers: isEmptyNewUsers ? null : terminalNewUsers,
+      inn: formData.inn, 
+      name: formData.ism, 
+      terminalSerialCode: formData.terminalSeriyaKodu ===  "" ? null : formData.terminalSeriyaKodu ,
+      terminalNewUsers: isEmptyNewUsers ? null : terminalNewUsers.map((item) => ({
+        phone: `+998${item.phone}`,
+        password: item.password
+      })),
     }
   );
 
@@ -116,17 +119,7 @@ const Terminal: React.FC = () => {
     if (validateForm()) {
       // Handle form submission here
       // console.log("Form submitted:", { ...formData, terminalNewUsers });
-      console.log("Form submitted:", {
-        account: formData.hisob,
-        filialCode: formData.filialKod,
-        inn: formData.inn,
-        name: formData.ism,
-        terminalSerialCode: formData.terminalSeriyaKodu,
-        terminalNewUsers: isEmptyNewUsers ? null : terminalNewUsers.map((item) => ({
-          phone: `+998${item.phone}`,
-          password: item.password
-        })),
-      });
+      
       editTerminal.globalDataFunc();
       // Add your update terminal logic here
     }

@@ -24,5 +24,6 @@ export interface RootStackParamList {
     "(tabs)/home": undefined
     "(Seller)/(transactionsDetail)/transactionDetail": undefined
     "(Seller)/notifications/notifications": undefined
+    "(welcome)/welcome": undefined
 
 }

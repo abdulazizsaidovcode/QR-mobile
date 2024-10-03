@@ -16,6 +16,7 @@ import Login from './(auth)/login';
 import TransactionDeatail from './(Seller)/(transactionsDetail)/transactionDetail';
 import Notifications from './(Seller)/notifications/notifications';
 import TabLayout from './(tabs)/_layout';
+import Welcome from './(welcome)/welcome';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -71,6 +72,11 @@ export default function RootLayout() {
             <Stack.Screen
             component={Notifications}
             name="(Seller)/notifications/notifications" 
+            options={{ headerShown: false }}
+            />
+            <Stack.Screen
+            component={Welcome}
+            name="(welcome)/welcome" 
             options={{ headerShown: false }}
             />
         </Stack.Navigator>

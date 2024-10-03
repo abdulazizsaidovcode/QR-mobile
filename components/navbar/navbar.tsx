@@ -7,7 +7,11 @@ import { NavigationProp } from "@react-navigation/native";
 import { useFocusEffect, useNavigation } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useGlobalRequest } from "@/helpers/apifunctions/univesalFunc";
-import { seller_notification_count, terminal_notification_count } from "@/helpers/url";
+import {
+  get_mee,
+  seller_notification_count,
+  terminal_notification_count,
+} from "@/helpers/url";
 type SettingsScreenNavigationProp = NavigationProp<
   RootStackParamList,
   "(tabs)"
@@ -29,9 +33,10 @@ const Navbar = () => {
       };
       fetchRole();
     }, [])
-  )
+  );
 
   const getCount = useGlobalRequest(url, "GET");
+  const getMee = useGlobalRequest(get_mee, "GET");
 
   useFocusEffect(
     useCallback(() => {
@@ -39,7 +44,12 @@ const Navbar = () => {
         getCount.globalDataFunc();
       }
     }, [url])
-  )
+  );
+  useFocusEffect(
+    useCallback(() => {
+        getMee.globalDataFunc();
+    }, [])
+  );
 
   
 
@@ -54,25 +64,39 @@ const Navbar = () => {
         />
 
         <View style={styles.textContainer}>
-          <Text style={styles.greetingText}>Hi, John!</Text>
-          <Text style={styles.subText}>Good Morning</Text>
+          <Text style={styles.greetingText}>Hi, {getMee?.response?.firstName ? getMee?.response?.firstName : "User"} {getMee?.response?.lastName}</Text>
+          <Text style={styles.subText}>{getMee?.response?.phone ? getMee?.response?.phone : "-- --- -- --"}</Text>
         </View>
       </View>
       <View style={{ flexDirection: "row", gap: 8, paddingRight: 10 }}>
-        <View style={{position: "relative"}}>
-          {getCount.response && getCount.response > 0 && <View style={{position: "absolute", width: 10, height: 10, backgroundColor: "red", borderRadius: 50, right: 3}}></View>}
-          <Feather
-            onPress={() => {
-              navigation.navigate("(Seller)/notifications/notifications");
-            }}
-            name="bell"
-            size={24}
-            color="black"
-          />
+        <View style={{ position: "relative" }}>
+          {getCount.response > 0 && (
+            <View
+              style={{
+                position: "absolute",
+                width: 10,
+                height: 10,
+                backgroundColor: "red",
+                borderRadius: 50,
+                right: 2,
+              }}
+            ></View>
+          )}
+          <Text>
+            <Feather
+              onPress={() => {
+                0;
+                navigation.navigate("(Seller)/notifications/notifications");
+              }}
+              name="bell"
+              size={24}
+              color="black"
+            />
+          </Text>
         </View>
         <Feather
           onPress={() => {
-            navigation.navigate("(auth)/login");
+            navigation.navigate("(welcome)/welcome");
             AsyncStorage.clear();
           }}
           name="log-out"

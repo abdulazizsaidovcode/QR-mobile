@@ -54,7 +54,7 @@ export default function TabLayout() {
           },
         })}
       >
-        {role === "ROLE_SELLER" && (
+        {/* {role === "ROLE_SELLER" && ( */}
           <Tab.Screen
             name="home"
             component={HomeScreen}
@@ -76,7 +76,7 @@ export default function TabLayout() {
               ),
             }}
           />
-        )}
+        {/* )} */}
 
         <Tab.Screen
           name="PayMent"

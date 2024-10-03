@@ -20,3 +20,6 @@ export const seller_notification = `${apiLink}notification/for-seller`
 export const terminal_notification = `${apiLink}notification/for-terminal`
 export const seller_notification_count = `${apiLink}notification/count/for-seller`
 export const terminal_notification_count = `${apiLink}notification/count/for-terminal`
+
+
+export const get_mee = `${apiLink}api/user/me`

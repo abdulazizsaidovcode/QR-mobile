@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Modal, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, Modal, TouchableOpacity, ActivityIndicator } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { useGlobalRequest } from "@/helpers/apifunctions/univesalFunc";
 import {
@@ -20,7 +20,7 @@ const Notifications = () => {
   useEffect(() => {}, []);
   const [selectedIds, setSelectedIds] = useState([]);
 
-  const { response, globalDataFunc } = useGlobalRequest(url, "GET");
+  const { response, globalDataFunc, loading } = useGlobalRequest(url, "GET");
   const isReadNotification = useGlobalRequest(
     isRead_notification,
     "POST",
@@ -65,7 +65,6 @@ const Notifications = () => {
    if (deleteNotification.response) {
       globalDataFunc()
       alert("Bildirishnomalar tozalandi.")
-      console.log(deleteNotification.response);
       
       setModalVisible(false)
     }
@@ -123,7 +122,11 @@ const Notifications = () => {
         Notifications for {role === "ROLE_SELLER" ? "Sellers" : "Terminals"}
       </Text>
       <View style={styles.CarsContainer}>
-        {sortedNotifications && sortedNotifications.length > 0 ? (
+        {
+          loading ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) :
+        sortedNotifications && sortedNotifications.length > 0 ? (
           sortedNotifications.map(
             (item: {
               id: number;
@@ -166,13 +169,24 @@ const Notifications = () => {
           style={styles.button}
           onPress={() => handleSelectIsReadIds()}
         >
-          <Text style={styles.buttonText}>Mark All as Unread</Text>
+          {
+            isReadNotification.loading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) :
+          <Text style={styles.buttonText}>Mark all as read</Text>
+          }
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
           onPress={() => setModalVisible(true)}
         >
-          <Text style={styles.buttonText}>Delete All</Text>
+          {
+            deleteNotification.loading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) :
+            <Text style={styles.buttonText}>Delete All</Text>
+          }
+          
         </TouchableOpacity>
       </View>
 

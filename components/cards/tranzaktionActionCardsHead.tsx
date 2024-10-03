@@ -17,7 +17,7 @@ const TransactionActionHeadCard = ({ title, desc, icon, onPress }: TransactionAc
             {icon}
             <View style={{ alignItems: 'center', marginTop: 6 }}>
                 <Text style={styles.title}>{title}</Text>
-                <Text style={styles.desc}>$ {desc && desc.toFixed(2)}</Text>
+                <Text style={styles.desc}>{desc && desc.toFixed(2)} UZS</Text>
             </View>
         </TouchableOpacity>
     );

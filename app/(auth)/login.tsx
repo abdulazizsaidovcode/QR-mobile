@@ -48,7 +48,11 @@ const Login = () => {
             loginUser.globalDataFunc();
         }
     }
-
+    useFocusEffect(
+        useCallback(() => {
+            formatPhoneNumber(phoneNumber.split(' ').join(''))
+        }, [])
+    )
     useFocusEffect(
         useCallback(() => {
             setStatus(loginUser.response)

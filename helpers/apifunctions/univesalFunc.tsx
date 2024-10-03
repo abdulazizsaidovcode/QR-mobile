@@ -25,12 +25,8 @@ export function useGlobalRequest<T>(
                     res = await axios.get(url, config || {});
                     break;
                 case 'POST':
-                    // res = await axios.post(url, data || {}, config || {});
-                    res = await axios.post(url, data || {}, {
-                        headers: {
-                          Authorization: `Bearer ${"eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIrOTk4OTA5NDk0MzIxIiwiaWF0IjoxNzI3NzgxNDMwLCJleHAiOjE4MTQxODE0MzB9.MB4yr_FRUw8ge28uuv8r2gkrgBOh6NG4AyWasM0iuFMdM5iSM0k_xvOIPapoHdWMsqetWeQAIFuzldoKujHS_A" || ""}`, // Safeguard if token is null
-                        },
-                      });
+                    res = await axios.post(url, data || {}, config || {});
+                    
                     break;
                 case 'PUT':
                     res = await axios.put(url, data || {}, config || {});

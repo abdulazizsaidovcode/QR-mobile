@@ -103,7 +103,15 @@ const TransactionDeatail = () => {
             <Text style={styles.title}>Check Miqdori: </Text>
             <Text style={styles.desc}>
               {paymentDetail.transaction.qrAmount
-                ? `${paymentDetail.transaction.qrAmount} UZS`
+                ? `${paymentDetail.transaction.qrAmount} RUB`
+                : "-"}
+            </Text>
+          </View>
+          <View style={styles.detailCardIn}>
+            <Text style={styles.title}>Check Miqdori: </Text>
+            <Text style={styles.desc}>
+              {paymentDetail.transaction.chequeAmount
+                ? `${paymentDetail.transaction.chequeAmount} UZS`
                 : "-"}
             </Text>
           </View>
@@ -128,7 +136,7 @@ const TransactionDeatail = () => {
             <View style={{ paddingVertical: 10 }}>
               <Text
                 style={styles.qrTextTop}
-              >{`QR amount: ${paymentDetail.transaction.qrAmount} UZS`}</Text>
+              >{`QR amount: ${paymentDetail.transaction.qrAmount} RUB`}</Text>
             </View>
             <QRCode
               value={paymentDetail.transaction.url} // The value to encode in the QR code
