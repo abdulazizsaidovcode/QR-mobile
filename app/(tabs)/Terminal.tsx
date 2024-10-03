@@ -7,6 +7,8 @@ import {
   ActivityIndicator,
   StyleSheet,
   ScrollView,
+  SafeAreaView,
+  Platform,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { useGlobalRequest } from "@/helpers/apifunctions/univesalFunc";
@@ -14,6 +16,7 @@ import { SellerEdit, SellerGet } from "@/helpers/url";
 import CenteredModal from "@/components/modal/modal-centered";
 import { useFocusEffect } from "expo-router";
 import { Colors } from "@/constants/Colors";
+import Navbar from "@/components/navbar/navbar";
 
 interface Terminal {
   id: number;
@@ -122,7 +125,7 @@ const Terminal: React.FC = () => {
         terminalNewUsers: isEmptyNewUsers ? null : terminalNewUsers.map((item) => ({
           phone: `+998${item.phone}`,
           password: item.password
-      })),
+        })),
       });
       editTerminal.globalDataFunc();
       // Add your update terminal logic here
@@ -154,157 +157,184 @@ const Terminal: React.FC = () => {
   if (errorTerminals) return <Text>Error: {errorTerminals.message}</Text>;
 
   return (
-    <View>
-      <Text style={styles.title}>Terminals</Text>
-
-      {loadingTerminals ? (
-        <ActivityIndicator size="large" color="#0000ff" />
-      ) : terminalList?.object?.length > 0 ? (
-        terminalList?.object?.map((terminal: Terminal, index: number) => (
-          <TouchableOpacity
-            key={index}
-            style={styles.card}
-            onPress={() => {
-              setTerminalId(terminal?.id);
-              toggleModal(terminal);
-            }} // Handle card press to open modal
-          >
-            <Text style={styles.cardTitle}>{terminal.account || "-"}</Text>
-            <Text style={styles.cardText}>Name: {terminal.name || "-"}</Text>
-            <Text style={styles.cardText}>
-              Account: {terminal.account || "-"}
-            </Text>
-            <Text style={styles.cardText}>
-              Filial Code: {terminal.filial_code || "-"}
-            </Text>
-            <Text style={styles.cardText}>
-              Phone: {terminal.phones[0] || "-"}
-            </Text>
-            <Text style={styles.cardText}>Inn: {terminal.inn || "-"}</Text>
-          </TouchableOpacity>
-        ))
-      ) : (
-        <Text>No Terminals Found</Text>
-      )}
-
-      <CenteredModal
-        btnRedText="Close"
-        btnWhiteText="Edit"
-        isFullBtn
-        isModal={isModalVisible}
-        toggleModal={() => {
-          setModalVisible(false);
-          resetFormData(); // Reset form data when closing the modal
-        }}
-        onConfirm={handleSubmit}
+    <SafeAreaView style={styles.container}>
+      <Navbar />
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingHorizontal: 16, marginBottom: 10 }}
       >
-        <ScrollView>
-          {[
-            { key: "ism", label: "Ism" },
-            { key: "hisob", label: "Hisob" },
-            { key: "filialKod", label: "Filial kodi" },
-            { key: "inn", label: "Inn raqami" },
-            {
-              key: "terminalSeriyaKodu",
-              label: "Terminalning seriya kodi (ixtiyory)",
-            }, // Optional
-          ].map(({ key, label }) => (
-            <TextInput
-              key={key}
-              placeholder={label}
-              style={styles.input}
-              value={formData[key as keyof typeof formData]}
-              onChangeText={(text) =>
-                handleInputChange(key as keyof typeof formData, text)
-              }
-            />
-          ))}
-
-          {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
-
-          <View style={styles.addPhoneSection}>
-            <Text>Telefon raqam</Text>
-            <TouchableOpacity onPress={handleAddPhoneNumber}>
-              <AntDesign name="pluscircle" size={24} color="black" />
-            </TouchableOpacity>
-          </View>
-
-          {terminalNewUsers?.map((user, index) => (
-            <View key={index} style={styles.phoneRow}>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  marginTop: 20,
+        <View>
+          <Text style={styles.title}>Terminals</Text>
+          {loadingTerminals ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : terminalList?.object?.length > 0 ? (
+            terminalList?.object?.map((terminal: Terminal, index: number) => (
+              <TouchableOpacity
+                key={index}
+                activeOpacity={.9}
+                style={styles.card}
+                onPress={() => {
+                  setTerminalId(terminal?.id);
+                  toggleModal(terminal);
                 }}
               >
-                <View style={styles.phoneCard}>
-                  {/* <Image source={require('../../../../assets/images/uzb.png')} /> */}
-                  <Text style={{ fontSize: 17, color: "gray" }}>+998</Text>
+                <Text style={styles.cardTitle}>{terminal.account || "-"}</Text>
+                <View style={styles.row}>
+                    <Text style={styles.boldText}>Phone:</Text>
+                    <Text style={styles.cardDetail}>{terminal.name || "-"}</Text>
                 </View>
-                <View style={{ width: "69%" }}>
-                  <TextInput
-                    style={styles.phoneInput}
-                    placeholder={`Telefon raqam ${index + 1}`}
-                    value={user.phone}
-                    keyboardType="numeric"
-                    onChangeText={(text) => {
-                      const updatedUsers = [...terminalNewUsers];
-                      updatedUsers[index].phone = text;
-                      setTerminalNewUsers(updatedUsers);
-                    }}
-                    maxLength={12}
-                    placeholderTextColor={"gray"}
-                  />
+                <View style={styles.row}>
+                    <Text style={styles.boldText}>Account:</Text>
+                    <Text style={styles.cardDetail}> {terminal.account || "-"}
+                  </Text>
                 </View>
+                <View style={styles.row}>
+                    <Text style={styles.boldText}>Filial Code:</Text>
+                    <Text style={styles.cardDetail}> {terminal.filial_code || "-"}
+                  </Text>
+                </View>
+                <View style={styles.row}>
+                    <Text style={styles.boldText}>Phone:</Text>
+                    <Text style={styles.cardDetail}> {terminal.phones[0] || "-"}</Text>
+                </View>
+                <View style={styles.row}>
+                <Text style={styles.boldText}>Inn:</Text>
+                  <Text style={styles.cardDetail}>{terminal.inn || "-"}</Text>
+                </View>
+              </TouchableOpacity>
+            ))
+          ) : (
+            <Text>No Terminals Found</Text>
+          )}
+
+          <CenteredModal
+            btnRedText="Close"
+            btnWhiteText="Edit"
+            isFullBtn
+            isModal={isModalVisible}
+            toggleModal={() => {
+              setModalVisible(false);
+              resetFormData();
+            }}
+            onConfirm={handleSubmit}
+          >
+            <ScrollView>
+              {[
+                { key: "ism", label: "Ism" },
+                { key: "hisob", label: "Hisob" },
+                { key: "filialKod", label: "Filial kodi" },
+                { key: "inn", label: "Inn raqami" },
+                {
+                  key: "terminalSeriyaKodu",
+                  label: "Terminalning seriya kodi (ixtiyory)",
+                }, // Optional
+              ].map(({ key, label }) => (
+                <TextInput
+                  key={key}
+                  placeholder={label}
+                  style={styles.input}
+                  value={formData[key as keyof typeof formData]}
+                  onChangeText={(text) =>
+                    handleInputChange(key as keyof typeof formData, text)
+                  }
+                />
+              ))}
+
+              {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
+
+              <View style={styles.addPhoneSection}>
+                <Text>Telefon raqam</Text>
+                <TouchableOpacity onPress={handleAddPhoneNumber}>
+                  <AntDesign name="pluscircle" size={24} color="black" />
+                </TouchableOpacity>
               </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  marginTop: 20,
-                }}
-              >
-                <View style={{ width: "85%" }}>
-                  <TextInput
-                    style={styles.passwordInput}
-                    placeholder={`Parol ${index + 1}`}
-                    secureTextEntry
-                    value={user.password}
-                    onChangeText={(text) => {
-                      const updatedUsers = [...terminalNewUsers];
-                      updatedUsers[index].password = text;
-                      setTerminalNewUsers(updatedUsers);
+
+              {terminalNewUsers?.map((user, index) => (
+                <View key={index} style={styles.phoneRow}>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      marginTop: 20,
                     }}
-                  />
-                </View>
-                {index > 0 && (
-                  <TouchableOpacity
-                    onPress={() => handleRemovePhoneNumber(index)}
                   >
-                    <View
-                      style={{
-                        alignItems: "center",
-                        justifyContent: "center",
-                        marginLeft: 5,
-                        marginTop: 15,
-                      }}
-                    >
+                    <View style={styles.phoneCard}>
                       {/* <Image source={require('../../../../assets/images/uzb.png')} /> */}
-                      <AntDesign name="minuscircle" size={24} color="black" />
+                      <Text style={{ fontSize: 17, color: "gray" }}>+998</Text>
                     </View>
-                  </TouchableOpacity>
-                )}
-              </View>
-            </View>
-          ))}
-        </ScrollView>
-      </CenteredModal>
-    </View>
+                    <View style={{ width: "69%" }}>
+                      <TextInput
+                        style={styles.phoneInput}
+                        placeholder={`Telefon raqam ${index + 1}`}
+                        value={user.phone}
+                        keyboardType="numeric"
+                        onChangeText={(text) => {
+                          const updatedUsers = [...terminalNewUsers];
+                          updatedUsers[index].phone = text;
+                          setTerminalNewUsers(updatedUsers);
+                        }}
+                        maxLength={12}
+                        placeholderTextColor={"gray"}
+                      />
+                    </View>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      marginTop: 20,
+                    }}
+                  >
+                    <View style={{ width: "85%" }}>
+                      <TextInput
+                        style={styles.passwordInput}
+                        placeholder={`Parol ${index + 1}`}
+                        secureTextEntry
+                        value={user.password}
+                        onChangeText={(text) => {
+                          const updatedUsers = [...terminalNewUsers];
+                          updatedUsers[index].password = text;
+                          setTerminalNewUsers(updatedUsers);
+                        }}
+                      />
+                    </View>
+                    {index > 0 && (
+                      <TouchableOpacity
+                        onPress={() => handleRemovePhoneNumber(index)}
+                      >
+                        <View
+                          style={{
+                            alignItems: "center",
+                            justifyContent: "center",
+                            marginLeft: 5,
+                            marginTop: 15,
+                          }}
+                        >
+                          {/* <Image source={require('../../../../assets/images/uzb.png')} /> */}
+                          <AntDesign name="minuscircle" size={24} color="black" />
+                        </View>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                </View>
+              ))}
+            </ScrollView>
+          </CenteredModal>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F5F5F5',
+    paddingVertical: Platform.OS === 'android' ? 35 : 0,
+    marginBottom: 12,
+  },
+
   title: { fontSize: 24, marginBottom: 10 },
   card: {
     padding: 15,
@@ -317,8 +347,18 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
+
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: 5,
+  },
   cardTitle: { fontSize: 18, fontWeight: "bold" },
-  cardText: { fontSize: 14, marginBottom: 5 },
+
+  cardDetail: {
+    fontSize: 16,
+    color: '#666',
+  },
   input: {
     backgroundColor: "#fff",
     borderRadius: 10,
@@ -338,6 +378,10 @@ const styles = StyleSheet.create({
     shadowRadius: 4.65,
 
     elevation: 8,
+  },
+  boldText: {
+    fontWeight: 'bold',
+    color: '#333',
   },
   errorText: { color: "red", marginBottom: 10 },
   addPhoneSection: {
