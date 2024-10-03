@@ -119,7 +119,10 @@ const Seller: React.FC = () => {
         inn: formData.inn,
         name: formData.ism,
         terminalSerialCode: formData.terminalSeriyaKodu,
-        terminalNewUsers: isEmptyNewUsers ? null : terminalNewUsers,
+        terminalNewUsers: isEmptyNewUsers ? null : terminalNewUsers.map((item) => ({
+          phone: `+998${item.phone}`,
+          password: item.password
+      })),
       });
       editTerminal.globalDataFunc();
       // Add your update terminal logic here

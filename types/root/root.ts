@@ -22,5 +22,6 @@ export interface RootStackParamList {
     "(auth)/login": undefined
     "(tabs)": undefined
     "(Seller)/(transactionsDetail)/transactionDetail": undefined
+    "(Seller)/notifications/notifications": undefined
 
 }

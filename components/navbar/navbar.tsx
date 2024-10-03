@@ -2,8 +2,17 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Avatar } from 'react-native-elements';
 import Feather from '@expo/vector-icons/Feather'
+import { RootStackParamList } from '@/types/root/root';
+import { NavigationProp } from '@react-navigation/native';
+import { useNavigation } from 'expo-router';
+type SettingsScreenNavigationProp = NavigationProp<
+    RootStackParamList,
+    "(tabs)"
+>;
 
 const Navbar = () => {
+  const navigation = useNavigation<SettingsScreenNavigationProp>();
+
   return (
     <View style={styles.container}>
       <View style={styles.greetingContainer}>
@@ -19,7 +28,9 @@ const Navbar = () => {
           <Text style={styles.subText}>Good Morning</Text>
         </View>
       </View>
-      <Feather name="bell" size={24} color="black" />
+      <Feather onPress={() => {
+        navigation.navigate("(Seller)/notifications/notifications")
+      }} name="bell" size={24} color="black" />
     </View>
   );
 };
