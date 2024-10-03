@@ -52,7 +52,7 @@ export default function UserTerminal() {
     return (
         <View>
             <Text style={styles.title}>
-                User Terminals ({response?.object?.length})
+                User Terminals ({response && response?.object?.length})
             </Text>
             {response && response?.object?.length > 0 ? (
                 response?.object?.map((item: {
