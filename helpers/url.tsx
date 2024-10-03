@@ -17,4 +17,6 @@ export const UserTerminalGet = `${apiLink}api/user/terminal`
 export const isRead_notification = `${apiLink}notification/is-read`
 export const delete_notification = `${apiLink}notification/delete`
 export const seller_notification = `${apiLink}notification/for-seller`
-export const terminal_notification = `${apiLink}notification/for-seller`
+export const terminal_notification = `${apiLink}notification/for-terminal`
+export const seller_notification_count = `${apiLink}notification/count/for-seller`
+export const terminal_notification_count = `${apiLink}notification/count/for-terminal`

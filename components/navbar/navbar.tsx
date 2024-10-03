@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Avatar } from "react-native-elements";
 import Feather from "@expo/vector-icons/Feather";
 import { RootStackParamList } from "@/types/root/root";
 import { NavigationProp } from "@react-navigation/native";
-import { useNavigation } from "expo-router";
+import { useFocusEffect, useNavigation } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useGlobalRequest } from "@/helpers/apifunctions/univesalFunc";
+import { seller_notification_count, terminal_notification_count } from "@/helpers/url";
 type SettingsScreenNavigationProp = NavigationProp<
   RootStackParamList,
   "(tabs)"
@@ -13,6 +15,35 @@ type SettingsScreenNavigationProp = NavigationProp<
 
 const Navbar = () => {
   const navigation = useNavigation<SettingsScreenNavigationProp>();
+  const [role, setRole] = useState<string | null>(null);
+  const [url, setUrl] = useState("");
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchRole = async () => {
+        const storedRole = await AsyncStorage.getItem("role");
+        setRole(storedRole);
+        if (storedRole === "ROLE_SELLER") {
+          setUrl(seller_notification_count);
+        } else if (storedRole === "ROLE_TERMINAL") {
+          setUrl(terminal_notification_count);
+        }
+      };
+      fetchRole();
+    }, [])
+  )
+
+  const getCount = useGlobalRequest(url, "GET");
+
+  useFocusEffect(
+    useCallback(() => {
+      if (url) {
+        getCount.globalDataFunc();
+      }
+    }, [url])
+  )
+
+  
 
   return (
     <View style={styles.container}>
@@ -29,19 +60,22 @@ const Navbar = () => {
           <Text style={styles.subText}>Good Morning</Text>
         </View>
       </View>
-      <View style={{flexDirection: "row", gap: 8, paddingRight: 10}}>
-        <Feather
-          onPress={() => {
-            navigation.navigate("(Seller)/notifications/notifications");
-          }}
-          name="bell"
-          size={24}
-          color="black"
-        />
+      <View style={{ flexDirection: "row", gap: 8, paddingRight: 10 }}>
+        <View style={{position: "relative"}}>
+          {getCount.response && getCount.response > 0 && <View style={{position: "absolute", width: 10, height: 10, backgroundColor: "red", borderRadius: 50, right: 3}}></View>}
+          <Feather
+            onPress={() => {
+              navigation.navigate("(Seller)/notifications/notifications");
+            }}
+            name="bell"
+            size={24}
+            color="black"
+          />
+        </View>
         <Feather
           onPress={() => {
             navigation.navigate("(auth)/login");
-            AsyncStorage.clear()
+            AsyncStorage.clear();
           }}
           name="log-out"
           size={24}
