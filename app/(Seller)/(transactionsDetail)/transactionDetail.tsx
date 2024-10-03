@@ -20,7 +20,7 @@ import { RootStackParamList } from "@/types/root/root";
 // import NavigationMenu from "../../../components/navigation copy/NavigationMenu";
 type SettingsScreenNavigationProp = NavigationProp<
   RootStackParamList,
-  "(tabs)"
+  "(Seller)/(transactionsDetail)/transactionDetail"
 >;
 
 const TransactionDeatail = () => {
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F5F5F5",
     padding: 16,
-    paddingVertical: Platform.OS === "android" ? 35 : 0,
+    paddingVertical: 35,
     alignItems: "center",
     justifyContent: "center",
   },
