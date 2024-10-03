@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Modal, TouchableOpacity, ActivityIndicator } from "react-native";
+import { StyleSheet, Text, View, Modal, TouchableOpacity, ActivityIndicator, ScrollView } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { useGlobalRequest } from "@/helpers/apifunctions/univesalFunc";
 import {
@@ -11,6 +11,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MaterialIcons } from "@expo/vector-icons";
 import CenteredModal from "@/components/modal/modal-centered";
 import { useFocusEffect } from "expo-router";
+import NavigationMenu from "@/components/navigation copy/NavigationMenu";
 
 const Notifications = () => {
   const [url, setUrl] = useState("");
@@ -118,10 +119,11 @@ const Notifications = () => {
 
   return (
     <View style={styles.container}>
+      <NavigationMenu name="Notification"/>
       <Text style={styles.title}>
         Notifications for {role === "ROLE_SELLER" ? "Sellers" : "Terminals"}
       </Text>
-      <View style={styles.CarsContainer}>
+      <ScrollView style={styles.CarsContainer}>
         {
           loading ? (
             <ActivityIndicator size="large" color="#0000ff" />
@@ -163,7 +165,7 @@ const Notifications = () => {
         ) : (
           <Text>No notifications available</Text>
         )}
-      </View>
+      </ScrollView>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.button}

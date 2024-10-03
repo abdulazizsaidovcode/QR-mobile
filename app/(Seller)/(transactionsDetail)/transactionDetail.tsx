@@ -17,6 +17,7 @@ import { useGlobalRequest } from "@/helpers/apifunctions/univesalFunc";
 import { cancel_payment } from "@/helpers/url";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "@/types/root/root";
+import NavigationMenu from "@/components/navigation copy/NavigationMenu";
 // import NavigationMenu from "../../../components/navigation copy/NavigationMenu";
 type SettingsScreenNavigationProp = NavigationProp<
   RootStackParamList,
@@ -47,19 +48,19 @@ const TransactionDeatail = () => {
   }, [paymentCancel.error, paymentCancel.response]);
 
   return (
-    <View style={{ flex: 1 }}>
-      <View style={styles.container}>
+    
+    <View style={{ flex: 1, backgroundColor: "#F5F5F5", padding: 16,}}>
+      <View style={{paddingTop: 35}}>
+        <NavigationMenu name="To'lov cheki" />
+      </View>
         <StatusBar barStyle="dark-content" backgroundColor="#f5f5f5" />
+      <ScrollView style={styles.container}>
         {/* <NavigationMenu name="Payment detail" /> */}
         <View style={styles.detailCard}>
           {/* <View style={styles.detailCardIn}>
               <Text style={styles.title}>Ext ID: </Text>
               <Text style={styles.desc}>{paymentDetail.transaction.ext_id}</Text>
             </View> */}
-          <View style={styles.detailCardIn}>
-            <Text style={{ fontSize: 22 }}>To'lov uchun chek</Text>
-            {/* <Text style={styles.desc}>{paymentDetail.transaction.partner ? paymentDetail?.transaction?.partner : "-"}</Text> */}
-          </View>
           <View style={styles.detailCardIn}>
             <Text style={styles.title}>Partner: </Text>
             <Text style={styles.desc}>
@@ -154,33 +155,33 @@ const TransactionDeatail = () => {
             </View>
           </Pressable>
         </View>
-      <CenteredModal
-        btnRedText="Close"
-        btnWhiteText="Ok"
-        isFullBtn={true}
-        isModal={modal}
-        onConfirm={() => {
-          paymentCancel.globalDataFunc()
-          closeModal()
-        }}
-        toggleModal={() => closeModal()}
-      >
-        <View
-          style={{
-            justifyContent: "center",
-            alignItems: "center",
-            marginBottom: 10,
-            backgroundColor: "#f8f9fa",
-            padding: 15,
-            gap: 10,
+        <CenteredModal
+          btnRedText="Close"
+          btnWhiteText="Ok"
+          isFullBtn={true}
+          isModal={modal}
+          onConfirm={() => {
+            paymentCancel.globalDataFunc();
+            closeModal();
           }}
+          toggleModal={() => closeModal()}
         >
-          <Text style={{ fontSize: 18, color: "#000", textAlign: "center" }}>
-            Haqiqiatdan ham siz bu to'lovni bekor qilasizmi?
-          </Text>
-        </View>
-      </CenteredModal>
-      </View>
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              marginBottom: 10,
+              backgroundColor: "#f8f9fa",
+              padding: 15,
+              gap: 10,
+            }}
+          >
+            <Text style={{ fontSize: 18, color: "#000", textAlign: "center" }}>
+              Haqiqiatdan ham siz bu to'lovni bekor qilasizmi?
+            </Text>
+          </View>
+        </CenteredModal>
+      </ScrollView>
     </View>
   );
 };
@@ -190,11 +191,11 @@ export default TransactionDeatail;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5F5F5",
-    padding: 16,
-    paddingVertical: 35,
-    alignItems: "center",
-    justifyContent: "center",
+    
+    paddingTop: 35,
+    marginBottom: 20
+    // alignItems: "center",
+    // justifyContent: "center",
   },
   detailCardIn: {
     width: "100%",
@@ -202,6 +203,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingVertical: 7,
+    marginBottom: 20
   },
   detailCard: {
     alignItems: "center",

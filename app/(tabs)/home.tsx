@@ -166,8 +166,7 @@ export default function HomeScreen() {
           />
         </View>}
         <View style={styles.header}>
-          <Text style={styles.headerText}>Latest Transactions</Text>
-          <Text style={styles.seeAll}>See All</Text>
+          <Text style={styles.headerText}>Latest Transactions({transactionGet?.response?.totalElements})</Text>
         </View>
         <FlatList
           data={transactionGet?.response?.object}
