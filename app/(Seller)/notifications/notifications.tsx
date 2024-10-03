@@ -1,120 +1,191 @@
-import { StyleSheet, Text, View, Modal, TouchableOpacity } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { useGlobalRequest } from '@/helpers/apifunctions/univesalFunc';
-import { seller_notification, terminal_notification, isRead_notification } from '@/helpers/url';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { MaterialIcons } from '@expo/vector-icons';
+import { StyleSheet, Text, View, Modal, TouchableOpacity } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import { useGlobalRequest } from "@/helpers/apifunctions/univesalFunc";
+import {
+  seller_notification,
+  terminal_notification,
+  isRead_notification,
+  delete_notification,
+} from "@/helpers/url";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { MaterialIcons } from "@expo/vector-icons";
+import CenteredModal from "@/components/modal/modal-centered";
+import { useFocusEffect } from "expo-router";
 
 const Notifications = () => {
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState("");
   const [role, setRole] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false); // State for modal visibility
 
-  useEffect(() => {
-    const fetchRole = async () => {
-      const storedRole = await AsyncStorage.getItem('role');
-      setRole(storedRole);
-      if (storedRole === 'ROLE_SELLER') {
-        setUrl(seller_notification);
-      } else if (storedRole === 'ROLE_TERMINAL') {
-        setUrl(terminal_notification);
+  useEffect(() => {}, []);
+  const [selectedIds, setSelectedIds] = useState([]);
+
+  const { response, globalDataFunc } = useGlobalRequest(url, "GET");
+  const isReadNotification = useGlobalRequest(
+    isRead_notification,
+    "POST",
+    selectedIds.length > 0 ? { ids: selectedIds } : { ids: [] }
+  );
+  const deleteNotification = useGlobalRequest(
+    delete_notification,
+    "POST",
+    selectedIds.length > 0 ? { ids: selectedIds } : { ids: [] }
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      console.log("urlllllllll", url);
+      const fetchRole = async () => {
+        const storedRole = await AsyncStorage.getItem("role");
+        setRole(storedRole);
+        if (storedRole === "ROLE_SELLER") {
+          setUrl(seller_notification);
+        } else if (storedRole === "ROLE_TERMINAL") {
+          setUrl(terminal_notification);
+        }
+      };
+      fetchRole();
+    }, [])
+  )
+
+  useFocusEffect(
+    useCallback(() => {
+      if (url) {
+        globalDataFunc();
       }
-    };
-    fetchRole();
-  }, []);
-
-  const { response, globalDataFunc } = useGlobalRequest(url, 'GET');
-  const { globalDataFunc: postFunc } = useGlobalRequest(isRead_notification, 'POST');
+    }, [url])
+  )
 
   useEffect(() => {
-    if (url) {
-      globalDataFunc();
+    if (isReadNotification.response) {
+      globalDataFunc()
+    } else if (deleteNotification.response) {
+      globalDataFunc()
+      alert("Bildirishnomalar tozalandi.")
+      setModalVisible(false)
     }
-  }, [url]);
+  }, [isReadNotification.response , deleteNotification.response])
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    const formattedDate = date.toISOString().split('T')[0];
-    const formattedTime = date.toTimeString().split(' ')[0].slice(0, 5);
+    const formattedDate = date.toISOString().split("T")[0];
+    const formattedTime = date.toTimeString().split(" ")[0].slice(0, 5);
     return `${formattedDate} T ${formattedTime}`;
   };
 
   const sortedNotifications = response?.object?.sort(
-    (a: { isRead: string }, b: { isRead: string }) => (a.isRead === b.isRead ? 0 : a.isRead ? 1 : -1)
+    (a: { isRead: string }, b: { isRead: string }) =>
+      a.isRead === b.isRead ? 0 : a.isRead ? 1 : -1
   );
 
-  const markAllAsRead = () => {
-    const unreadNotifications = response?.object?.filter((item) => !item.isRead);
-    const notificationIds = unreadNotifications.map((item) => item.id);
+  const handleSelectIsReadIds = async () => {
+    if (response?.object) {
+      // isRead false bo'lgan elementlarning id larini olish
+      const ids = response?.object
+        ? response?.object
+            .filter((item: any) => !item.isRead) // isRead false bo'lganlarni filtrlash
+            .map((item: any) => item.id)
+        : []; // ularning id larini olish
 
-    postFunc({
-      ids: notificationIds, // Assuming the API accepts an array of notification IDs
-      isRead: true,
-    }).then(() => {
-      globalDataFunc(); // Refresh notifications after marking them as read
-    });
+      if (ids && ids.length > 0) {
+        await setSelectedIds(ids);
+        await isReadNotification.globalDataFunc();
+      } else {
+        alert("Sizda bildirishnoma yo'q.");
+      }
+    }
   };
 
-  const deleteAllNotifications = () => {
-    // Add logic to delete notifications via API
-    setModalVisible(false); // Close the modal
-    globalDataFunc(); // Refresh the data after deletion
+  const handleSelectAllIds = async () => {
+
+    if (response?.object) {
+      const ids = await response?.object.map((item: any) => item.id);
+      console.log("idsssss", ids);
+
+      if (ids && ids.length > 0) {
+        await setSelectedIds(ids);
+        await deleteNotification.globalDataFunc();
+        console.log("alert ishlamadi");
+      } else {
+        console.log("alert ishladi");
+        alert("Sizda bildirishnoma yo'q.");
+      }
+    }
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>
-        Notifications for {role === 'ROLE_SELLER' ? 'Sellers' : 'Terminals'}
+        Notifications for {role === "ROLE_SELLER" ? "Sellers" : "Terminals"}
       </Text>
       <View style={styles.CarsContainer}>
         {sortedNotifications && sortedNotifications.length > 0 ? (
-          sortedNotifications.map((item: { id: number; title: string; createdAt: string; isRead: string }) => (
-            <View key={item.id} style={item.isRead ? styles.cards : styles.cards21}>
-              {item.isRead ? (
-                <MaterialIcons name="done-all" size={24} color="#ccc" />
-              ) : (
-                <MaterialIcons name="done" size={24} color="#828282" />
-              )}
-              <View>
-                <Text style={item.isRead ? styles.greycolor : styles.Darkcolor}>
-                  {item.title}
+          sortedNotifications.map(
+            (item: {
+              id: number;
+              title: string;
+              createdAt: string;
+              isRead: string;
+            }) => (
+              <View
+                key={item.id}
+                style={item.isRead ? styles.cards : styles.cards21}
+              >
+                {item.isRead ? (
+                  <MaterialIcons name="done-all" size={24} color="#ccc" />
+                ) : (
+                  <MaterialIcons name="done" size={24} color="#828282" />
+                )}
+                <View>
+                  <Text
+                    style={item.isRead ? styles.greycolor : styles.Darkcolor}
+                  >
+                    {item.title}
+                  </Text>
+                </View>
+                <Text
+                  style={
+                    item.isRead ? { color: "#ccc", fontSize: 10 } : styles.date
+                  }
+                >
+                  {formatDate(item.createdAt)}
                 </Text>
               </View>
-              <Text style={item.isRead ? { color: '#ccc', fontSize: 10 } : styles.date}>{formatDate(item.createdAt)}</Text>
-            </View>
-          ))
+            )
+          )
         ) : (
           <Text>No notifications available</Text>
         )}
       </View>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={markAllAsRead}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => handleSelectIsReadIds()}
+        >
           <Text style={styles.buttonText}>Mark All as Unread</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => setModalVisible(true)}
+        >
           <Text style={styles.buttonText}>Delete All</Text>
         </TouchableOpacity>
       </View>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(!modalVisible)}
+
+      <CenteredModal
+        btnRedText="No"
+        btnWhiteText="Yes"
+        isFullBtn={true}
+        isModal={modalVisible}
+        toggleModal={() => setModalVisible(!modalVisible)}
+        onConfirm={() => handleSelectAllIds()}
       >
-        <View style={styles.modalView}>
-          <View style={styles.modalContent}>
-            <Text>Are you sure you want to delete all notifications?</Text>
-            <View style={styles.modalButtons}>
-              <TouchableOpacity style={styles.modalButton} onPress={deleteAllNotifications}>
-                <Text style={styles.buttonText}>Yes</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.modalButton} onPress={() => setModalVisible(false)}>
-                <Text style={styles.buttonText}>No</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+        <View>
+          <Text style={{ fontSize: 20 }}>
+            Are you sure you want to delete all notifications?
+          </Text>
         </View>
-      </Modal>
+      </CenteredModal>
     </View>
   );
 };
@@ -124,7 +195,7 @@ export default Notifications;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
     padding: 20,
     paddingTop: 50,
   },
@@ -137,11 +208,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   cards: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     padding: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: 10,
     borderRadius: 5,
     shadowOpacity: 0.2,
@@ -149,62 +220,63 @@ const styles = StyleSheet.create({
   },
   cards21: {
     borderWidth: 1,
-    backgroundColor: '#fff',
+    borderBlockColor: "#FF5A3A",
+    backgroundColor: "#fff",
     padding: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: 10,
     borderRadius: 5,
     shadowOpacity: 0.2,
     shadowRadius: 2,
   },
   greycolor: {
-    color: '#ccc',
+    color: "#ccc",
   },
   Darkcolor: {
-    color: '#000',
+    color: "#000",
   },
   date: {
     fontSize: 10,
-    color: '#666',
+    color: "#666",
   },
   buttonContainer: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingVertical: 15,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderTopWidth: 1,
-    borderTopColor: '#ccc',
+    borderTopColor: "#ccc",
   },
   button: {
-    backgroundColor: '#007bff',
+    backgroundColor: "#FF5A3A",
     padding: 10,
     borderRadius: 5,
     flex: 1,
     marginHorizontal: 5,
   },
   buttonText: {
-    color: '#fff',
-    textAlign: 'center',
+    color: "#fff",
+    textAlign: "center",
   },
   modalView: {
     flex: 1,
-    justifyContent: 'center', // Center modal content vertically
-    alignItems: 'center', // Center modal content horizontally
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Transparent background for modal overlay
+    justifyContent: "center", // Center modal content vertically
+    alignItems: "center", // Center modal content horizontally
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Transparent background for modal overlay
   },
   modalContent: {
-    width: '80%', // Set a width for the modal content
-    backgroundColor: 'white',
+    width: "80%", // Set a width for the modal content
+    backgroundColor: "white",
     borderRadius: 10,
     padding: 20,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -212,17 +284,5 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 20,
-  },
-  modalButton: {
-    backgroundColor: '#007bff', // Consistent theme color
-    padding: 10,
-    borderRadius: 5,
-    flex: 1,
-    marginHorizontal: 5,
   },
 });

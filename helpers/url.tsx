@@ -15,5 +15,6 @@ export const payment_get_terminal = `${apiLink}payment/list/for/terminal`
 export const UserTerminalGet = `${apiLink}api/user/terminal`
 
 export const isRead_notification = `${apiLink}notification/is-read`
+export const delete_notification = `${apiLink}notification/delete`
 export const seller_notification = `${apiLink}notification/for-seller`
 export const terminal_notification = `${apiLink}notification/for-seller`

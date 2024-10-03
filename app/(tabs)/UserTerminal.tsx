@@ -52,7 +52,7 @@ export default function UserTerminal() {
             <Navbar />
             <ScrollView
                 showsVerticalScrollIndicator={true}
-                contentContainerStyle={{ paddingHorizontal: 16, marginBottom: 10 }}
+                contentContainerStyle={{ paddingHorizontal: 16, marginBottom: 10, paddingBottom: 40 }}
             >
                 <View>
                     <Text style={styles.title}>

@@ -75,7 +75,6 @@ const Tab = createBottomTabNavigator();
               <AntDesign
                 name="qrcode"
                 size={34}
-                style={{ marginBottom: -10 }}
                 color={color}
               />
             ),
