@@ -85,6 +85,8 @@ const Terminal: React.FC = () => {
   useEffect(() => {
     if (editTerminal?.response) {
       alert("Terminal muvafaqqiyatli tahrirlandi!");
+      setModalVisible(false);
+      resetFormData();
     } else if (editTerminal?.error) {
       alert(editTerminal?.error);
     }
@@ -121,6 +123,7 @@ const Terminal: React.FC = () => {
       // console.log("Form submitted:", { ...formData, terminalNewUsers });
       
       editTerminal.globalDataFunc();
+
       // Add your update terminal logic here
     }
   };
