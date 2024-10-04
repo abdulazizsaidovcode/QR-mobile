@@ -1,6 +1,7 @@
 export interface INavigationProps {
     name: string;
     deleteIcon?: boolean;
+    editIcon?: boolean;
     all?: boolean;
     toggleModal?: () => void;
     delOnPress?: () => void;

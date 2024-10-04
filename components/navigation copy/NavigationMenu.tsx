@@ -5,21 +5,22 @@ import { INavigationProps } from "@/types/navigation/navigation";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import React from 'react';
 
-const NavigationMenu = ({ toggleModal, name, deleteIcon, all = false, delOnPress, editOnPress, addOnPress, navigate }: INavigationProps) => {
+const NavigationMenu = ({ toggleModal, name, deleteIcon, all = false, delOnPress, editIcon, editOnPress, addOnPress, navigate }: INavigationProps) => {
     const navigation = useNavigation();
     return (
         <View style={styles.container}>
             <Feather name="chevron-left" size={30} color="#000" onPress={navigate ? navigate : () => navigation.goBack()} />
             <Text style={styles.title}>{name}</Text>
             {deleteIcon
-                ? <MaterialIcons name="delete" size={25} color="white" onPress={toggleModal} />
+                ? <MaterialIcons name="delete" size={25} color="#ff5e2c" onPress={toggleModal} />
                 : <Text style={{}}></Text>
             }
+           
             {all ?
                 <View style={{ gap: 10, flexDirection: 'row', alignItems: 'center' }}>
-                    <Ionicons name="add-circle-outline" size={25} color="white" onPress={addOnPress} />
-                    <AntDesign name="edit" size={25} color="white" onPress={editOnPress} />
-                    <MaterialIcons name="delete" size={25} color="white" onPress={delOnPress} />
+                    <Ionicons name="add-circle-outline" size={25} color="#ff5e2c" onPress={addOnPress} />
+                    <AntDesign name="edit" size={25} color="#ff5e2c" onPress={editOnPress} />
+                    <MaterialIcons name="delete" size={25} color="#ff5e2c" onPress={delOnPress} />
                 </View> : ''}
         </View>
     );
@@ -37,6 +38,7 @@ const styles = StyleSheet.create({
     title: {
         color: '#000',
         fontSize: 20,
+        fontWeight: "700"
     },
 });
 

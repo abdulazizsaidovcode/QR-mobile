@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Pressable } from "react-native";
 import { Avatar } from "react-native-elements";
 import Feather from "@expo/vector-icons/Feather";
 import { RootStackParamList } from "@/types/root/root";
@@ -55,6 +55,8 @@ const Navbar = () => {
 
   return (
     <View style={styles.container}>
+      <Pressable onPress={() => navigation.navigate("(Seller)/(profile)/profile")}>
+
       <View style={styles.greetingContainer}>
         <Avatar
           rounded
@@ -68,6 +70,7 @@ const Navbar = () => {
           <Text style={styles.subText}>{getMee?.response?.phone ? getMee?.response?.phone : "-- --- -- --"}</Text>
         </View>
       </View>
+      </Pressable>
       <View style={{ flexDirection: "row", gap: 8, paddingRight: 10 }}>
         <View style={{ position: "relative" }}>
           {getCount.response > 0 && (

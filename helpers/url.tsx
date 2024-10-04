@@ -23,3 +23,5 @@ export const terminal_notification_count = `${apiLink}notification/count/for-ter
 
 
 export const get_mee = `${apiLink}api/user/me`
+export const update_profile = `${apiLink}api/user/update
+`

@@ -25,5 +25,7 @@ export interface RootStackParamList {
     "(Seller)/(transactionsDetail)/transactionDetail": undefined
     "(Seller)/notifications/notifications": undefined
     "(welcome)/welcome": undefined
+    "(Seller)/(profile)/profile": undefined
+
 
 }
