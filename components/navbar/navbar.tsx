@@ -64,7 +64,7 @@ const Navbar = () => {
         />
 
         <View style={styles.textContainer}>
-          <Text style={styles.greetingText}>Hi, {getMee?.response?.firstName ? getMee?.response?.firstName : "User"} {getMee?.response?.lastName}</Text>
+          <Text style={styles.greetingText}>Hi, {getMee?.response?.firstName ? getMee?.response?.firstName : "-- --"} {getMee?.response?.lastName}</Text>
           <Text style={styles.subText}>{getMee?.response?.phone ? getMee?.response?.phone : "-- --- -- --"}</Text>
         </View>
       </View>
