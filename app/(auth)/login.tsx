@@ -1,4 +1,4 @@
-import { Image, Keyboard, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native'
+import { BackHandler, Image, Keyboard, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Buttons from '@/components/buttons/button';
@@ -20,7 +20,7 @@ type SettingsScreenNavigationProp = NavigationProp<
 const Login = () => {
     const { phoneNumber, setPhoneNumber, status, setStatus, setPassword, password } = useAuthStore();
     const navigation = useNavigation<SettingsScreenNavigationProp>();
-
+    const [backPressCount, setBackPressCount] = useState(0);
     const userData = {
         "phone": `+998${phoneNumber.split(' ').join('')}`,
         "password": password
@@ -29,6 +29,27 @@ const Login = () => {
 
     const [isPhoneNumberComplete, setIsPhoneNumberComplete] = useState(false); // New state to track phone number completeness
 
+    useFocusEffect(
+        useCallback(() => {
+            const onBackPress = () => {
+                if (backPressCount === 0) {
+                    setBackPressCount(backPressCount + 1);
+                    // Toast.show('Orqaga qaytish uchun yana bir marta bosing', Toast.SHORT);
+                    setTimeout(() => {
+                        setBackPressCount(0);
+                    }, 2000); // 2 soniya ichida ikkinchi marta bosilmasa, holatni qayta boshlaydi
+                    return true; // Orqaga qaytishni bloklaydi
+                } else {
+                    BackHandler.exitApp(); // Ilovadan chiqish
+                    return false;
+                }
+            };
+    
+            BackHandler.addEventListener('hardwareBackPress', onBackPress);
+    
+            return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+        }, [backPressCount])
+    );
 
     const formatPhoneNumber = (text: string) => {
         let cleaned = ('' + text).replace(/\D/g, '');

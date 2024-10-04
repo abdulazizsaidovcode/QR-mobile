@@ -96,8 +96,9 @@ const Navbar = () => {
         </View>
         <Feather
           onPress={() => {
-            navigation.navigate("(welcome)/welcome");
             AsyncStorage.clear();
+            AsyncStorage.removeItem("token")
+            navigation.navigate("(auth)/login");
           }}
           name="log-out"
           size={24}
