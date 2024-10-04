@@ -66,13 +66,16 @@ const Terminal: React.FC = () => {
     {
       account: formData.hisob,
       filialCode: formData.filialKod,
-      inn: formData.inn, 
-      name: formData.ism, 
-      terminalSerialCode: formData.terminalSeriyaKodu ===  "" ? null : formData.terminalSeriyaKodu ,
-      terminalNewUsers: isEmptyNewUsers ? null : terminalNewUsers.map((item) => ({
-        phone: `+998${item.phone}`,
-        password: item.password
-      })),
+      inn: formData.inn,
+      name: formData.ism,
+      terminalSerialCode:
+        formData.terminalSeriyaKodu === "" ? null : formData.terminalSeriyaKodu,
+      terminalNewUsers: isEmptyNewUsers
+        ? null
+        : terminalNewUsers.map((item) => ({
+            phone: `+998${item.phone}`,
+            password: item.password,
+          })),
     }
   );
 
@@ -121,7 +124,7 @@ const Terminal: React.FC = () => {
     if (validateForm()) {
       // Handle form submission here
       // console.log("Form submitted:", { ...formData, terminalNewUsers });
-      
+
       editTerminal.globalDataFunc();
 
       // Add your update terminal logic here
@@ -150,7 +153,12 @@ const Terminal: React.FC = () => {
     setTerminalNewUsers([{ phone: "", password: "" }]);
   };
 
-  if (errorTerminals) return <Text>Error: {errorTerminals.message}</Text>;
+  if (errorTerminals)
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text>Error: {errorTerminals.message}</Text>
+      </SafeAreaView>
+    );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -167,7 +175,7 @@ const Terminal: React.FC = () => {
             terminalList?.object?.map((terminal: Terminal, index: number) => (
               <TouchableOpacity
                 key={index}
-                activeOpacity={.9}
+                activeOpacity={0.9}
                 style={styles.card}
                 onPress={() => {
                   setTerminalId(terminal?.id);
@@ -176,25 +184,32 @@ const Terminal: React.FC = () => {
               >
                 <Text style={styles.cardTitle}>{terminal.account || "-"}</Text>
                 <View style={styles.row}>
-                    <Text style={styles.boldText}>Phone:</Text>
-                    <Text style={styles.cardDetail}>{terminal.name || "-"}</Text>
+                  <Text style={styles.boldText}>Phone:</Text>
+                  <Text style={styles.cardDetail}>{terminal.name || "-"}</Text>
                 </View>
                 <View style={styles.row}>
-                    <Text style={styles.boldText}>Account:</Text>
-                    <Text style={styles.cardDetail}> {terminal.account || "-"}
+                  <Text style={styles.boldText}>Account:</Text>
+                  <Text style={styles.cardDetail}>
+                    {" "}
+                    {terminal.account || "-"}
                   </Text>
                 </View>
                 <View style={styles.row}>
-                    <Text style={styles.boldText}>Filial Code:</Text>
-                    <Text style={styles.cardDetail}> {terminal.filial_code || "-"}
+                  <Text style={styles.boldText}>Filial Code:</Text>
+                  <Text style={styles.cardDetail}>
+                    {" "}
+                    {terminal.filial_code || "-"}
                   </Text>
                 </View>
                 <View style={styles.row}>
-                    <Text style={styles.boldText}>Phone:</Text>
-                    <Text style={styles.cardDetail}> {terminal.phones[0] || "-"}</Text>
+                  <Text style={styles.boldText}>Phone:</Text>
+                  <Text style={styles.cardDetail}>
+                    {" "}
+                    {terminal.phones[0] || "-"}
+                  </Text>
                 </View>
                 <View style={styles.row}>
-                <Text style={styles.boldText}>Inn:</Text>
+                  <Text style={styles.boldText}>Inn:</Text>
                   <Text style={styles.cardDetail}>{terminal.inn || "-"}</Text>
                 </View>
               </TouchableOpacity>
@@ -236,7 +251,9 @@ const Terminal: React.FC = () => {
                 />
               ))}
 
-              {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
+              {errorMessage && (
+                <Text style={styles.errorText}>{errorMessage}</Text>
+              )}
 
               <View style={styles.addPhoneSection}>
                 <Text>Telefon raqam</Text>
@@ -307,7 +324,11 @@ const Terminal: React.FC = () => {
                           }}
                         >
                           {/* <Image source={require('../../../../assets/images/uzb.png')} /> */}
-                          <AntDesign name="minuscircle" size={24} color="black" />
+                          <AntDesign
+                            name="minuscircle"
+                            size={24}
+                            color="black"
+                          />
                         </View>
                       </TouchableOpacity>
                     )}
@@ -319,15 +340,14 @@ const Terminal: React.FC = () => {
         </View>
       </ScrollView>
     </SafeAreaView>
-
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
-    paddingVertical: Platform.OS === 'android' ? 35 : 0,
+    backgroundColor: "#F5F5F5",
+    paddingVertical: Platform.OS === "android" ? 35 : 0,
     marginBottom: 12,
   },
 
@@ -345,15 +365,15 @@ const styles = StyleSheet.create({
   },
 
   row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginVertical: 5,
   },
   cardTitle: { fontSize: 18, fontWeight: "bold" },
 
   cardDetail: {
     fontSize: 16,
-    color: '#666',
+    color: "#666",
   },
   input: {
     backgroundColor: "#fff",
@@ -376,8 +396,8 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   boldText: {
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
   },
   errorText: { color: "red", marginBottom: 10 },
   addPhoneSection: {
