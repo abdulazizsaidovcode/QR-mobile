@@ -1,4 +1,13 @@
-import { StyleSheet, Text, View, Modal, TouchableOpacity, ActivityIndicator, ScrollView } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Modal,
+  TouchableOpacity,
+  ActivityIndicator,
+  ScrollView,
+  Pressable,
+} from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { useGlobalRequest } from "@/helpers/apifunctions/univesalFunc";
 import {
@@ -12,6 +21,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import CenteredModal from "@/components/modal/modal-centered";
 import { useFocusEffect } from "expo-router";
 import NavigationMenu from "@/components/navigation copy/NavigationMenu";
+import { Colors } from "@/constants/Colors";
 
 const Notifications = () => {
   const [url, setUrl] = useState("");
@@ -20,8 +30,12 @@ const Notifications = () => {
 
   useEffect(() => {}, []);
   const [selectedIds, setSelectedIds] = useState([]);
+  const [page, setPage] = useState(0);
 
-  const { response, globalDataFunc, loading } = useGlobalRequest(url, "GET");
+  const { response, globalDataFunc, loading } = useGlobalRequest(
+    `${url}?page=${page}`,
+    "GET"
+  );
   const isReadNotification = useGlobalRequest(
     isRead_notification,
     "POST",
@@ -46,7 +60,7 @@ const Notifications = () => {
       };
       fetchRole();
     }, [])
-  )
+  );
 
   useFocusEffect(
     useCallback(() => {
@@ -54,22 +68,28 @@ const Notifications = () => {
         globalDataFunc();
       }
     }, [url])
-  )
-  
-  useEffect(() => {
-    if (isReadNotification.response) {
-      globalDataFunc()
-    }
-  }, [isReadNotification.response])
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      globalDataFunc();
+    }, [page])
+  );
 
   useEffect(() => {
-   if (deleteNotification.response) {
-      globalDataFunc()
-      alert("Bildirishnomalar tozalandi.")
-      
-      setModalVisible(false)
+    if (isReadNotification.response) {
+      globalDataFunc();
     }
-  }, [ deleteNotification.response])
+  }, [isReadNotification.response]);
+
+  useEffect(() => {
+    if (deleteNotification.response) {
+      globalDataFunc();
+      alert("Bildirishnomalar tozalandi.");
+
+      setModalVisible(false);
+    }
+  }, [deleteNotification.response]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -102,7 +122,6 @@ const Notifications = () => {
   };
 
   const handleSelectAllIds = async () => {
-
     if (response?.object) {
       const ids = await response?.object.map((item: any) => item.id);
 
@@ -115,20 +134,20 @@ const Notifications = () => {
     }
   };
 
-
-
   return (
     <View style={styles.container}>
-      <NavigationMenu name="Notification"/>
-      <Text style={styles.title}>
-        Notifications for {role === "ROLE_SELLER" ? "Sellers" : "Terminals"}
-      </Text>
+      <NavigationMenu name="Notification" />
+      <View style={styles.header}>
+        <Text style={styles.headerText}>
+          Notifications for {role === "ROLE_SELLER" ? "Sellers" : "Terminals"}(
+          {response?.totalElements ? response?.totalElements : 0})
+        </Text>
+        <Text style={styles.headerText}>Current({page + 1})</Text>
+      </View>
       <ScrollView style={styles.CarsContainer}>
-        {
-          loading ? (
-            <ActivityIndicator size="large" color="#0000ff" />
-          ) :
-        sortedNotifications && sortedNotifications.length > 0 ? (
+        {loading ? (
+          <ActivityIndicator size="large" color="#0000ff" />
+        ) : sortedNotifications && sortedNotifications.length > 0 ? (
           sortedNotifications.map(
             (item: {
               id: number;
@@ -163,7 +182,41 @@ const Notifications = () => {
             )
           )
         ) : (
-          <Text>No notifications available</Text>
+          <Text style={styles.noDataText}>No user terminals found.</Text>
+        )}
+        {sortedNotifications && (
+          <View style={styles.paginationContainer}>
+            <Pressable
+              onPress={() => {
+                if (page > 0) setPage(page - 1);
+              }}
+              disabled={page === 0}
+            >
+              <Text
+                style={[
+                  styles.paginationButton,
+                  page === 0 && styles.disabledButton,
+                ]}
+              >
+                Last
+              </Text>
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                if (page + 1 < response?.totalPage) setPage(page + 1);
+              }}
+              disabled={page + 1 === response?.totalPage}
+            >
+              <Text
+                style={[
+                  styles.paginationButton,
+                  page + 1 === response?.totalPage && styles.disabledButton,
+                ]}
+              >
+                Next
+              </Text>
+            </Pressable>
+          </View>
         )}
       </ScrollView>
       <View style={styles.buttonContainer}>
@@ -171,24 +224,21 @@ const Notifications = () => {
           style={styles.button}
           onPress={() => handleSelectIsReadIds()}
         >
-          {
-            isReadNotification.loading ? (
-              <ActivityIndicator size="small" color="#fff" />
-            ) :
-          <Text style={styles.buttonText}>Mark all as read</Text>
-          }
+          {isReadNotification.loading ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>Mark all as read</Text>
+          )}
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
           onPress={() => setModalVisible(true)}
         >
-          {
-            deleteNotification.loading ? (
-              <ActivityIndicator size="small" color="#fff" />
-            ) :
+          {deleteNotification.loading ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
             <Text style={styles.buttonText}>Delete All</Text>
-          }
-          
+          )}
         </TouchableOpacity>
       </View>
 
@@ -218,6 +268,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5",
     padding: 20,
     paddingTop: 50,
+  },
+  noDataText: {
+    fontSize: 16,
+    color: "#999",
+    textAlign: "center",
+    marginVertical: 20,
   },
   title: {
     fontSize: 25,
@@ -284,5 +340,37 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#fff",
     textAlign: "center",
+  },
+
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginVertical: 10,
+    marginBottom: 16,
+  },
+  headerText: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  paginationContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginVertical: 20,
+    paddingHorizontal: 20,
+  },
+  paginationButton: {
+    fontSize: 18,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: Colors.light.primary,
+    color: "white",
+    borderRadius: 5,
+    textAlign: "center",
+  },
+  disabledButton: {
+    backgroundColor: "#d3d3d3", // Disabled rang
+    color: "#888", // Disabled matn rangi
   },
 });

@@ -9,6 +9,7 @@ import {
   ScrollView,
   SafeAreaView,
   Platform,
+  Pressable,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { useGlobalRequest } from "@/helpers/apifunctions/univesalFunc";
@@ -48,6 +49,7 @@ const Terminal: React.FC = () => {
   });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [TerminalId, setTerminalId] = useState<number | null>(null);
+  const [page, setPage] = useState(0);
 
   const isEmptyNewUsers = terminalNewUsers.every(
     (user: any) => !user.phone && !user.password
@@ -58,7 +60,10 @@ const Terminal: React.FC = () => {
     error: errorTerminals,
     response: terminalList,
     globalDataFunc: fetchTerminalList,
-  } = useGlobalRequest<{ object: Terminal[] }>(SellerGet, "GET");
+  } = useGlobalRequest<{ object: Terminal[] }>(
+    `${SellerGet}?page=${page}`,
+    "GET"
+  );
 
   const editTerminal = useGlobalRequest(
     `${SellerEdit}${TerminalId ? TerminalId : 0}`,
@@ -152,13 +157,21 @@ const Terminal: React.FC = () => {
     });
     setTerminalNewUsers([{ phone: "", password: "" }]);
   };
+  useFocusEffect(
+    useCallback(() => {
+      fetchTerminalList();
+    }, [page])
+  );
 
-  if (errorTerminals)
+  if (loadingTerminals) {
     return (
       <SafeAreaView style={styles.container}>
-        <Text>Error: {errorTerminals.message}</Text>
+        <View style={styles.loader}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
       </SafeAreaView>
     );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -168,10 +181,13 @@ const Terminal: React.FC = () => {
         contentContainerStyle={{ paddingHorizontal: 16, marginBottom: 10 }}
       >
         <View>
-          <Text style={styles.title}>Terminals</Text>
-          {loadingTerminals ? (
-            <ActivityIndicator size="large" color="#0000ff" />
-          ) : terminalList?.object?.length > 0 ? (
+          <View style={styles.header}>
+            <Text style={styles.headerText}>
+              Terminals({terminalList?.totalElements})
+            </Text>
+            <Text style={styles.headerText}>Current({page + 1})</Text>
+          </View>
+          {terminalList?.object?.length > 0 ? (
             terminalList?.object?.map((terminal: Terminal, index: number) => (
               <TouchableOpacity
                 key={index}
@@ -215,9 +231,43 @@ const Terminal: React.FC = () => {
               </TouchableOpacity>
             ))
           ) : (
-            <Text>No Terminals Found</Text>
+            <Text style={styles.noDataText}>No user terminals found.</Text>
           )}
 
+          {terminalList?.object?.length > 0 &&
+            <View style={styles.paginationContainer}>
+              <Pressable
+                onPress={() => {
+                  if (page > 0) setPage(page - 1);
+                }}
+                disabled={page === 0}
+              >
+                <Text
+                  style={[
+                    styles.paginationButton,
+                    page === 0 && styles.disabledButton,
+                  ]}
+                >
+                  Last
+                </Text>
+              </Pressable>
+              <Pressable
+                onPress={() => {
+                  if (page + 1 < terminalList?.totalPage) setPage(page + 1);
+                }}
+                disabled={page + 1 === terminalList?.totalPage}
+              >
+                <Text
+                  style={[
+                    styles.paginationButton,
+                    page + 1 === terminalList?.totalPage && styles.disabledButton,
+                  ]}
+                >
+                  Next
+                </Text>
+              </Pressable>
+            </View>
+          }
           <CenteredModal
             btnRedText="Close"
             btnWhiteText="Edit"
@@ -262,79 +312,82 @@ const Terminal: React.FC = () => {
                 </TouchableOpacity>
               </View>
 
-              {terminalNewUsers?.map((user, index) => (
-                <View key={index} style={styles.phoneRow}>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      marginTop: 20,
-                    }}
-                  >
-                    <View style={styles.phoneCard}>
-                      {/* <Image source={require('../../../../assets/images/uzb.png')} /> */}
-                      <Text style={{ fontSize: 17, color: "gray" }}>+998</Text>
-                    </View>
-                    <View style={{ width: "69%" }}>
-                      <TextInput
-                        style={styles.phoneInput}
-                        placeholder={`Telefon raqam ${index + 1}`}
-                        value={user.phone}
-                        keyboardType="numeric"
-                        onChangeText={(text) => {
-                          const updatedUsers = [...terminalNewUsers];
-                          updatedUsers[index].phone = text;
-                          setTerminalNewUsers(updatedUsers);
-                        }}
-                        maxLength={12}
-                        placeholderTextColor={"gray"}
-                      />
-                    </View>
-                  </View>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      marginTop: 20,
-                    }}
-                  >
-                    <View style={{ width: "85%" }}>
-                      <TextInput
-                        style={styles.passwordInput}
-                        placeholder={`Parol ${index + 1}`}
-                        secureTextEntry
-                        value={user.password}
-                        onChangeText={(text) => {
-                          const updatedUsers = [...terminalNewUsers];
-                          updatedUsers[index].password = text;
-                          setTerminalNewUsers(updatedUsers);
-                        }}
-                      />
-                    </View>
-                    {index > 0 && (
-                      <TouchableOpacity
-                        onPress={() => handleRemovePhoneNumber(index)}
-                      >
-                        <View
-                          style={{
-                            alignItems: "center",
-                            justifyContent: "center",
-                            marginLeft: 5,
-                            marginTop: 15,
+              {terminalNewUsers &&
+                terminalNewUsers?.map((user, index) => (
+                  <View key={index} style={styles.phoneRow}>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        marginTop: 20,
+                      }}
+                    >
+                      <View style={styles.phoneCard}>
+                        {/* <Image source={require('../../../../assets/images/uzb.png')} /> */}
+                        <Text style={{ fontSize: 17, color: "gray" }}>
+                          +998
+                        </Text>
+                      </View>
+                      <View style={{ width: "69%" }}>
+                        <TextInput
+                          style={styles.phoneInput}
+                          placeholder={`Telefon raqam ${index + 1}`}
+                          value={user.phone}
+                          keyboardType="numeric"
+                          onChangeText={(text) => {
+                            const updatedUsers = [...terminalNewUsers];
+                            updatedUsers[index].phone = text;
+                            setTerminalNewUsers(updatedUsers);
                           }}
+                          maxLength={12}
+                          placeholderTextColor={"gray"}
+                        />
+                      </View>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        marginTop: 20,
+                      }}
+                    >
+                      <View style={{ width: "85%" }}>
+                        <TextInput
+                          style={styles.passwordInput}
+                          placeholder={`Parol ${index + 1}`}
+                          secureTextEntry
+                          value={user.password}
+                          onChangeText={(text) => {
+                            const updatedUsers = [...terminalNewUsers];
+                            updatedUsers[index].password = text;
+                            setTerminalNewUsers(updatedUsers);
+                          }}
+                        />
+                      </View>
+                      {index > 0 && (
+                        <TouchableOpacity
+                          onPress={() => handleRemovePhoneNumber(index)}
                         >
-                          {/* <Image source={require('../../../../assets/images/uzb.png')} /> */}
-                          <AntDesign
-                            name="minuscircle"
-                            size={24}
-                            color="black"
-                          />
-                        </View>
-                      </TouchableOpacity>
-                    )}
+                          <View
+                            style={{
+                              alignItems: "center",
+                              justifyContent: "center",
+                              marginLeft: 5,
+                              marginTop: 15,
+                            }}
+                          >
+                            {/* <Image source={require('../../../../assets/images/uzb.png')} /> */}
+                            <AntDesign
+                              name="minuscircle"
+                              size={24}
+                              color="black"
+                            />
+                          </View>
+                        </TouchableOpacity>
+                      )}
+                    </View>
                   </View>
-                </View>
-              ))}
+                ))}
             </ScrollView>
           </CenteredModal>
         </View>
@@ -350,7 +403,11 @@ const styles = StyleSheet.create({
     paddingVertical: Platform.OS === "android" ? 35 : 0,
     marginBottom: 12,
   },
-
+  loader: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   title: { fontSize: 24, marginBottom: 10 },
   card: {
     padding: 15,
@@ -462,10 +519,48 @@ const styles = StyleSheet.create({
       width: 0,
       height: 4,
     },
+   
     shadowOpacity: 0.3,
     shadowRadius: 4.65,
 
     elevation: 8,
+  },
+  noDataText: {
+    fontSize: 16,
+    color: "#999",
+    textAlign: "center",
+    marginVertical: 20,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginVertical: 10,
+    marginBottom: 16,
+  },
+  headerText: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  paginationContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginVertical: 0,
+    paddingHorizontal: 20,
+  },
+  paginationButton: {
+    fontSize: 18,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: Colors.light.primary,
+    color: "white",
+    borderRadius: 5,
+    textAlign: "center",
+  },
+  disabledButton: {
+    backgroundColor: "#d3d3d3", // Disabled rang
+    color: "#888", // Disabled matn rangi
   },
 });
 

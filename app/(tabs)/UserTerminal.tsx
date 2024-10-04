@@ -1,7 +1,9 @@
 import Navbar from "@/components/navbar/navbar";
+import { Colors } from "@/constants/Colors";
 import { useGlobalRequest } from "@/helpers/apifunctions/univesalFunc";
 import { UserTerminalGet } from "@/helpers/url";
-import React, { useEffect } from "react";
+import { useFocusEffect } from "expo-router";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Text,
   View,
@@ -10,6 +12,7 @@ import {
   SafeAreaView,
   Platform,
   ScrollView,
+  Pressable,
 } from "react-native";
 
 interface UserTerminal {
@@ -30,30 +33,32 @@ interface UserTerminalResponse {
 }
 
 export default function UserTerminal() {
+    const [page, setPage] = useState(0);
   const { response, loading, error, globalDataFunc } = useGlobalRequest<
     UserTerminalResponse
-  >(UserTerminalGet, "GET");
+  >(`${UserTerminalGet}?page=${page}`, "GET");
 
-  useEffect(() => {
-    globalDataFunc();
-  }, [globalDataFunc]);
+
+  useFocusEffect(
+      useCallback(() => {
+        globalDataFunc();
+      }, [])
+  )
+
+  useFocusEffect(
+    useCallback(() => {
+        globalDataFunc();
+    }, [page])
+  );
+
 
   if (loading) {
     return (
+      <SafeAreaView style={styles.container}>
+
       <View style={styles.loader}>
         <ActivityIndicator size="large" color="#0000ff" />
       </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>
-            Error fetching user terminals: {error.message}
-          </Text>
-        </View>
       </SafeAreaView>
     );
   }
@@ -70,9 +75,12 @@ export default function UserTerminal() {
         }}
       >
         <View>
-          <Text style={styles.title}>
-            User Terminals ({response && response?.object?.length})
-          </Text>
+        <View style={styles.header}>
+            <Text style={styles.headerText}>
+              Terminal users({response?.totalElements ? response?.totalElements : 0})
+            </Text>
+            <Text style={styles.headerText}>Current({page + 1})</Text>
+          </View>
           {response && response?.object?.length > 0 ? (
             response?.object?.map((item: any) => (
               <View key={item.id} style={styles.card}>
@@ -119,6 +127,40 @@ export default function UserTerminal() {
             <Text style={styles.noDataText}>No user terminals found.</Text>
           )}
         </View>
+        {response && response?.object?.length > 0 &&
+        <View style={styles.paginationContainer}>
+            <Pressable
+              onPress={() => {
+                if (page > 0) setPage(page - 1);
+              }}
+              disabled={page === 0}
+            >
+              <Text
+                style={[
+                  styles.paginationButton,
+                  page === 0 && styles.disabledButton,
+                ]}
+              >
+                Last
+              </Text>
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                if (page + 1 < response?.totalPage) setPage(page + 1);
+              }}
+              disabled={page + 1 === response?.totalPage}
+            >
+              <Text
+                style={[
+                  styles.paginationButton,
+                  page + 1 === response?.totalPage && styles.disabledButton,
+                ]}
+              >
+                Next
+              </Text>
+            </Pressable>
+          </View>
+        }
       </ScrollView>
     </SafeAreaView>
   );
@@ -172,7 +214,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#999",
     textAlign: "center",
-    marginTop: 20,
+    marginVertical: 20,
   },
   errorContainer: {
     flex: 1,
@@ -187,5 +229,36 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginVertical: 10,
+    marginBottom: 16,
+  },
+  headerText: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  paginationContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginVertical: 20,
+    paddingHorizontal: 20,
+  },
+  paginationButton: {
+    fontSize: 18,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: Colors.light.primary,
+    color: "white",
+    borderRadius: 5,
+    textAlign: "center",
+  },
+  disabledButton: {
+    backgroundColor: "#d3d3d3", // Disabled rang
+    color: "#888", // Disabled matn rangi
   },
 });
