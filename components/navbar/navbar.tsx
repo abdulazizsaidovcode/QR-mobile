@@ -98,10 +98,10 @@ const Navbar = () => {
           </Text>
         </View>
         <Feather
-          onPress={() => {
-            AsyncStorage.clear();
-            AsyncStorage.removeItem("token")
-            navigation.navigate("(auth)/login");
+          onPress={async () => {
+            await AsyncStorage.removeItem("token")
+            await AsyncStorage.removeItem("role")
+            await navigation.navigate("(auth)/login");
           }}
           name="log-out"
           size={24}

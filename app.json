@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "QR-mobile",
-    "slug": "QR-mobile",
+    "slug": "qr-pay",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -19,7 +19,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.behruz_0790.qrpay"
     },
     "web": {
       "bundler": "metro",
@@ -31,6 +32,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "9305cfb5-7685-4dea-8a1c-b44d03fd960d",
+        "apiBaseUrl": "https://apk.qrpay.uz/"
+      }
     }
   }
 }

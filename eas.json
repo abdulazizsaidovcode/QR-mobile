@@ -1,0 +1,22 @@
+{
+  "build": {
+    "production": {
+      "android": {
+        "buildType": "apk",
+        "resourceClass": "medium"
+      },
+      "ios": {
+        "simulator": false
+      },
+      "env": {
+        "API_BASE_URL": "https://apk.qrpay.uz/"
+      }
+    },
+    "development": {
+      "developmentClient": true,
+      "env": {
+        "API_BASE_URL": "https://apk.qrpay.uz/"
+      }
+    }
+  }
+}

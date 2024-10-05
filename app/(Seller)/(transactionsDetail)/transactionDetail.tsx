@@ -30,8 +30,7 @@ const TransactionDeatail = () => {
   const paymentCancel = useGlobalRequest(
     `${cancel_payment}?ext_id=${paymentDetail?.transaction?.ext_id}`,
     "POST",
-    {},
-    "DEFAULT"
+    {}
   );
   const navigation = useNavigation<SettingsScreenNavigationProp>();
 
@@ -55,16 +54,11 @@ const TransactionDeatail = () => {
       </View>
         <StatusBar barStyle="dark-content" backgroundColor="#f5f5f5" />
       <ScrollView style={styles.container}>
-        {/* <NavigationMenu name="Payment detail" /> */}
         <View style={styles.detailCard}>
-          {/* <View style={styles.detailCardIn}>
-              <Text style={styles.title}>Ext ID: </Text>
-              <Text style={styles.desc}>{paymentDetail.transaction.ext_id}</Text>
-            </View> */}
           <View style={styles.detailCardIn}>
             <Text style={styles.title}>Partner: </Text>
             <Text style={styles.desc}>
-              {paymentDetail.transaction.partner
+              {paymentDetail?.transaction.partner
                 ? paymentDetail?.transaction?.partner
                 : "-"}
             </Text>
@@ -79,7 +73,7 @@ const TransactionDeatail = () => {
           >
             <Text style={styles.title}>Purpose: </Text>
             <Text style={styles.desc}>
-              {paymentDetail.transaction.purpose
+              {paymentDetail?.transaction?.purpose
                 ? paymentDetail?.transaction?.purpose
                 : "-"}
             </Text>
@@ -95,7 +89,7 @@ const TransactionDeatail = () => {
           <View style={styles.detailCardIn}>
             <Text style={styles.title}>Status: </Text>
             <Text style={styles.desc}>
-              {paymentDetail.transaction.status
+              {paymentDetail?.transaction?.status
                 ? paymentDetail?.transaction?.status
                 : "-"}
             </Text>
@@ -103,16 +97,16 @@ const TransactionDeatail = () => {
           <View style={styles.detailCardIn}>
             <Text style={styles.title}>Check Miqdori: </Text>
             <Text style={styles.desc}>
-              {paymentDetail.transaction.qrAmount
-                ? `${paymentDetail.transaction.qrAmount} RUB`
+              {paymentDetail?.transaction?.qrAmount
+                ? `${paymentDetail?.transaction?.qrAmount} RUB`
                 : "-"}
             </Text>
           </View>
           <View style={styles.detailCardIn}>
             <Text style={styles.title}>Check Miqdori: </Text>
             <Text style={styles.desc}>
-              {paymentDetail.transaction.chequeAmount
-                ? `${paymentDetail.transaction.chequeAmount} UZS`
+              {paymentDetail?.transaction?.chequeAmount
+                ? `${paymentDetail?.transaction?.chequeAmount} UZS`
                 : "-"}
             </Text>
           </View>
@@ -128,7 +122,7 @@ const TransactionDeatail = () => {
             <Text style={styles.title}>Sana: </Text>
             <Text style={styles.desc}>
               {paymentDetail?.transaction?.cheque_created_at
-                ? paymentDetail.transaction.cheque_created_at.substring(0, 16)
+                ? paymentDetail?.transaction?.cheque_created_at?.substring(0, 16)
                 : "-"}
             </Text>
           </View>
@@ -137,10 +131,10 @@ const TransactionDeatail = () => {
             <View style={{ paddingVertical: 10 }}>
               <Text
                 style={styles.qrTextTop}
-              >{`QR amount: ${paymentDetail.transaction.qrAmount} RUB`}</Text>
+              >{`QR amount: ${paymentDetail?.transaction?.qrAmount} RUB`}</Text>
             </View>
             <QRCode
-              value={paymentDetail.transaction.url} // The value to encode in the QR code
+              value={paymentDetail?.transaction?.url} // The value to encode in the QR code
               size={250} // Size of the QR code
               color="black" // Color of the QR code
               backgroundColor="white" // Background color of the QR code
@@ -191,7 +185,6 @@ export default TransactionDeatail;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    
     paddingTop: 35,
     marginBottom: 20
     // alignItems: "center",

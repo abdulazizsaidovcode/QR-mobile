@@ -35,9 +35,9 @@ interface TerminalNewUser {
 }
 
 const Terminal: React.FC = () => {
-  const [terminalNewUsers, setTerminalNewUsers] = useState<TerminalNewUser[]>([
-    { phone: "", password: "" },
-  ]);
+  // const [terminalNewUsers, setTerminalNewUsers] = useState<TerminalNewUser[]>([
+  //   { phone: "", password: "" },
+  // ]);
   const [isModalVisible, setModalVisible] = useState<boolean>(false);
 
   const [formData, setFormData] = useState({
@@ -51,9 +51,9 @@ const Terminal: React.FC = () => {
   const [TerminalId, setTerminalId] = useState<number | null>(null);
   const [page, setPage] = useState(0);
 
-  const isEmptyNewUsers = terminalNewUsers.every(
-    (user: any) => !user.phone && !user.password
-  );
+  // const isEmptyNewUsers = terminalNewUsers.every(
+  //   (user: any) => !user.phone && !user.password
+  // );
 
   const {
     loading: loadingTerminals,
@@ -75,12 +75,12 @@ const Terminal: React.FC = () => {
       name: formData.ism,
       terminalSerialCode:
         formData.terminalSeriyaKodu === "" ? null : formData.terminalSeriyaKodu,
-      terminalNewUsers: isEmptyNewUsers
-        ? null
-        : terminalNewUsers.map((item) => ({
-            phone: `+998${item.phone}`,
-            password: item.password,
-          })),
+    //   terminalNewUsers: isEmptyNewUsers
+    //     ? null
+    //     : terminalNewUsers.map((item) => ({
+    //         phone: `+998${item.phone}`,
+    //         password: item.password,
+    //       })),
     }
   );
 
@@ -100,13 +100,13 @@ const Terminal: React.FC = () => {
     }
   }, [editTerminal.response, editTerminal.error]);
 
-  const handleAddPhoneNumber = () => {
-    setTerminalNewUsers((prev) => [...prev, { phone: "", password: "" }]);
-  };
+  // const handleAddPhoneNumber = () => {
+  //   setTerminalNewUsers((prev) => [...prev, { phone: "", password: "" }]);
+  // };
 
-  const handleRemovePhoneNumber = (index: number) => {
-    setTerminalNewUsers((prev) => prev.filter((_, i) => i !== index));
-  };
+  // const handleRemovePhoneNumber = (index: number) => {
+  //   setTerminalNewUsers((prev) => prev.filter((_, i) => i !== index));
+  // };
 
   const handleInputChange = (name: keyof typeof formData, value: string) => {
     setFormData((prev) => ({
@@ -155,7 +155,7 @@ const Terminal: React.FC = () => {
       inn: "",
       terminalSeriyaKodu: "",
     });
-    setTerminalNewUsers([{ phone: "", password: "" }]);
+    // setTerminalNewUsers([{ phone: "", password: "" }]);
   };
   useFocusEffect(
     useCallback(() => {
@@ -280,6 +280,7 @@ const Terminal: React.FC = () => {
             onConfirm={handleSubmit}
           >
             <ScrollView>
+              <Text style={{fontSize: 20, paddingVertical: 3}}>Terminalni tahrirlash</Text>
               {[
                 { key: "ism", label: "Ism" },
                 { key: "hisob", label: "Hisob" },
@@ -290,6 +291,8 @@ const Terminal: React.FC = () => {
                   label: "Terminalning seriya kodi (ixtiyory)",
                 }, // Optional
               ].map(({ key, label }) => (
+                <>
+                <Text style={{fontSize: 15, paddingVertical: 3}}>{label}</Text>
                 <TextInput
                   key={key}
                   placeholder={label}
@@ -299,20 +302,21 @@ const Terminal: React.FC = () => {
                     handleInputChange(key as keyof typeof formData, text)
                   }
                 />
+                </>
               ))}
 
               {errorMessage && (
                 <Text style={styles.errorText}>{errorMessage}</Text>
               )}
 
-              <View style={styles.addPhoneSection}>
+              {/* <View style={styles.addPhoneSection}>
                 <Text>Telefon raqam</Text>
                 <TouchableOpacity onPress={handleAddPhoneNumber}>
                   <AntDesign name="pluscircle" size={24} color="black" />
                 </TouchableOpacity>
-              </View>
+              </View> */}
 
-              {terminalNewUsers &&
+              {/* {terminalNewUsers &&
                 terminalNewUsers?.map((user, index) => (
                   <View key={index} style={styles.phoneRow}>
                     <View
@@ -322,9 +326,9 @@ const Terminal: React.FC = () => {
                         marginTop: 20,
                       }}
                     >
-                      <View style={styles.phoneCard}>
+                      <View style={styles.phoneCard}> */}
                         {/* <Image source={require('../../../../assets/images/uzb.png')} /> */}
-                        <Text style={{ fontSize: 17, color: "gray" }}>
+                        {/* <Text style={{ fontSize: 17, color: "gray" }}>
                           +998
                         </Text>
                       </View>
@@ -375,9 +379,9 @@ const Terminal: React.FC = () => {
                               marginLeft: 5,
                               marginTop: 15,
                             }}
-                          >
+                          > */}
                             {/* <Image source={require('../../../../assets/images/uzb.png')} /> */}
-                            <AntDesign
+                            {/* <AntDesign
                               name="minuscircle"
                               size={24}
                               color="black"
@@ -387,7 +391,7 @@ const Terminal: React.FC = () => {
                       )}
                     </View>
                   </View>
-                ))}
+                ))} */}
             </ScrollView>
           </CenteredModal>
         </View>

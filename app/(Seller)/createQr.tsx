@@ -1,6 +1,6 @@
 import { Colors } from '@/constants/Colors';
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
 import { useGlobalRequest } from '@/helpers/apifunctions/univesalFunc';
 import { createPayment } from '@/helpers/url';
 import QRCode from 'react-native-qrcode-svg'; // Import the QR code component
@@ -60,7 +60,7 @@ const CreateQr = () => {
             </ScrollView>
             <Text style={styles.note}>Make sure the nominal you write is correct</Text>
             <TouchableOpacity style={styles.sendButton} onPress={() => paymentCreate.globalDataFunc()}>
-                <Text style={styles.sendButtonText}>Save Money</Text>
+                <Text style={styles.sendButtonText}>{paymentCreate.loading  ? <ActivityIndicator size="small" color="#0000ff" /> : "Save Money"}</Text>
             </TouchableOpacity>
 
            
