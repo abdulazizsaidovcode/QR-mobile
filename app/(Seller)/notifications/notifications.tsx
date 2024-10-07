@@ -20,7 +20,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MaterialIcons } from "@expo/vector-icons";
 import CenteredModal from "@/components/modal/modal-centered";
 import { useFocusEffect } from "expo-router";
-import NavigationMenu from "@/components/navigation copy/NavigationMenu";
+import NavigationMenu from "@/components/navigationMenu/NavigationMenu";
 import { Colors } from "@/constants/Colors";
 
 const Notifications = () => {

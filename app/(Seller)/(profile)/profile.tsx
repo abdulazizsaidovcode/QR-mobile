@@ -14,7 +14,7 @@ import { useFocusEffect } from "expo-router";
 import { Avatar } from "react-native-elements/dist/avatar/Avatar";
 import { FontAwesome } from "@expo/vector-icons"; // For password visibility icon
 import CenteredModal from "@/components/modal/modal-centered";
-import NavigationMenu from "@/components/navigation copy/NavigationMenu";
+import NavigationMenu from "@/components/navigationMenu/NavigationMenu";
 import { useGlobalRequest } from "@/helpers/apifunctions/univesalFunc";
 import { get_mee, update_profile } from "@/helpers/url"; // Ensure you have an update_profile URL
 import { Colors } from "@/constants/Colors";

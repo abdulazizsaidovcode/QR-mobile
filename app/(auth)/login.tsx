@@ -18,7 +18,7 @@ import { useAuthStore } from "@/helpers/stores/auth/auth-store";
 import { useFocusEffect } from "expo-router";
 import { useGlobalRequest } from "@/helpers/apifunctions/univesalFunc";
 import { loginUrl } from "@/helpers/url";
-import NavigationMenu from "@/components/navigation copy/NavigationMenu";
+import NavigationMenu from "@/components/navigationMenu/NavigationMenu";
 import { Colors } from "@/constants/Colors";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
