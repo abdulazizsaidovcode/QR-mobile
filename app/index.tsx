@@ -27,9 +27,8 @@ const Index = () => {
 
     getToken()
   }, []);
-  if (token) {
+  if ((token && role)) {
     navigation.navigate('(tabs)')
-
   } else {
     return <Welcome />
   }
