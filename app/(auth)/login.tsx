@@ -1,15 +1,13 @@
 import {
   BackHandler,
-  Image,
   Keyboard,
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Buttons from "@/components/buttons/button";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
@@ -17,11 +15,8 @@ import { RootStackParamList } from "@/types/root/root";
 import { useAuthStore } from "@/helpers/stores/auth/auth-store";
 import { useFocusEffect } from "expo-router";
 import { useGlobalRequest } from "@/helpers/apifunctions/univesalFunc";
-import { loginUrl } from "@/helpers/url";
-import NavigationMenu from "@/components/navigationMenu/NavigationMenu";
+import { sendCodeUrl } from "@/helpers/url";
 import { Colors } from "@/constants/Colors";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Ionicons } from "@expo/vector-icons";
 
 type SettingsScreenNavigationProp = NavigationProp<
   RootStackParamList,
@@ -32,20 +27,14 @@ const Login = () => {
   const {
     phoneNumber,
     setPhoneNumber,
-    status,
-    setStatus,
-    setPassword,
-    password,
   } = useAuthStore();
   const navigation = useNavigation<SettingsScreenNavigationProp>();
   const [backPressCount, setBackPressCount] = useState(0);
   const userData = {
-    phone: `+998${phoneNumber.split(" ").join("")}`,
-    password: password,
+    phone: `+998${phoneNumber.split(" ").join("")}`
   };
-  const loginUser = useGlobalRequest(`${loginUrl}`, "POST", userData);
+  const loginUser = useGlobalRequest(`${sendCodeUrl}`, "POST", userData);
 
-  const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
   const [response, setResponse] = useState<any>({});
   const [isPhoneNumberComplete, setIsPhoneNumberComplete] = useState(false); // New state to track phone number completeness
 
@@ -89,7 +78,7 @@ const Login = () => {
   };
 
   function loginuser() {
-    if (isPhoneNumberComplete && password.length > 0) {
+    if (isPhoneNumberComplete) {
         console.log('ishlab ketdi');
       loginUser.globalDataFunc();
     }
@@ -97,35 +86,20 @@ const Login = () => {
   useFocusEffect(
     useCallback(() => {
       formatPhoneNumber(phoneNumber.split(" ").join(""));
-      console.log("daatattattaata", {
-        response: response,
-        res: AsyncStorage.getItem("token"),
-        data: AsyncStorage.getItem("role")
-      });
       setResponse({})
     }, [])
   );
   useFocusEffect(
     useCallback(() => {
       if (loginUser.response) {
-       setResponse(loginUser.response)
+       navigation.navigate("(auth)/checkCode")
       } else if (loginUser.error) {
         alert(loginUser.error?.message);
       }
     }, [loginUser.response, loginUser.error])
   );
 
-  useFocusEffect(
-    useCallback(() => {
-        setStatus(response)
-        if (response && response?.token) {
-            AsyncStorage.setItem("token", response?.token ? response?.token : null);
-            AsyncStorage.setItem("role", response?.role ? response?.role : null);
-            navigation.navigate("(tabs)");
-            setResponse({})
-          }
-    }, [response])
-  );
+
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -161,7 +135,7 @@ const Login = () => {
           </View>
 
 
-          <View style={styles.passwordContainer}>
+          {/* <View style={styles.passwordContainer}>
             <TextInput
               placeholder="Password"
               style={styles.passwordInput}
@@ -180,7 +154,7 @@ const Login = () => {
                 color="gray"
               />
             </TouchableOpacity>
-          </View>
+          </View> */}
           
         </View>
         {isPhoneNumberComplete && (

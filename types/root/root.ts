@@ -20,6 +20,7 @@ export interface RootStackParamList {
     "(pages)/(master)/(order)/order": undefined
     "(pages)/(master)/(order)/orderDetail": undefined
     "(auth)/login": undefined
+    "(auth)/checkCode": undefined
     "(tabs)": undefined
     "(tabs)/home": undefined
     "(Seller)/(transactionsDetail)/transactionDetail": undefined

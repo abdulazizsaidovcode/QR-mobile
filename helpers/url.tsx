@@ -3,6 +3,7 @@ const apiLink = 'https://apk.qrpay.uz/'
 
 export const staisticUrl = `${apiLink}statistics/seller`
 export const loginUrl = `${apiLink}api/user/login`
+export const sendCodeUrl = `${apiLink}api/user/send-code`
 export const createPayment = `${apiLink}payment/create`
 export const cancel_payment = `${apiLink}payment/cancel`
 

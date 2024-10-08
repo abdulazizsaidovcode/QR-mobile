@@ -1,3 +1,4 @@
+// TransactionDetail.tsx
 import React, { useEffect, useState } from "react";
 import {
   Platform,
@@ -10,7 +11,6 @@ import {
   View,
   Alert,
 } from "react-native";
-import QRCode from "react-native-qrcode-svg";
 import OrderStore from "@/helpers/stores/order/orderStore";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import CenteredModal from "@/components/modal/modal-centered";
@@ -20,6 +20,8 @@ import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "@/types/root/root";
 import NavigationMenu from "@/components/navigationMenu/NavigationMenu"; // Adjusted path
 import { Ionicons } from '@expo/vector-icons'; // For optional improvements
+import ErrorBoundary from '@/components/ErrorBoundary'; // Import the ErrorBoundary component
+import { RenderQRCode } from "@/components/QRgenerate";
 
 type TransactionDetailNavigationProp = NavigationProp<
   RootStackParamList,
@@ -42,7 +44,7 @@ const TransactionDetail = () => {
   const closeModal = () => setIsModalVisible(false);
 
   useEffect(() => {
-    if (paymentCancel.response) {
+    if (paymentCancel?.response) {
       Alert.alert("Success", "Payment has been cancelled.");
       navigation.goBack();
     } else if (paymentCancel.error) {
@@ -51,7 +53,7 @@ const TransactionDetail = () => {
   }, [paymentCancel.error, paymentCancel.response]);
 
   // Ensure paymentDetail and transaction are defined
-  if (!paymentDetail || !paymentDetail.transaction) {
+  if (!paymentDetail || !paymentDetail?.transaction) {
     return (
       <SafeAreaView style={styles.container}>
         <Text style={styles.noDataText}>No payment details available.</Text>
@@ -76,42 +78,42 @@ const TransactionDetail = () => {
           <View style={styles.detailRow}>
             <Text style={styles.title}>Partner:</Text>
             <Text style={styles.desc}>
-              {paymentDetail.transaction.partner || "-"}
+              {paymentDetail?.transaction?.partner || "-"}
             </Text>
           </View>
           <View style={{width: "100%", gap: 10}}>
             <Text style={styles.title}>Purpose:</Text>
             <Text style={styles.desc}>
-              {paymentDetail.transaction.purpose || "-"}
+              {paymentDetail?.transaction?.purpose || "-"}
             </Text>
           </View>
           <View style={styles.detailRow}>
             <Text style={styles.title}>Status:</Text>
             <Text style={styles.desc}>
-              {paymentDetail.transaction.status || "-"}
+              {paymentDetail?.transaction?.status || "-"}
             </Text>
           </View>
           <View style={styles.detailRow}>
             <Text style={styles.title}>Check Miqdori (RUB):</Text>
             <Text style={styles.desc}>
-              {paymentDetail.transaction.qrAmount
-                ? `${paymentDetail.transaction.qrAmount} RUB`
+              {paymentDetail?.transaction?.qrAmount
+                ? `${paymentDetail?.transaction?.qrAmount} RUB`
                 : "-"}
             </Text>
           </View>
           <View style={styles.detailRow}>
             <Text style={styles.title}>Check Miqdori (UZS):</Text>
             <Text style={styles.desc}>
-              {paymentDetail.transaction.chequeAmount
-                ? `${paymentDetail.transaction.chequeAmount} UZS`
+              {paymentDetail?.transaction?.chequeAmount
+                ? `${paymentDetail?.transaction?.chequeAmount} UZS`
                 : "-"}
             </Text>
           </View>
           <View style={styles.detailRow}>
             <Text style={styles.title}>Sana:</Text>
             <Text style={styles.desc}>
-              {paymentDetail.transaction.cheque_created_at
-                ? paymentDetail.transaction.cheque_created_at.substring(0, 16)
+              {paymentDetail?.transaction?.cheque_created_at
+                ? paymentDetail?.transaction?.cheque_created_at.substring(0, 16)
                 : "-"}
             </Text>
           </View>
@@ -119,15 +121,13 @@ const TransactionDetail = () => {
           <View style={styles.qrContainer}>
             <View style={{ paddingVertical: 10 }}>
               <Text style={styles.qrTextTop}>
-                {`QR amount: ${paymentDetail.transaction.qrAmount} RUB`}
+                {`QR amount: ${paymentDetail?.transaction?.qrAmount} RUB`}
               </Text>
             </View>
-            <QRCode
-              value={paymentDetail.transaction.url || ""}
-              size={250}
-              color="black"
-              backgroundColor="white"
-            />
+            {/* Wrap QRCode with ErrorBoundary */}
+            <ErrorBoundary>
+              <RenderQRCode url={paymentDetail?.transaction?.url}/> 
+            </ErrorBoundary>
             <Text style={styles.qrText}>Scan this QR code to proceed</Text>
           </View>
 
