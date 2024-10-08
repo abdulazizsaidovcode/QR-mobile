@@ -18,7 +18,6 @@ import { loginUrl } from "@/helpers/url";
 import { useGlobalRequest } from "@/helpers/apifunctions/univesalFunc";
 import { Colors } from "@/constants/Colors";
 import NavigationMenu from "@/components/navigationMenu/NavigationMenu";
-
 type SettingsScreenNavigationProp = NavigationProp<
   RootStackParamList,
   "(auth)/checkCode"
@@ -38,24 +37,6 @@ const CheckCode = () => {
 
   const handleInputChange = (text: string, index: number) => {
     const newCode = [...code];
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
     newCode[index] = text;
     setCode(newCode);
 
@@ -82,7 +63,7 @@ const CheckCode = () => {
       if (response && response?.token) {
         AsyncStorage.setItem("token", response?.token ? response?.token : null);
         AsyncStorage.setItem("role", response?.role ? response?.role : null);
-        navigation.navigate("(tabs)");
+        navigation.navigate('(tabs)');
         setResponse({});
       }
     }, [response])
@@ -98,7 +79,7 @@ const CheckCode = () => {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView style={styles.container}>
         <View style={styles.navigationContainer}>
-          <NavigationMenu name="To'lov cheki" />
+          <NavigationMenu name="" />
         </View>
         <View style={{ marginTop: 50 }}>
           <Text style={styles.title}>Подтверждение номера</Text>
