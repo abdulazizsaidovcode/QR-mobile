@@ -19,6 +19,7 @@ import { useGlobalRequest } from "@/helpers/apifunctions/univesalFunc";
 import { get_mee, update_profile } from "@/helpers/url"; // Ensure you have an update_profile URL
 import { Colors } from "@/constants/Colors";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import ChangeLang from "./changeLang";
 
 // Define the shape of the profile data
 interface ProfileData {
@@ -94,9 +95,9 @@ const Profile: React.FC = () => {
 
   useEffect(() => {
     if (updateProfile.response) {
-      AsyncStorage.setItem("token", updateProfile.response) 
+      AsyncStorage.setItem("token", updateProfile.response);
     }
-  }, [updateProfile.response])
+  }, [updateProfile.response]);
 
   // Handle input changes
   const handleInputChange = (name: keyof ProfileData, value: string) => {
@@ -216,9 +217,8 @@ const Profile: React.FC = () => {
             </Text>
           </View>
         </View>
+        {/* <ChangeLang /> */}
 
-
-        
         {/* Edit Profile Modal */}
         <CenteredModal
           btnRedText={submitting ? "..." : "Bekor qilish"}
@@ -229,110 +229,115 @@ const Profile: React.FC = () => {
           toggleModal={closeModal}
           // disableWhiteButton={submitting}
         >
-          <ScrollView style={{width: "100%"}}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Profilni Tahrirlash</Text>
-            <Text style={{fontSize: 15, paddingVertical: 3}}>Ism</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Ism"
-              value={formData.firstName}
-              onChangeText={(text) => handleInputChange("firstName", text)}
-            />
-            {errors.firstName && (
-              <Text style={styles.errorText}>{errors.firstName}</Text>
-            )}
-
-            <Text style={{fontSize: 15, paddingVertical: 3}}>Familiya</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Familiya"
-              value={formData.lastName}
-              onChangeText={(text) => handleInputChange("lastName", text)}
-            />
-            {errors.lastName && (
-              <Text style={styles.errorText}>{errors.lastName}</Text>
-            )}
-
-            <Text style={{fontSize: 15, paddingVertical: 3}}>Telefon raqam</Text>
-            <View style={[styles.passwordContainer, {paddingRight: 0}]}>
-              <View
-               
-                style={styles.eyeIcon}
-              >
-                <Text style={{fontSize: 17, paddingHorizontal: 5}}>+998</Text>
-              </View>
+          <ScrollView style={{ width: "100%" }}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Profilni Tahrirlash</Text>
+              <Text style={{ fontSize: 15, paddingVertical: 3 }}>Ism</Text>
               <TextInput
-                style={[styles.input, styles.passwordInput]}
-                placeholder="Telefon raqam"
-                keyboardType="numeric"
-                value={formData.phone}
-                onChangeText={(text) => handleInputChange("phone", text)}
-                maxLength={9}
+                style={styles.input}
+                placeholder="Ism"
+                value={formData.firstName}
+                onChangeText={(text) => handleInputChange("firstName", text)}
               />
-            </View>
+              {errors.firstName && (
+                <Text style={styles.errorText}>{errors.firstName}</Text>
+              )}
 
-            {errors.phone && (
-              <Text style={styles.errorText}>{errors.phone}</Text>
-            )}
-
-            <Text style={{fontSize: 15, paddingVertical: 3}}>Email</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Email"
-              keyboardType="email-address"
-              value={formData.email}
-              onChangeText={(text) => handleInputChange("email", text)}
-              autoCapitalize="none"
-            />
-            {errors.email && (
-              <Text style={styles.errorText}>{errors.email}</Text>
-            )}
-
-            <Text style={{fontSize: 15, paddingVertical: 3}}>Inn</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Inn"
-              value={formData.inn}
-              onChangeText={(text) => handleInputChange("inn", text)}
-            />
-            {errors.inn && <Text style={styles.errorText}>{errors.inn}</Text>}
-
-            <Text style={{fontSize: 15, paddingVertical: 3}}>Filial kod</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Filial kod"
-              value={formData.filial_code}
-              onChangeText={(text) => handleInputChange("filial_code", text)}
-            />
-            {errors.filial_code && (
-              <Text style={styles.errorText}>{errors.filial_code}</Text>
-            )}
-
-            <Text style={{fontSize: 15, paddingVertical: 3}}>Parol (Agar parol kiritilmasa eski parol saqlanadi)</Text>
-            <View style={styles.passwordContainer}>
+              <Text style={{ fontSize: 15, paddingVertical: 3 }}>Familiya</Text>
               <TextInput
-                style={[styles.input, styles.passwordInput]}
-                placeholder="Parol (ixtiyoriy)"
-                secureTextEntry={!passwordVisible}
-                value={formData.password}
-                onChangeText={(text) => handleInputChange("password", text)}
+                style={styles.input}
+                placeholder="Familiya"
+                value={formData.lastName}
+                onChangeText={(text) => handleInputChange("lastName", text)}
               />
-              <Pressable
-                onPress={() => setPasswordVisible(!passwordVisible)}
-                style={styles.eyeIcon}
-              >
-                <FontAwesome
-                  name={passwordVisible ? "eye" : "eye-slash"}
-                  size={24}
-                  color="gray"
+              {errors.lastName && (
+                <Text style={styles.errorText}>{errors.lastName}</Text>
+              )}
+
+              <Text style={{ fontSize: 15, paddingVertical: 3 }}>
+                Telefon raqam
+              </Text>
+              <View style={[styles.passwordContainer, { paddingRight: 0 }]}>
+                <View style={styles.eyeIcon}>
+                  <Text style={{ fontSize: 17, paddingHorizontal: 5 }}>
+                    +998
+                  </Text>
+                </View>
+                <TextInput
+                  style={[styles.input, styles.passwordInput]}
+                  placeholder="Telefon raqam"
+                  keyboardType="numeric"
+                  value={formData.phone}
+                  onChangeText={(text) => handleInputChange("phone", text)}
+                  maxLength={9}
                 />
-              </Pressable>
+              </View>
+
+              {errors.phone && (
+                <Text style={styles.errorText}>{errors.phone}</Text>
+              )}
+
+              <Text style={{ fontSize: 15, paddingVertical: 3 }}>Email</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                keyboardType="email-address"
+                value={formData.email}
+                onChangeText={(text) => handleInputChange("email", text)}
+                autoCapitalize="none"
+              />
+              {errors.email && (
+                <Text style={styles.errorText}>{errors.email}</Text>
+              )}
+
+              <Text style={{ fontSize: 15, paddingVertical: 3 }}>Inn</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Inn"
+                value={formData.inn}
+                onChangeText={(text) => handleInputChange("inn", text)}
+              />
+              {errors.inn && <Text style={styles.errorText}>{errors.inn}</Text>}
+
+              <Text style={{ fontSize: 15, paddingVertical: 3 }}>
+                Filial kod
+              </Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Filial kod"
+                value={formData.filial_code}
+                onChangeText={(text) => handleInputChange("filial_code", text)}
+              />
+              {errors.filial_code && (
+                <Text style={styles.errorText}>{errors.filial_code}</Text>
+              )}
+
+              <Text style={{ fontSize: 15, paddingVertical: 3 }}>
+                Parol (Agar parol kiritilmasa eski parol saqlanadi)
+              </Text>
+              <View style={styles.passwordContainer}>
+                <TextInput
+                  style={[styles.input, styles.passwordInput]}
+                  placeholder="Parol (ixtiyoriy)"
+                  secureTextEntry={!passwordVisible}
+                  value={formData.password}
+                  onChangeText={(text) => handleInputChange("password", text)}
+                />
+                <Pressable
+                  onPress={() => setPasswordVisible(!passwordVisible)}
+                  style={styles.eyeIcon}
+                >
+                  <FontAwesome
+                    name={passwordVisible ? "eye" : "eye-slash"}
+                    size={24}
+                    color="gray"
+                  />
+                </Pressable>
+              </View>
+              {errors.password && (
+                <Text style={styles.errorText}>{errors.password}</Text>
+              )}
             </View>
-            {errors.password && (
-              <Text style={styles.errorText}>{errors.password}</Text>
-            )}
-          </View>
           </ScrollView>
         </CenteredModal>
       </ScrollView>
@@ -359,7 +364,7 @@ const styles = StyleSheet.create({
     paddingTop: 35,
   },
   scrollView: {
-    paddingBottom: 20,
+    paddingVertical: 20,
   },
   detailCard: {
     alignItems: "center",
