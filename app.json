@@ -6,6 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
+    "svg": true,
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -35,7 +36,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "9305cfb5-7685-4dea-8a1c-b44d03fd960d",
+        "projectId": "3c9fbcc6-0d75-4c9f-b491-913f03b3c9e0",
         "apiBaseUrl": "https://apk.qrpay.uz/"
       }
     }

@@ -18,7 +18,7 @@ const CreateQr = () => {
   const [amount, setAmount] = useState("");
   const [Messageamount, setMessageAmount] = useState("");
   const [alertShown, setAlertShown] = useState(false);
-  const [qrValue, setQrValue] = useState(""); // State to hold the QR code value
+  const [qrValue, setQrValue] = useState<any>(""); // State to hold the QR code value
 
   const paymentCreate = useGlobalRequest(
     createPayment,
@@ -31,11 +31,14 @@ const CreateQr = () => {
     if (paymentCreate.response && !alertShown) {
       // alert(paymentCreate.response);
       setMessageAmount(amount);
-      setQrValue(`${paymentCreate.response}`); // Set the QR code value to the response
+      setQrValue(paymentCreate?.response ? paymentCreate?.response : null); // Set the QR code value to the response
       setAlertShown(true);
+      console.log(paymentCreate?.response);
+      
     } else if (paymentCreate.error && !alertShown) {
       setMessageAmount("0");
       alert(paymentCreate.error);
+      setQrValue(null)
       setAlertShown(true);
     }
   }, [paymentCreate.response, paymentCreate.error]);
@@ -63,7 +66,7 @@ const CreateQr = () => {
               </Text>
             </View>
             <ErrorBoundary>
-            <RenderQRCode url={qrValue}/> 
+            <RenderQRCode url={qrValue ? qrValue : null}/> 
             </ErrorBoundary>
             <Text style={styles.qrText}>Scan this QR code to proceed</Text>
           </View>

@@ -189,8 +189,8 @@ export default function HomeScreen() {
               title="Total payment"
               desc={
                 response &&
-                response.paymentTotalBalance &&
-                response.paymentTotalBalance
+                response.paymentTotalBalance ?
+                response.paymentTotalBalance : 0
               }
               icon={
                 <FontAwesome5
