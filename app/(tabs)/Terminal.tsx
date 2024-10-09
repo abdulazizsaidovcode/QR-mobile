@@ -11,7 +11,6 @@ import {
   Platform,
   Pressable,
 } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
 import { useGlobalRequest } from "@/helpers/apifunctions/univesalFunc";
 import { SellerEdit, SellerGet } from "@/helpers/url";
 import CenteredModal from "@/components/modal/modal-centered";
@@ -35,9 +34,6 @@ interface TerminalNewUser {
 }
 
 const Terminal: React.FC = () => {
-  // const [terminalNewUsers, setTerminalNewUsers] = useState<TerminalNewUser[]>([
-  //   { phone: "", password: "" },
-  // ]);
   const [isModalVisible, setModalVisible] = useState<boolean>(false);
 
   const [formData, setFormData] = useState({
@@ -51,9 +47,6 @@ const Terminal: React.FC = () => {
   const [TerminalId, setTerminalId] = useState<number | null>(null);
   const [page, setPage] = useState(0);
 
-  // const isEmptyNewUsers = terminalNewUsers.every(
-  //   (user: any) => !user.phone && !user.password
-  // );
 
   const {
     loading: loadingTerminals,
@@ -75,12 +68,7 @@ const Terminal: React.FC = () => {
       name: formData.ism,
       terminalSerialCode:
         formData.terminalSeriyaKodu === "" ? null : formData.terminalSeriyaKodu,
-    //   terminalNewUsers: isEmptyNewUsers
-    //     ? null
-    //     : terminalNewUsers.map((item) => ({
-    //         phone: `+998${item.phone}`,
-    //         password: item.password,
-    //       })),
+
     }
   );
 
@@ -99,14 +87,6 @@ const Terminal: React.FC = () => {
       alert(editTerminal?.error);
     }
   }, [editTerminal.response, editTerminal.error]);
-
-  // const handleAddPhoneNumber = () => {
-  //   setTerminalNewUsers((prev) => [...prev, { phone: "", password: "" }]);
-  // };
-
-  // const handleRemovePhoneNumber = (index: number) => {
-  //   setTerminalNewUsers((prev) => prev.filter((_, i) => i !== index));
-  // };
 
   const handleInputChange = (name: keyof typeof formData, value: string) => {
     setFormData((prev) => ({
@@ -308,90 +288,6 @@ const Terminal: React.FC = () => {
               {errorMessage && (
                 <Text style={styles.errorText}>{errorMessage}</Text>
               )}
-
-              {/* <View style={styles.addPhoneSection}>
-                <Text>Telefon raqam</Text>
-                <TouchableOpacity onPress={handleAddPhoneNumber}>
-                  <AntDesign name="pluscircle" size={24} color="black" />
-                </TouchableOpacity>
-              </View> */}
-
-              {/* {terminalNewUsers &&
-                terminalNewUsers?.map((user, index) => (
-                  <View key={index} style={styles.phoneRow}>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        marginTop: 20,
-                      }}
-                    >
-                      <View style={styles.phoneCard}> */}
-                        {/* <Image source={require('../../../../assets/images/uzb.png')} /> */}
-                        {/* <Text style={{ fontSize: 17, color: "gray" }}>
-                          +998
-                        </Text>
-                      </View>
-                      <View style={{ width: "69%" }}>
-                        <TextInput
-                          style={styles.phoneInput}
-                          placeholder={`Telefon raqam ${index + 1}`}
-                          value={user.phone}
-                          keyboardType="numeric"
-                          onChangeText={(text) => {
-                            const updatedUsers = [...terminalNewUsers];
-                            updatedUsers[index].phone = text;
-                            setTerminalNewUsers(updatedUsers);
-                          }}
-                          maxLength={12}
-                          placeholderTextColor={"gray"}
-                        />
-                      </View>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        marginTop: 20,
-                      }}
-                    >
-                      <View style={{ width: "85%" }}>
-                        <TextInput
-                          style={styles.passwordInput}
-                          placeholder={`Parol ${index + 1}`}
-                          secureTextEntry
-                          value={user.password}
-                          onChangeText={(text) => {
-                            const updatedUsers = [...terminalNewUsers];
-                            updatedUsers[index].password = text;
-                            setTerminalNewUsers(updatedUsers);
-                          }}
-                        />
-                      </View>
-                      {index > 0 && (
-                        <TouchableOpacity
-                          onPress={() => handleRemovePhoneNumber(index)}
-                        >
-                          <View
-                            style={{
-                              alignItems: "center",
-                              justifyContent: "center",
-                              marginLeft: 5,
-                              marginTop: 15,
-                            }}
-                          > */}
-                            {/* <Image source={require('../../../../assets/images/uzb.png')} /> */}
-                            {/* <AntDesign
-                              name="minuscircle"
-                              size={24}
-                              color="black"
-                            />
-                          </View>
-                        </TouchableOpacity>
-                      )}
-                    </View>
-                  </View>
-                ))} */}
             </ScrollView>
           </CenteredModal>
         </View>
@@ -405,7 +301,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F5F5F5",
     paddingVertical: Platform.OS === "android" ? 35 : 0,
-    marginBottom: 12,
+    // marginBottom: 12,
   },
   loader: {
     flex: 1,
