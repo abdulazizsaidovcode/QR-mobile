@@ -9,7 +9,7 @@ import {
   UserTerminalListGet,
 } from "@/helpers/url";
 import { useFocusEffect } from "expo-router";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Text,
   View,
@@ -96,29 +96,26 @@ export default function UserTerminal() {
     }, [])
   );
 
-  useFocusEffect(
-    useCallback(() => {
-      if (editTerminal.response) {
+  
+    useEffect(() => {
+      if (editTerminal?.response) {
         alert("Terminal user muvafaqqiyatli qo'shildi!");
         globalDataFunc();
         terminalList.globalDataFunc();
-      } else if (editTerminal.error) {
+      } else if (editTerminal?.error) {
         alert("Terminal user qo'shishda xatolik yuz berdi");
       }
-    }, [editTerminal.response, editTerminal.error])
-  );
+    }, [editTerminal?.response, editTerminal?.error])
 
-  useFocusEffect(
-    useCallback(() => {
-      if (terminalDelete.response) {
+    useEffect(() => {
+      if (terminalDelete?.response) {
         alert("Terminal user muvafaqqiyatli o'chirildi");
         globalDataFunc();
         terminalList.globalDataFunc();
-      } else if (terminalDelete.error) {
+      } else if (terminalDelete?.error) {
         alert("Terminal user o'chirishda xatolik yuz berdi");
       }
-    }, [terminalDelete.response, terminalDelete.error])
-  );
+    }, [terminalDelete?.response, terminalDelete?.error])
 
   const validateForm = () => {
     const { terminalId, firstName, lastName, phone, password } = formData;

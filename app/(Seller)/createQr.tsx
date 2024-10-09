@@ -33,7 +33,6 @@ const CreateQr = () => {
       setMessageAmount(amount);
       setQrValue(paymentCreate?.response ? paymentCreate?.response : null); // Set the QR code value to the response
       setAlertShown(true);
-      console.log(paymentCreate?.response);
       
     } else if (paymentCreate.error && !alertShown) {
       setMessageAmount("0");
