@@ -19,6 +19,7 @@ import TabLayout from './(tabs)/_layout';
 import Welcome from './(welcome)/welcome';
 import Profile from './(Seller)/(profile)/profile';
 import CheckCode from './(auth)/checkCode';
+import PrivacyTermsPage from './(Seller)/(shartlar)/PrivacyTermsPage';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -89,6 +90,11 @@ export default function RootLayout() {
             <Stack.Screen
             component={CheckCode}
             name="(auth)/checkCode" 
+            options={{ headerShown: false }}
+            />
+            <Stack.Screen
+            component={PrivacyTermsPage}
+            name="(Seller)/(shartlar)/PrivacyTermsPage" 
             options={{ headerShown: false }}
             />
         </Stack.Navigator>

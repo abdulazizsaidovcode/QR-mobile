@@ -83,6 +83,7 @@ const Terminal: React.FC = () => {
       alert("Terminal muvafaqqiyatli tahrirlandi!");
       setModalVisible(false);
       resetFormData();
+      fetchTerminalList()
     } else if (editTerminal?.error) {
       alert(editTerminal?.error);
     }
