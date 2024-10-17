@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "QR-mobile",
-    "slug": "qr-pay",
+    "slug": "project",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -37,9 +37,10 @@
     },
     "extra": {
       "eas": {
-        "projectId": "3c9fbcc6-0d75-4c9f-b491-913f03b3c9e0",
+        "projectId": "1e530b86-ce84-4fe0-8a44-6e7997c9c8fe",
         "apiBaseUrl": "https://apk.qrpay.uz/"
       }
-    }
+    },
+    "owner": "kimdir"
   }
 }
