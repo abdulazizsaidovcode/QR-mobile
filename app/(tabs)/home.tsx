@@ -124,7 +124,7 @@ export default function HomeScreen() {
         {role === "ROLE_SELLER" && (
           <View style={{ flexDirection: "row", gap: 5 }}>
             <TransactionActionCard
-              title="Terminals"
+              title="Терминалы"
               desc={
                 response && response.terminalCount && response.terminalCount
               }
@@ -138,7 +138,7 @@ export default function HomeScreen() {
               onPress={() => console.log("Send Money Pressed")}
             />
             <TransactionActionCard
-              title="Cancelled transactions"
+              title="Отмененные транзакции"
               desc={
                 response &&
                 response.transactionCountCancel &&
@@ -158,7 +158,7 @@ export default function HomeScreen() {
         {role === "ROLE_SELLER" && (
           <View style={{ flexDirection: "row", gap: 5, flexWrap: "wrap" }}>
             <TransactionActionCard
-              title="Number of terminal users"
+              title="Количество пользователей терминала"
               desc={response && response.userCount && response.userCount}
               icon={
                 <FontAwesome5
@@ -170,7 +170,7 @@ export default function HomeScreen() {
               onPress={() => console.log("Send Money Pressed")}
             />
             <TransactionActionCard
-              title="Transactions"
+              title="Транзакции"
               desc={
                 response &&
                 response.transactionCountWaitOrCompleted &&
@@ -186,7 +186,7 @@ export default function HomeScreen() {
               onPress={() => console.log("Receive Money Pressed")}
             />
             <TransactionActionHeadCard
-              title="Total payment"
+              title="Общая сумма платежа"
               desc={
                 response &&
                 response.paymentTotalBalance ?
@@ -205,10 +205,10 @@ export default function HomeScreen() {
         )}
         <View style={styles.header}>
           <Text style={styles.headerText}>
-            Payments({transactionGet?.response?.totalElements})
+          Платежи({transactionGet?.response?.totalElements})
           </Text>
           <Text style={styles.headerText}>
-            Current({page + 1})
+          Текущий({page + 1})
           </Text>
         </View>
 
@@ -219,7 +219,7 @@ export default function HomeScreen() {
           // keyExtractor={(item) => item.id} // Use a unique key for each item
           renderItem={({ item }) => <TransactionCard transaction={item} />}
         />
-        :  <Text style={styles.noDataText}>No user terminals found.</Text>
+        :  <Text style={styles.noDataText}>Платеж не найден.</Text>
         }
         {
           transactionGet?.response?.object.length > 0 && 
@@ -237,7 +237,7 @@ export default function HomeScreen() {
                 page === 0 && styles.disabledButton,
               ]}
             >
-              Last
+              Последний
             </Text>
           </Pressable>
           <Pressable
@@ -254,7 +254,7 @@ export default function HomeScreen() {
                   styles.disabledButton,
               ]}
             >
-              Next
+              Следующий
             </Text>
           </Pressable>
         </View>

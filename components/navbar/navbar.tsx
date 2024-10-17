@@ -66,7 +66,7 @@ const Navbar = () => {
         />
 
         <View style={styles.textContainer}>
-          <Text style={styles.greetingText}>Hi, {getMee?.response?.firstName ? getMee?.response?.firstName : "-- --"} {getMee?.response?.lastName}</Text>
+          <Text style={styles.greetingText}>Привет, {getMee?.response?.firstName ? getMee?.response?.firstName : "-- --"} {getMee?.response?.lastName}</Text>
           <Text style={styles.subText}>{getMee?.response?.phone ? getMee?.response?.phone : "-- --- -- --"}</Text>
         </View>
       </View>
@@ -101,7 +101,7 @@ const Navbar = () => {
           onPress={async () => {
             await AsyncStorage.removeItem("token")
             await AsyncStorage.removeItem("role")
-            await navigation.navigate("(auth)/login");
+            await navigation.navigate("(welcome)/welcome");
           }}
           name="log-out"
           size={24}

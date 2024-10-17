@@ -110,23 +110,23 @@ const Profile: React.FC = () => {
   // Validate the form
   const validate = (): boolean => {
     const newErrors: ProfileErrors = {};
-    if (!formData.firstName.trim()) newErrors.firstName = "Ism kerak";
-    if (!formData.lastName.trim()) newErrors.lastName = "Familiya kerak";
+    if (!formData.firstName.trim()) newErrors.firstName = "Нужно имя";
+    if (!formData.lastName.trim()) newErrors.lastName = "Требуется фамилия";
     if (!formData.phone.trim()) {
-      newErrors.phone = "Telefon raqam kerak";
+      newErrors.phone = "Требуется номер телефона";
     } else if (!/^\d{9}$/.test(formData.phone)) {
-      newErrors.phone = "Telefon raqam 9 raqamdan iborat bo'lishi kerak";
+      newErrors.phone = "Номер телефона должен состоять из 9 цифр.";
     }
     if (!formData.email.trim()) {
-      newErrors.email = "Email kerak";
+      newErrors.email = "Требуется электронная почта";
     } else if (
       !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(formData.email)
     ) {
-      newErrors.email = "Email format noto'g'ri";
+      newErrors.email = "Формат электронной почты noto'g'ri";
     }
-    if (!formData.inn.trim()) newErrors.inn = "INN kerak";
+    if (!formData.inn.trim()) newErrors.inn = "ИНН обязателен";
     if (!formData.filial_code.trim())
-      newErrors.filial_code = "Filial kod kerak";
+      newErrors.filial_code = "Требуется партнерский код";
     // Password is optional; no validation unless you want to enforce certain rules
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -135,7 +135,7 @@ const Profile: React.FC = () => {
   // Handle form submission
   const handleSubmit = async () => {
     if (!validate()) {
-      Alert.alert("Xatolik", "Iltimos, barcha maydonlarni to'ldiring");
+      Alert.alert("Ошибка", "Пожалуйста, заполните все поля");
       return;
     }
 
@@ -154,11 +154,11 @@ const Profile: React.FC = () => {
         ...(formData.password ? { password: formData.password } : {}),
       });
 
-      Alert.alert("Muvaffaqiyatli", "Profil muvaffaqiyatli yangilandi");
+      Alert.alert("Успех", "Профиль успешно обновлен.");
       closeModal();
       getMee.globalDataFunc(); // Refresh profile data
     } catch (error) {
-      Alert.alert("Xatolik", "Profilni yangilashda xatolik yuz berdi");
+      Alert.alert("Ошибка, «Произошла ошибка при обновлении профиля.»");
     } finally {
       setSubmitting(false);
     }
@@ -167,7 +167,7 @@ const Profile: React.FC = () => {
   return (
     <View style={styles.containerView}>
       <View style={styles.navigationContainer}>
-        <NavigationMenu name="Profile" />
+        <NavigationMenu name="Профиль" />
       </View>
       <StatusBar barStyle="dark-content" backgroundColor="#f5f5f5" />
       <ScrollView contentContainerStyle={styles.scrollView}>
@@ -182,36 +182,36 @@ const Profile: React.FC = () => {
           </View>
           <Pressable onPress={openModal}>
             <View style={styles.editButton}>
-              <Text style={styles.editButtonText}>Profilni tahrirlash</Text>
+              <Text style={styles.editButtonText}>Редактировать профиль</Text>
             </View>
           </Pressable>
           {/* Profile Details */}
           <View style={styles.detailRow}>
-            <Text style={styles.title}>Ism: </Text>
+            <Text style={styles.title}>Имя: </Text>
             <Text style={styles.desc}>
               {getMee?.response?.firstName || "--"}
             </Text>
           </View>
           <View style={styles.detailRow}>
-            <Text style={styles.title}>Familiya: </Text>
+            <Text style={styles.title}>Фамилия: </Text>
             <Text style={styles.desc}>
               {getMee?.response?.lastName || "--"}
             </Text>
           </View>
           <View style={styles.detailRow}>
-            <Text style={styles.title}>Telefon raqam: </Text>
+            <Text style={styles.title}>Номер телефона: </Text>
             <Text style={styles.desc}>{getMee?.response?.phone || "--"}</Text>
           </View>
           <View style={styles.detailRow}>
-            <Text style={styles.title}>Email: </Text>
+            <Text style={styles.title}>Электронная почта: </Text>
             <Text style={styles.desc}>{getMee?.response?.email || "--"}</Text>
           </View>
           <View style={styles.detailRow}>
-            <Text style={styles.title}>Inn: </Text>
+            <Text style={styles.title}>ИНН: </Text>
             <Text style={styles.desc}>{getMee?.response?.inn || "--"}</Text>
           </View>
           <View style={styles.detailRow}>
-            <Text style={styles.title}>Filial kod: </Text>
+            <Text style={styles.title}>Партнерский код: </Text>
             <Text style={styles.desc}>
               {getMee?.response?.filial_code || "--"}
             </Text>
@@ -221,8 +221,8 @@ const Profile: React.FC = () => {
 
         {/* Edit Profile Modal */}
         <CenteredModal
-          btnRedText={submitting ? "..." : "Bekor qilish"}
-          btnWhiteText={submitting ? "Yuklanmoqda..." : "Saqlash"}
+          btnRedText={submitting ? "..." : "Отмена"}
+          btnWhiteText={submitting ? "Загрузка..." : "Сохранять"}
           isFullBtn={true}
           isModal={modal}
           onConfirm={handleSubmit}
@@ -231,11 +231,11 @@ const Profile: React.FC = () => {
         >
           <ScrollView style={{ width: "100%" }}>
             <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Profilni Tahrirlash</Text>
-              <Text style={{ fontSize: 15, paddingVertical: 3 }}>Ism</Text>
+              <Text style={styles.modalTitle}>Редактировать профиль</Text>
+              <Text style={{ fontSize: 15, paddingVertical: 3 }}>Имя</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Ism"
+                placeholder="Имя"
                 value={formData.firstName}
                 onChangeText={(text) => handleInputChange("firstName", text)}
               />
@@ -243,10 +243,10 @@ const Profile: React.FC = () => {
                 <Text style={styles.errorText}>{errors.firstName}</Text>
               )}
 
-              <Text style={{ fontSize: 15, paddingVertical: 3 }}>Familiya</Text>
+              <Text style={{ fontSize: 15, paddingVertical: 3 }}>Фамилия</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Familiya"
+                placeholder="Фамилия"
                 value={formData.lastName}
                 onChangeText={(text) => handleInputChange("lastName", text)}
               />
@@ -255,7 +255,7 @@ const Profile: React.FC = () => {
               )}
 
               <Text style={{ fontSize: 15, paddingVertical: 3 }}>
-                Telefon raqam
+                Номер телефона
               </Text>
               <View style={[styles.passwordContainer, { paddingRight: 0 }]}>
                 <View style={styles.eyeIcon}>
@@ -265,7 +265,7 @@ const Profile: React.FC = () => {
                 </View>
                 <TextInput
                   style={[styles.input, styles.passwordInput]}
-                  placeholder="Telefon raqam"
+                  placeholder="Номер телефона"
                   keyboardType="numeric"
                   value={formData.phone}
                   onChangeText={(text) => handleInputChange("phone", text)}
@@ -277,10 +277,10 @@ const Profile: React.FC = () => {
                 <Text style={styles.errorText}>{errors.phone}</Text>
               )}
 
-              <Text style={{ fontSize: 15, paddingVertical: 3 }}>Email</Text>
+              <Text style={{ fontSize: 15, paddingVertical: 3 }}>Электронная почта</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Email"
+                placeholder="Электронная почта"
                 keyboardType="email-address"
                 value={formData.email}
                 onChangeText={(text) => handleInputChange("email", text)}
@@ -290,21 +290,21 @@ const Profile: React.FC = () => {
                 <Text style={styles.errorText}>{errors.email}</Text>
               )}
 
-              <Text style={{ fontSize: 15, paddingVertical: 3 }}>Inn</Text>
+              <Text style={{ fontSize: 15, paddingVertical: 3 }}>ИНН</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Inn"
+                placeholder="ИНН"
                 value={formData.inn}
                 onChangeText={(text) => handleInputChange("inn", text)}
               />
               {errors.inn && <Text style={styles.errorText}>{errors.inn}</Text>}
 
               <Text style={{ fontSize: 15, paddingVertical: 3 }}>
-                Filial kod
+                Партнерский код
               </Text>
               <TextInput
                 style={styles.input}
-                placeholder="Filial kod"
+                placeholder="Партнерский код"
                 value={formData.filial_code}
                 onChangeText={(text) => handleInputChange("filial_code", text)}
               />
@@ -313,12 +313,12 @@ const Profile: React.FC = () => {
               )}
 
               <Text style={{ fontSize: 15, paddingVertical: 3 }}>
-                Parol (Agar parol kiritilmasa eski parol saqlanadi)
+              Пароль (если пароль не введен, старый пароль будет сохранен)
               </Text>
               <View style={styles.passwordContainer}>
                 <TextInput
                   style={[styles.input, styles.passwordInput]}
-                  placeholder="Parol (ixtiyoriy)"
+                  placeholder="Пароль (необязательно)"
                   secureTextEntry={!passwordVisible}
                   value={formData.password}
                   onChangeText={(text) => handleInputChange("password", text)}

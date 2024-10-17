@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
@@ -14,10 +15,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect, useNavigation } from "expo-router";
 import { RootStackParamList } from "@/types/root/root";
 import { NavigationProp } from "@react-navigation/native";
-import { loginUrl } from "@/helpers/url";
+import { loginUrl, sendCodeUrl } from "@/helpers/url";
 import { useGlobalRequest } from "@/helpers/apifunctions/univesalFunc";
 import { Colors } from "@/constants/Colors";
 import NavigationMenu from "@/components/navigationMenu/NavigationMenu";
+import axios from "axios";
+
 type SettingsScreenNavigationProp = NavigationProp<
   RootStackParamList,
   "(auth)/checkCode"
@@ -26,14 +29,35 @@ type SettingsScreenNavigationProp = NavigationProp<
 const CheckCode = () => {
   const { phoneNumber } = useAuthStore();
   const [code, setCode] = useState<string[]>(["", "", "", ""]);
+  const [canResend, setCanResend] = useState(false); // Resend state
+  const [timer, setTimer] = useState(120); // 2 minutes timer
   const navigation = useNavigation<SettingsScreenNavigationProp>();
   const inputRefs = useRef<Array<TextInput | null>>([]);
   const [response, setResponse] = useState<any>({});
+
+  const userData = {
+    phone: `+998${phoneNumber.split(" ").join("")}`,
+  };
 
   const checkCode = useGlobalRequest(loginUrl, "POST", {
     phone: "+998" + phoneNumber.split(" ").join(""),
     code: +code.join(""),
   });
+
+  const sendCode = async () => {
+    if (phoneNumber) {
+      await axios
+        .post(`${sendCodeUrl}`, userData)
+        .then((res) => {
+          if (res.data.data) navigation.navigate("(auth)/checkCode");
+          else if (res.data.error && res.data.error.message)
+            alert(res.data.error.message);
+        })
+        .catch((err) => {
+          alert("произошла ошибка");
+        });
+    }
+  };
 
   const handleInputChange = (text: string, index: number) => {
     const newCode = [...code];
@@ -49,6 +73,27 @@ const CheckCode = () => {
     }
   };
 
+  const handleResendCode = () => {
+    if (canResend) {
+      setCanResend(false);
+      setTimer(120); // Reset timer
+      // Kodni qayta yuborish uchun API chaqirig'i kiritiladi
+      sendCode() 
+    }
+  };
+
+  // Timer logic
+  useEffect(() => {
+    if (timer > 0) {
+      const interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    } else {
+      setCanResend(true);
+    }
+  }, [timer]);
+
   useFocusEffect(
     useCallback(() => {
       if (checkCode.response) {
@@ -63,7 +108,7 @@ const CheckCode = () => {
       if (response && response?.token) {
         AsyncStorage.setItem("token", response?.token ? response?.token : null);
         AsyncStorage.setItem("role", response?.role ? response?.role : null);
-        navigation.navigate('(tabs)');
+        navigation.navigate("(tabs)");
         setResponse({});
       }
     }, [response])
@@ -110,6 +155,23 @@ const CheckCode = () => {
               />
             ))}
           </View>
+
+          {/* Resend Code Section */}
+          <View style={{ marginTop: 30, alignItems: "center" }}>
+            <TouchableOpacity
+              onPress={handleResendCode}
+              disabled={!canResend}
+              style={[
+                styles.resendButton,
+                { backgroundColor: canResend ? Colors.dark.primary : "#ccc" },
+              ]}
+            >
+              <Text style={{ color: "white" }}>Отправить код повторно</Text>
+            </TouchableOpacity>
+            {!canResend && (
+              <Text style={styles.timerText}>Отправить повторно {timer} с</Text>
+            )}
+          </View>
         </View>
       </SafeAreaView>
     </TouchableWithoutFeedback>
@@ -121,7 +183,6 @@ export default CheckCode;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: colors.darkGreen,
     backgroundColor: "#f5f5f5",
     paddingHorizontal: 16,
   },
@@ -131,7 +192,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 25,
-    // color: colors.white,
     textAlign: "center",
   },
   des: {
@@ -150,6 +210,16 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     borderRadius: 10,
     color: Colors.dark.primary,
-    // backgroundColor: Colors.dark.primary
+  },
+  resendButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  timerText: {
+    fontSize: 14,
+    color: "#828282",
+    marginTop: 5,
   },
 });

@@ -45,10 +45,10 @@ const TransactionDetail = () => {
 
   useEffect(() => {
     if (paymentCancel?.response) {
-      Alert.alert("Success", "Payment has been cancelled.");
+      Alert.alert("Успех", "Платеж отменен.");
       navigation.goBack();
     } else if (paymentCancel.error) {
-      Alert.alert("Error", paymentCancel.error);
+      Alert.alert("Ошибка", paymentCancel.error);
     }
   }, [paymentCancel.error, paymentCancel.response]);
 
@@ -56,7 +56,7 @@ const TransactionDetail = () => {
   if (!paymentDetail || !paymentDetail?.transaction) {
     return (
       <SafeAreaView style={styles.container}>
-        <Text style={styles.noDataText}>No payment details available.</Text>
+        <Text style={styles.noDataText}>Платежные реквизиты отсутствуют.</Text>
       </SafeAreaView>
     );
   }
@@ -70,31 +70,31 @@ const TransactionDetail = () => {
   return (
     <View style={styles.outerContainer}>
       <View style={styles.navigationContainer}>
-        <NavigationMenu name="To'lov cheki" />
+        <NavigationMenu name="Проверка оплаты" />
       </View>
       <StatusBar barStyle="dark-content" backgroundColor="#f5f5f5" />
       <ScrollView style={styles.container}>
         <View style={styles.detailCard}>
           <View style={styles.detailRow}>
-            <Text style={styles.title}>Partner:</Text>
+            <Text style={styles.title}> Партнер:</Text>
             <Text style={styles.desc}>
               {paymentDetail?.transaction?.partner || "-"}
             </Text>
           </View>
           <View style={{width: "100%", gap: 10}}>
-            <Text style={styles.title}>Purpose:</Text>
+            <Text style={styles.title}>Цель:</Text>
             <Text style={styles.desc}>
               {paymentDetail?.transaction?.purpose || "-"}
             </Text>
           </View>
           <View style={styles.detailRow}>
-            <Text style={styles.title}>Status:</Text>
+            <Text style={styles.title}>Статус:</Text>
             <Text style={styles.desc}>
               {paymentDetail?.transaction?.status || "-"}
             </Text>
           </View>
           <View style={styles.detailRow}>
-            <Text style={styles.title}>Check Miqdori (RUB):</Text>
+            <Text style={styles.title}>Сумма чека (руб.):</Text>
             <Text style={styles.desc}>
               {paymentDetail?.transaction?.qrAmount
                 ? `${paymentDetail?.transaction?.qrAmount} RUB`
@@ -102,7 +102,7 @@ const TransactionDetail = () => {
             </Text>
           </View>
           <View style={styles.detailRow}>
-            <Text style={styles.title}>Check Miqdori (UZS):</Text>
+            <Text style={styles.title}>Сумма чека (сум):</Text>
             <Text style={styles.desc}>
               {paymentDetail?.transaction?.chequeAmount
                 ? `${paymentDetail?.transaction?.chequeAmount} UZS`
@@ -110,7 +110,7 @@ const TransactionDetail = () => {
             </Text>
           </View>
           <View style={styles.detailRow}>
-            <Text style={styles.title}>Sana:</Text>
+            <Text style={styles.title}>Дата:</Text>
             <Text style={styles.desc}>
               {paymentDetail?.transaction?.cheque_created_at
                 ? paymentDetail?.transaction?.cheque_created_at.substring(0, 16)
@@ -121,20 +121,20 @@ const TransactionDetail = () => {
           <View style={styles.qrContainer}>
             <View style={{ paddingVertical: 10 }}>
               <Text style={styles.qrTextTop}>
-                {`QR amount: ${paymentDetail?.transaction?.qrAmount} RUB`}
+                {`QR-сумма: ${paymentDetail?.transaction?.qrAmount} RUB`}
               </Text>
             </View>
             {/* Wrap QRCode with ErrorBoundary */}
             <ErrorBoundary>
               <RenderQRCode url={paymentDetail?.transaction?.url}/> 
             </ErrorBoundary>
-            <Text style={styles.qrText}>Scan this QR code to proceed</Text>
+            <Text style={styles.qrText}>Чтобы продолжить, отсканируйте этот QR-код.</Text>
           </View>
 
           <Pressable onPress={openModal}>
             <View style={styles.cancelPayment}>
               <Text style={styles.cancelPaymentText}>
-                To'lovni bekor qilish
+              Отмена платежа
               </Text>
             </View>
           </Pressable>
@@ -150,7 +150,7 @@ const TransactionDetail = () => {
         >
           <View style={styles.modalContent}>
             <Text style={styles.modalText}>
-              Haqiqatan ham siz bu to'lovni bekor qilasizmi?
+            Вы действительно собираетесь отменить этот платеж?
             </Text>
           </View>
         </CenteredModal>

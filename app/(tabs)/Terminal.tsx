@@ -28,11 +28,6 @@ interface Terminal {
   phones: string[];
 }
 
-interface TerminalNewUser {
-  phone: string;
-  password: string;
-}
-
 const Terminal: React.FC = () => {
   const [isModalVisible, setModalVisible] = useState<boolean>(false);
 
@@ -80,7 +75,7 @@ const Terminal: React.FC = () => {
 
   useEffect(() => {
     if (editTerminal?.response) {
-      alert("Terminal muvafaqqiyatli tahrirlandi!");
+      alert("Терминал успешно отредактирован!");
       setModalVisible(false);
       resetFormData();
       fetchTerminalList()
@@ -99,7 +94,7 @@ const Terminal: React.FC = () => {
   const validateForm = () => {
     const { ism, hisob, filialKod, inn } = formData;
     if (!ism || !hisob || !filialKod || !inn) {
-      setErrorMessage("Iltimos, barcha majburiy maydonlarni to'ldiring.");
+      setErrorMessage("Пожалуйста, заполните все обязательные поля.");
       return false;
     }
     setErrorMessage(null);
@@ -164,9 +159,9 @@ const Terminal: React.FC = () => {
         <View>
           <View style={styles.header}>
             <Text style={styles.headerText}>
-              Terminals({terminalList?.totalElements})
+            Терминалы({terminalList?.totalElements})
             </Text>
-            <Text style={styles.headerText}>Current({page + 1})</Text>
+            <Text style={styles.headerText}>Текущий({page + 1})</Text>
           </View>
           {terminalList?.object?.length > 0 ? (
             terminalList?.object?.map((terminal: Terminal, index: number) => (
@@ -181,38 +176,38 @@ const Terminal: React.FC = () => {
               >
                 <Text style={styles.cardTitle}>{terminal.account || "-"}</Text>
                 <View style={styles.row}>
-                  <Text style={styles.boldText}>Phone:</Text>
+                  <Text style={styles.boldText}>Имя:</Text>
                   <Text style={styles.cardDetail}>{terminal.name || "-"}</Text>
                 </View>
                 <View style={styles.row}>
-                  <Text style={styles.boldText}>Account:</Text>
+                  <Text style={styles.boldText}>Счет:</Text>
                   <Text style={styles.cardDetail}>
                     {" "}
                     {terminal.account || "-"}
                   </Text>
                 </View>
                 <View style={styles.row}>
-                  <Text style={styles.boldText}>Filial Code:</Text>
+                  <Text style={styles.boldText}>Партнерский код:</Text>
                   <Text style={styles.cardDetail}>
                     {" "}
                     {terminal.filial_code || "-"}
                   </Text>
                 </View>
                 <View style={styles.row}>
-                  <Text style={styles.boldText}>Phone:</Text>
+                  <Text style={styles.boldText}>Телефон:</Text>
                   <Text style={styles.cardDetail}>
                     {" "}
                     {terminal.phones[0] || "-"}
                   </Text>
                 </View>
                 <View style={styles.row}>
-                  <Text style={styles.boldText}>Inn:</Text>
+                  <Text style={styles.boldText}>ИНН:</Text>
                   <Text style={styles.cardDetail}>{terminal.inn || "-"}</Text>
                 </View>
               </TouchableOpacity>
             ))
           ) : (
-            <Text style={styles.noDataText}>No user terminals found.</Text>
+            <Text style={styles.noDataText}>Терминал не найден.</Text>
           )}
 
           {terminalList?.object?.length > 0 &&
@@ -229,7 +224,7 @@ const Terminal: React.FC = () => {
                     page === 0 && styles.disabledButton,
                   ]}
                 >
-                  Last
+                  Последний
                 </Text>
               </Pressable>
               <Pressable
@@ -244,14 +239,14 @@ const Terminal: React.FC = () => {
                     page + 1 === terminalList?.totalPage && styles.disabledButton,
                   ]}
                 >
-                  Next
+                  Следующий
                 </Text>
               </Pressable>
             </View>
           }
           <CenteredModal
-            btnRedText="Close"
-            btnWhiteText="Edit"
+            btnRedText="Закрывать"
+            btnWhiteText="Редактировать"
             isFullBtn
             isModal={isModalVisible}
             toggleModal={() => {
@@ -261,15 +256,15 @@ const Terminal: React.FC = () => {
             onConfirm={handleSubmit}
           >
             <ScrollView>
-              <Text style={{fontSize: 20, paddingVertical: 3}}>Terminalni tahrirlash</Text>
+              <Text style={{fontSize: 20, paddingVertical: 3}}>Редактировать терминал</Text>
               {[
-                { key: "ism", label: "Ism" },
-                { key: "hisob", label: "Hisob" },
-                { key: "filialKod", label: "Filial kodi" },
-                { key: "inn", label: "Inn raqami" },
+                { key: "ism", label: "Имя" },
+                { key: "hisob", label: "Счет" },
+                { key: "filialKod", label: "Код филиала" },
+                { key: "inn", label: "Инн" },
                 {
                   key: "terminalSeriyaKodu",
-                  label: "Terminalning seriya kodi (ixtiyory)",
+                  label: "Серийный код терминала (опционально)",
                 }, // Optional
               ].map(({ key, label }) => (
                 <>

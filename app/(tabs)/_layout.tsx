@@ -59,7 +59,7 @@ export default function TabLayout() {
             name="home"
             component={HomeScreen}
             options={{
-              title: "Home",
+              title: "Панель управления",
               tabBarIcon: ({ color, focused }) => (
                 <TabBarIcon
                   name={focused ? "home" : "home-outline"}
@@ -82,7 +82,7 @@ export default function TabLayout() {
           name="PayMent"
           component={PaymentQr}
           options={{
-            title: "Payment",
+            title: "Оплата",
             tabBarIcon: ({ color, focused }) => (
               <AntDesign name="qrcode" size={34} color={color} />
             ),
@@ -105,7 +105,7 @@ export default function TabLayout() {
             name="Terminal"
             component={Terminal}
             options={{
-              title: "Terminal",
+              title: "Терминал",
               tabBarIcon: ({ color, focused }) => (
                 <FontAwesome5 name="calculator" size={24} color={color} />
               ),
@@ -127,7 +127,7 @@ export default function TabLayout() {
             name="Terminal users"
             component={UserTerminal}
             options={{
-              title: "Terminal users",
+              title: "Пользователи терминала",
               tabBarIcon: ({ color, focused }) => (
                 <FontAwesome5 name="users" size={24} color={color} />
               ),

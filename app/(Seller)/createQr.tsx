@@ -50,7 +50,7 @@ const CreateQr = () => {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={{}}>
-        <Text style={styles.label}>Enter Amount</Text>
+        <Text style={styles.label}>Введите сумму</Text>
         <TextInput
           style={styles.amountInput}
           value={amount}
@@ -61,18 +61,18 @@ const CreateQr = () => {
           <View style={styles.qrContainer}>
             <View style={{ paddingVertical: 10 }}>
               <Text style={styles.qrTextTop}>
-                {`QR amount: ${Messageamount} UZS`}
+                {`QR-сумма: ${Messageamount} UZS`}
               </Text>
             </View>
             <ErrorBoundary>
             <RenderQRCode url={qrValue ? qrValue : null}/> 
             </ErrorBoundary>
-            <Text style={styles.qrText}>Scan this QR code to proceed</Text>
+            <Text style={styles.qrText}>Отсканируйте этот QR-код, чтобы продолжить</Text>
           </View>
         ) : null}
       </ScrollView>
       <Text style={styles.note}>
-        Make sure the nominal you write is correct
+      Убедитесь, что номинал, который вы пишете, правильный.
       </Text>
       <TouchableOpacity
         style={styles.sendButton}
@@ -82,7 +82,7 @@ const CreateQr = () => {
           {paymentCreate.loading ? (
             <ActivityIndicator size="small" color="#0000ff" />
           ) : (
-            "Save Money"
+            "Создать платеж"
           )}
         </Text>
       </TouchableOpacity>
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
   },
   qrContainer: {
     alignItems: "center",
-    marginTop: 20,
+    // marginTop: 10,
     paddingVertical: 30,
   },
   qrText: {

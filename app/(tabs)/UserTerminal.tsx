@@ -99,28 +99,28 @@ export default function UserTerminal() {
   
     useEffect(() => {
       if (editTerminal?.response) {
-        alert("Terminal user muvafaqqiyatli qo'shildi!");
+        alert("Пользователь терминала добавлен успешно!");
         globalDataFunc();
         terminalList.globalDataFunc();
       } else if (editTerminal?.error) {
-        alert("Terminal user qo'shishda xatolik yuz berdi");
+        alert("Ошибка добавления пользователя терминала.");
       }
     }, [editTerminal?.response, editTerminal?.error])
 
     useEffect(() => {
       if (terminalDelete?.response) {
-        alert("Terminal user muvafaqqiyatli o'chirildi");
+        alert("Пользователь терминала успешно удален");
         globalDataFunc();
         terminalList.globalDataFunc();
       } else if (terminalDelete?.error) {
-        alert("Terminal user o'chirishda xatolik yuz berdi");
+        alert("Произошла ошибка при удалении пользователя терминала.");
       }
     }, [terminalDelete?.response, terminalDelete?.error])
 
   const validateForm = () => {
     const { terminalId, firstName, lastName, phone, password } = formData;
     if (!terminalId || !firstName || !lastName || !phone || !password) {
-      setErrorMessage("Iltimos, barcha majburiy maydonlarni to'ldiring.");
+      setErrorMessage("Пожалуйста, заполните все обязательные поля.");
       return false;
     }
     setErrorMessage(null);
@@ -182,10 +182,10 @@ export default function UserTerminal() {
         <View>
           <View style={styles.header}>
             <Text style={styles.headerText}>
-              Terminal users (
+            Пользователи терминала (
               {response?.totalElements ? response?.totalElements : 0})
             </Text>
-            <Text style={styles.headerText}>Current ({page + 1})</Text>
+            <Text style={styles.headerText}>Текущий ({page + 1})</Text>
           </View>
           <Pressable
             onPress={() => {
@@ -193,44 +193,44 @@ export default function UserTerminal() {
             }}
           >
             <Text style={[styles.paginationButton]}>
-              Foydalanuvchi yaratish
+            Создать пользователя
             </Text>
           </Pressable>
           {response && response.object.length > 0 ? (
             response.object.map((item: UserTerminal) => (
               <View key={item.id} style={styles.card}>
                 <View style={styles.row}>
-                  <Text style={styles.boldText}>Name:</Text>
+                  <Text style={styles.boldText}>Терминал Имя:</Text>
                   <Text style={styles.cardDetail}>{item.name || "-"}</Text>
                 </View>
                 <View style={styles.row}>
-                  <Text style={styles.boldText}>Phone:</Text>
+                  <Text style={styles.boldText}>Телефон:</Text>
                   <Text style={styles.cardDetail}>{item.phone || "-"}</Text>
                 </View>
                 <View style={styles.row}>
-                  <Text style={styles.boldText}>Terminal:</Text>
+                  <Text style={styles.boldText}>Терминал:</Text>
                   <Text style={styles.cardDetail}>
                     {item.terminalName || "-"}
                   </Text>
                 </View>
                 <View style={styles.row}>
-                  <Text style={styles.boldText}>Last Name:</Text>
+                  <Text style={styles.boldText}>Фамилия:</Text>
                   <Text style={styles.cardDetail}>{item.lastName || "-"}</Text>
                 </View>
                 <View style={styles.row}>
-                  <Text style={styles.boldText}>First Name:</Text>
+                  <Text style={styles.boldText}>Имя:</Text>
                   <Text style={styles.cardDetail}>{item.firstName || "-"}</Text>
                 </View>
                 <View style={styles.row}>
-                  <Text style={styles.boldText}>Email:</Text>
+                  <Text style={styles.boldText}>Электронная почта:</Text>
                   <Text style={styles.cardDetail}>{item.email || "-"}</Text>
                 </View>
                 <View style={styles.row}>
-                  <Text style={styles.boldText}>INN:</Text>
+                  <Text style={styles.boldText}>ИНН:</Text>
                   <Text style={styles.cardDetail}>{item.inn || "-"}</Text>
                 </View>
                 <View style={styles.row}>
-                  <Text style={styles.boldText}>Filial Code:</Text>
+                  <Text style={styles.boldText}>Партнерский код:</Text>
                   <Text style={styles.cardDetail}>
                     {item.filialCode || "-"}
                   </Text>
@@ -260,7 +260,7 @@ export default function UserTerminal() {
               </View>
             ))
           ) : (
-            <Text style={styles.noDataText}>No user terminals found.</Text>
+            <Text style={styles.noDataText}>Пользовательские терминалы не найдены.</Text>
           )}
         </View>
         {response && response.object.length > 0 && (
@@ -277,7 +277,7 @@ export default function UserTerminal() {
                   page === 0 && styles.disabledButton,
                 ]}
               >
-                Last
+                Последний
               </Text>
             </Pressable>
             <Pressable
@@ -292,14 +292,14 @@ export default function UserTerminal() {
                   page + 1 === response.totalPage && styles.disabledButton,
                 ]}
               >
-                Next
+                Следующий
               </Text>
             </Pressable>
           </View>
         )}
         <CenteredModal
-          btnRedText="Close"
-          btnWhiteText="Saqlash"
+          btnRedText="Закрывать"
+          btnWhiteText="Сохранять"
           isFullBtn
           isModal={isModalVisible}
           toggleModal={() => {
@@ -309,10 +309,10 @@ export default function UserTerminal() {
           onConfirm={handleSubmit}
         >
           <ScrollView style={{ width: "100%" }}>
-            <Text style={styles.modalTitle}>Foydalanuvchi qo'shish</Text>
+            <Text style={styles.modalTitle}>Добавить пользователя</Text>
 
             {/* Terminal Selection */}
-            <Text style={styles.label}>Terminal</Text>
+            <Text style={styles.label}>Терминал</Text>
             <View style={styles.pickerContainer}>
               <Picker
                 selectedValue={formData.terminalId}
@@ -321,7 +321,7 @@ export default function UserTerminal() {
                 }
                 style={styles.picker}
               >
-                <Picker.Item label="Select Terminal" value={0} />
+                <Picker.Item label="Выберите терминал" value={0} />
                 {terminalList?.response?.map((terminal: UserTerminal) => (
                   <Picker.Item
                     key={terminal.id}
@@ -333,25 +333,25 @@ export default function UserTerminal() {
             </View>
 
             {/* First Name */}
-            <Text style={styles.label}>First Name</Text>
+            <Text style={styles.label}>Имя</Text>
             <TextInput
-              placeholder="First Name"
+              placeholder="Имя"
               style={styles.input}
               value={formData.firstName}
               onChangeText={(text) => handleInputChange("firstName", text)}
             />
 
             {/* Last Name */}
-            <Text style={styles.label}>Last Name</Text>
+            <Text style={styles.label}>Фамилия</Text>
             <TextInput
-              placeholder="Last Name"
+              placeholder="Фамилия"
               style={styles.input}
               value={formData.lastName}
               onChangeText={(text) => handleInputChange("lastName", text)}
             />
 
             {/* Phone Number */}
-            <Text style={styles.label}>Phone</Text>
+            <Text style={styles.label}>Телефон</Text>
             <View style={styles.phoneContainer}>
               <Text style={styles.phonePrefix}>+998</Text>
               <TextInput
@@ -364,10 +364,10 @@ export default function UserTerminal() {
             </View>
 
             {/* Password */}
-            <Text style={styles.label}>Password</Text>
+            <Text style={styles.label}>Пароль</Text>
             <View style={styles.passwordContainer}>
               <TextInput
-                placeholder="Password"
+                placeholder="Пароль"
                 style={styles.passwordInput}
                 secureTextEntry={!passwordVisible}
                 value={formData.password}
@@ -390,8 +390,8 @@ export default function UserTerminal() {
           </ScrollView>
         </CenteredModal>
         <CenteredModal
-          btnRedText="Yo'q"
-          btnWhiteText="Ha"
+          btnRedText="Нет"
+          btnWhiteText="Да"
           isFullBtn
           isModal={isDeleteModalVisible}
           toggleModal={() => {
@@ -403,7 +403,7 @@ export default function UserTerminal() {
           }}
         >
           <ScrollView style={{ width: "100%" }}>
-            <Text style={styles.modalTitle}>Haqiqatdan ham bu user ni o'chirmoqchimisiz?</Text>
+            <Text style={styles.modalTitle}>Вы уверены, что хотите удалить этого пользователя?</Text>
           </ScrollView>
         </CenteredModal>
       </ScrollView>

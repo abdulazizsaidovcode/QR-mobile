@@ -45,7 +45,7 @@ const Login = () => {
             alert(res.data.error.message);
         })
         .catch((err) => {
-          alert("xatolik yuz berdi");
+          alert("произошла ошибка");
         });
     }
   };
@@ -93,7 +93,7 @@ const Login = () => {
 
   function loginuser() {
     if (isPhoneNumberComplete) {
-      console.log("ishlab ketdi");
+      // console.log("ishlab ketdi");
       loginUser();
     }
   }
@@ -127,7 +127,7 @@ const Login = () => {
             <View style={{ width: "69%" }}>
               <TextInput
                 style={styles.phoneInput}
-                placeholder="Phone Number"
+                placeholder="Номер телефона"
                 value={phoneNumber}
                 keyboardType="numeric"
                 onChangeText={formatPhoneNumber}
@@ -143,20 +143,20 @@ const Login = () => {
               checkedColor="#000" // Checkbox ranglari
               containerStyle={styles.checkboxContainer}
             />
-            <Text style={styles.text}>
-              Tizimga kirish orqali siz
+            <View>
+                <Text style={styles.text}>Авторизуясь, вы соглашаетесь с </Text>
               <TouchableOpacity
               style={{ display: "flex", alignItems: "center"}}
                 onPress={() => navigation.navigate("(Seller)/(shartlar)/PrivacyTermsPage")}
               >
                 <Text style={styles.link}>
-                  Foydalanish shartlari, Maxfiylik siyosatiga
+                 Условиями использования и Политикой конфиденциальности.
                 </Text>
-              </TouchableOpacity>{" "}
+              </TouchableOpacity>
               <Text>
-                rozilik bildirasiz
+                
               </Text>
-            </Text>
+            </View>
           </View>
 
         </View>
@@ -267,8 +267,8 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     fontSize: 14,
     color: '#000', // textColorDetails
-    display: "flex",
-
+    // display: "flex",
+    // flexDirection: "column",
   },
   link: {
     color: '#007AFF', // textColorBrand

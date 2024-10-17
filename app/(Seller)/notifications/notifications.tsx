@@ -116,7 +116,7 @@ const Notifications = () => {
         await setSelectedIds(ids);
         await isReadNotification.globalDataFunc();
       } else {
-        alert("Sizda bildirishnoma yo'q.");
+        alert("У вас нет уведомлений.");
       }
     }
   };
@@ -129,20 +129,20 @@ const Notifications = () => {
         await setSelectedIds(ids);
         await deleteNotification.globalDataFunc();
       } else {
-        alert("Sizda bildirishnoma yo'q.");
+        alert("У вас нет уведомлений.");
       }
     }
   };
 
   return (
     <View style={styles.container}>
-      <NavigationMenu name="Notification" />
+      <NavigationMenu name="Уведомление" />
       <View style={styles.header}>
         <Text style={styles.headerText}>
-          Notifications for {role === "ROLE_SELLER" ? "Sellers" : "Terminals"}(
+        Уведомления для {role === "ROLE_SELLER" ? "Продавцы" : "Терминалы"}(
           {response?.totalElements ? response?.totalElements : 0})
         </Text>
-        <Text style={styles.headerText}>Current({page + 1})</Text>
+        <Text style={styles.headerText}>Текущий({page + 1})</Text>
       </View>
       <ScrollView style={styles.CarsContainer}>
         {loading ? (
@@ -182,7 +182,7 @@ const Notifications = () => {
             )
           )
         ) : (
-          <Text style={styles.noDataText}>No user terminals found.</Text>
+          <Text style={styles.noDataText}>Уведомления не найдены.</Text>
         )}
         {sortedNotifications && (
           <View style={styles.paginationContainer}>
@@ -198,7 +198,7 @@ const Notifications = () => {
                   page === 0 && styles.disabledButton,
                 ]}
               >
-                Last
+                Последний
               </Text>
             </Pressable>
             <Pressable
@@ -213,7 +213,7 @@ const Notifications = () => {
                   page + 1 === response?.totalPage && styles.disabledButton,
                 ]}
               >
-                Next
+                Следующий
               </Text>
             </Pressable>
           </View>
@@ -227,7 +227,7 @@ const Notifications = () => {
           {isReadNotification.loading ? (
             <ActivityIndicator size="small" color="#fff" />
           ) : (
-            <Text style={styles.buttonText}>Mark all as read</Text>
+            <Text style={styles.buttonText}>Отметить все как прочитанное</Text>
           )}
         </TouchableOpacity>
         <TouchableOpacity
@@ -237,7 +237,7 @@ const Notifications = () => {
           {deleteNotification.loading ? (
             <ActivityIndicator size="small" color="#fff" />
           ) : (
-            <Text style={styles.buttonText}>Delete All</Text>
+            <Text style={styles.buttonText}>Удалить все</Text>
           )}
         </TouchableOpacity>
       </View>
@@ -252,7 +252,7 @@ const Notifications = () => {
       >
         <View>
           <Text style={{ fontSize: 20 }}>
-            Are you sure you want to delete all notifications?
+          Вы уверены, что хотите удалить все уведомления?
           </Text>
         </View>
       </CenteredModal>
@@ -352,6 +352,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 18,
     fontWeight: "bold",
+    width: 150
   },
   paginationContainer: {
     flexDirection: "row",
