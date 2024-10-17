@@ -68,7 +68,7 @@ const TransactionDetail = () => {
   };
 
   return (
-    <View style={styles.outerContainer}>
+    <SafeAreaView style={styles.outerContainer}>
       <View style={styles.navigationContainer}>
         <NavigationMenu name="Проверка оплаты" />
       </View>
@@ -155,7 +155,7 @@ const TransactionDetail = () => {
           </View>
         </CenteredModal>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 
