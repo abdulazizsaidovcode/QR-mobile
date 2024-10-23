@@ -295,6 +295,8 @@ const Profile: React.FC = () => {
                 style={styles.input}
                 placeholder="ИНН"
                 value={formData.inn}
+                keyboardType="numeric"
+                maxLength={14}    
                 onChangeText={(text) => handleInputChange("inn", text)}
               />
               {errors.inn && <Text style={styles.errorText}>{errors.inn}</Text>}

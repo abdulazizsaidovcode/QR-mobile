@@ -1,4 +1,3 @@
-import Ionicons from "@expo/vector-icons/Ionicons";
 import {
   StyleSheet,
   Image,
@@ -49,6 +48,10 @@ export default function HomeScreen() {
   useFocusEffect(
     useCallback(() => {
       const onBackPress = () => {
+        if (Platform.OS === 'ios') {
+          return true; // iOS uchun orqaga qaytishni bloklash
+        }
+        
         if (backPressCount === 0) {
           setBackPressCount(backPressCount + 1);
           // Toast.show('Orqaga qaytish uchun yana bir marta bosing', Toast.SHORT);
@@ -58,14 +61,22 @@ export default function HomeScreen() {
           return true; // Orqaga qaytishni bloklaydi
         } else {
           BackHandler.exitApp(); // Ilovadan chiqish
-          return false;
+          return true;
         }
       };
 
       BackHandler.addEventListener("hardwareBackPress", onBackPress);
 
-      return () =>
+      // iOS uchun qo'shimcha
+      if (Platform.OS === 'ios') {
+        // Bu yerda iOS uchun orqaga qaytishni bloklash uchun qo'shimcha logika yozilishi mumkin
+        // Masalan, navigation event listener qo'shish orqali
+      }
+
+      return () => {
         BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+        // iOS uchun qo'shilgan event listener'larni ham olib tashlash kerak
+      };
     }, [backPressCount])
   );
 

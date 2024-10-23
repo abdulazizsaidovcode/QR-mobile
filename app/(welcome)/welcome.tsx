@@ -63,7 +63,7 @@ const Welcome: React.FC = () => {
           source={require("../../assets/images/icon.png")}
         />
       </View>
-      <Text style={styles.title}>СБП QR</Text>
+      <Text style={styles.title}>QR Pay</Text>
       <Text
         style={{
           fontSize: 34,
@@ -77,7 +77,8 @@ const Welcome: React.FC = () => {
       {/* <Text style={styles.selectLanguage}>Buu app orqali o'zngizga yoqan ...</Text> */}
       <View style={styles.button}>
         <Buttons
-          title="Входить"
+          title="Login"
+          // title="Войти"
           onPress={() => {
             navigation.navigate("(auth)/login");
             changeLanguage("ru");

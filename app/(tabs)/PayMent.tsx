@@ -5,8 +5,6 @@ import { Platform } from 'react-native';
 
 export default function PaymentQr() {
 
- 
-
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView style={styles.container}>
