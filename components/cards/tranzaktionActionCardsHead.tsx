@@ -5,7 +5,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-nati
 interface TransactionActionCardProps {
     title: string;
     icon: React.ReactNode;
-    desc: number
+    desc: number | string
     onPress: () => void;
 }
 const { width, height } = Dimensions.get('window')
@@ -17,7 +17,7 @@ const TransactionActionHeadCard = ({ title, desc, icon, onPress }: TransactionAc
             {icon}
             <View style={{ alignItems: 'center', marginTop: 6 }}>
                 <Text style={styles.title}>{title}</Text>
-                <Text style={styles.desc}>{desc && desc.toFixed(2)} UZS</Text>
+                <Text style={styles.desc}>{desc}</Text>
             </View>
         </TouchableOpacity>
     );

@@ -21,7 +21,7 @@ const CreateQr = () => {
   const { phoneNumber } = useAuthStore();
   const [Messageamount, setMessageAmount] = useState("");
   const [alertShown, setAlertShown] = useState(false);
-  const [qrValue, setQrValue] = useState<any>(""); // State to hold the QR code value
+  const [qrValue, setQrValue] = useState<any>("238cc3c 3 32h3iuhchchew "); // State to hold the QR code value
 
   const paymentCreate = useGlobalRequest(
     createPayment,
@@ -51,9 +51,9 @@ const CreateQr = () => {
 
   return (
     <View style={styles.container}>
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, height: 40 }}>
         <ScrollView
-          style={{ flex: 1, paddingBottom: Platform.OS === "ios" ? 100 : 0 }}
+          style={{ flex: 1}}
         >
           <Text style={styles.label}>Введите сумму</Text>
           <TextInput
@@ -79,9 +79,6 @@ const CreateQr = () => {
           ) : null}
         </ScrollView>
       </View>
-      <Text style={styles.note}>
-        Убедитесь, что номинал, который вы пишете, правильный.
-      </Text>
       <TouchableOpacity
         style={styles.sendButton}
         onPress={() => {
@@ -114,7 +111,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   label: {
-    marginTop: 20,
     fontSize: 16,
   },
   amountInput: {

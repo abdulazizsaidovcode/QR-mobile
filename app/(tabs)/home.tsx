@@ -48,10 +48,10 @@ export default function HomeScreen() {
   useFocusEffect(
     useCallback(() => {
       const onBackPress = () => {
-        if (Platform.OS === 'ios') {
+        if (Platform.OS === "ios") {
           return true; // iOS uchun orqaga qaytishni bloklash
         }
-        
+
         if (backPressCount === 0) {
           setBackPressCount(backPressCount + 1);
           // Toast.show('Orqaga qaytish uchun yana bir marta bosing', Toast.SHORT);
@@ -68,7 +68,7 @@ export default function HomeScreen() {
       BackHandler.addEventListener("hardwareBackPress", onBackPress);
 
       // iOS uchun qo'shimcha
-      if (Platform.OS === 'ios') {
+      if (Platform.OS === "ios") {
         // Bu yerda iOS uchun orqaga qaytishni bloklash uchun qo'shimcha logika yozilishi mumkin
         // Masalan, navigation event listener qo'shish orqali
       }
@@ -106,7 +106,7 @@ export default function HomeScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      transactionGet.globalDataFunc()
+      transactionGet.globalDataFunc();
     }, [page])
   );
 
@@ -136,9 +136,7 @@ export default function HomeScreen() {
           <View style={{ flexDirection: "row", gap: 5 }}>
             <TransactionActionCard
               title="Терминалы"
-              desc={
-                response && response.terminalCount && response.terminalCount
-              }
+              desc={response && response.terminalCount}
               icon={
                 <FontAwesome5
                   name="calculator"
@@ -149,12 +147,40 @@ export default function HomeScreen() {
               onPress={() => console.log("Send Money Pressed")}
             />
             <TransactionActionCard
-              title="Отмененные транзакции"
+              title="Завершенные транзакции"
               desc={
                 response &&
-                response.transactionCountCancel &&
-                response.paymentTotalBalance
+                response?.completedCount &&
+                response?.completedCount
               }
+              icon={
+                <FontAwesome6
+                  name="money-bill-transfer"
+                  size={26}
+                  color={Colors.light.primary}
+                />
+              } // Another icon
+              onPress={() => console.log("Receive Money Pressed")}
+            />
+          </View>
+        )}
+        {role === "ROLE_SELLER" && (
+          <View style={{ flexDirection: "row", gap: 5 }}>
+            <TransactionActionCard
+              title="Отмененные транзакции"
+              desc={response && response.cancelCount}
+              icon={
+                <MaterialIcons
+                  name="money-off"
+                  size={36}
+                  color={Colors.light.primary}
+                />
+              } // Another icon
+              onPress={() => console.log("Receive Money Pressed")}
+            />
+            <TransactionActionCard
+              title="Ожидающие транзакции"
+              desc={response && response?.waitCount}
               icon={
                 <MaterialIcons
                   name="money-off"
@@ -168,29 +194,17 @@ export default function HomeScreen() {
         )}
         {role === "ROLE_SELLER" && (
           <View style={{ flexDirection: "row", gap: 5, flexWrap: "wrap" }}>
-            <TransactionActionCard
+            <TransactionActionHeadCard
               title="Количество пользователей терминала"
-              desc={response && response.userCount && response.userCount}
+              desc={
+                `${response && response?.userCount
+                  ? response?.userCount
+                  : 0}`
+              }
               icon={
                 <FontAwesome5
                   name="users"
-                  size={26}
-                  color={Colors.light.primary}
-                />
-              } // Pass the icon as a prop
-              onPress={() => console.log("Send Money Pressed")}
-            />
-            <TransactionActionCard
-              title="Транзакции"
-              desc={
-                response &&
-                response.transactionCountWaitOrCompleted &&
-                response.transactionCountWaitOrCompleted
-              }
-              icon={
-                <FontAwesome6
-                  name="money-bill-transfer"
-                  size={26}
+                  size={36}
                   color={Colors.light.primary}
                 />
               } // Another icon
@@ -199,9 +213,39 @@ export default function HomeScreen() {
             <TransactionActionHeadCard
               title="Общая сумма платежа"
               desc={
-                response &&
-                response.paymentTotalBalance ?
-                response.paymentTotalBalance : 0
+                `${response && response?.balanceCompleted
+                  ? response?.balanceCompleted.toFixed(2)
+                  : 0} UZS`
+              }
+              icon={
+                <FontAwesome5
+                  name="money-bill"
+                  size={36}
+                  color={Colors.light.primary}
+                />
+              } // Another icon
+              onPress={() => console.log("Receive Money Pressed")}
+            />
+            <TransactionActionHeadCard
+              title="Ожидающие транзакции"
+              desc={
+                `${response && response?.balanceWait ? response?.balanceWait.toFixed(2) : 0} UZS`
+              }
+              icon={
+                <FontAwesome5
+                  name="money-bill"
+                  size={36}
+                  color={Colors.light.primary}
+                />
+              } // Another icon
+              onPress={() => console.log("Receive Money Pressed")}
+            />
+            <TransactionActionHeadCard
+              title="Завершенные транзакции"
+              desc={
+                `${response && response?.balanceCancel
+                  ? response?.balanceCancel.toFixed(2)
+                  : 0} UZS`
               }
               icon={
                 <FontAwesome5
@@ -216,60 +260,56 @@ export default function HomeScreen() {
         )}
         <View style={styles.header}>
           <Text style={styles.headerText}>
-          Платежи({transactionGet?.response?.totalElements})
+            Платежи({transactionGet?.response?.totalElements})
           </Text>
-          <Text style={styles.headerText}>
-          Текущий({page + 1})
-          </Text>
+          <Text style={styles.headerText}>Текущий({page + 1})</Text>
         </View>
 
-        {transactionGet?.response?.object.length > 0 ?
-        <FlatList
-
-          data={transactionGet?.response?.object}
-          // keyExtractor={(item) => item.id} // Use a unique key for each item
-          renderItem={({ item }) => <TransactionCard transaction={item} />}
-        />
-        :  <Text style={styles.noDataText}>Платеж не найден.</Text>
-        }
-        {
-          transactionGet?.response?.object.length > 0 && 
-
-        <View style={styles.paginationContainer}>
-          <Pressable
-            onPress={() => {
-              if (page > 0) setPage(page - 1);
-            }}
-            disabled={page === 0}
-          >
-            <Text
-              style={[
-                styles.paginationButton,
-                page === 0 && styles.disabledButton,
-              ]}
+        {transactionGet?.response?.object.length > 0 ? (
+          <FlatList
+            data={transactionGet?.response?.object}
+            // keyExtractor={(item) => item.id} // Use a unique key for each item
+            renderItem={({ item }) => <TransactionCard transaction={item} />}
+          />
+        ) : (
+          <Text style={styles.noDataText}>Платеж не найден.</Text>
+        )}
+        {transactionGet?.response?.object.length > 0 && (
+          <View style={styles.paginationContainer}>
+            <Pressable
+              onPress={() => {
+                if (page > 0) setPage(page - 1);
+              }}
+              disabled={page === 0}
             >
-              Последний
-            </Text>
-          </Pressable>
-          <Pressable
-            onPress={() => {
-              if (page + 1 < transactionGet?.response?.totalPage)
-                setPage(page + 1);
-            }}
-            disabled={page === transactionGet?.response?.totalPage}
-          >
-            <Text
-              style={[
-                styles.paginationButton,
-                page === transactionGet?.response?.totalPage &&
-                  styles.disabledButton,
-              ]}
+              <Text
+                style={[
+                  styles.paginationButton,
+                  page === 0 && styles.disabledButton,
+                ]}
+              >
+                Последний
+              </Text>
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                if (page + 1 < transactionGet?.response?.totalPage)
+                  setPage(page + 1);
+              }}
+              disabled={page === transactionGet?.response?.totalPage}
             >
-              Следующий
-            </Text>
-          </Pressable>
-        </View>
-        }
+              <Text
+                style={[
+                  styles.paginationButton,
+                  page === transactionGet?.response?.totalPage &&
+                    styles.disabledButton,
+                ]}
+              >
+                Следующий
+              </Text>
+            </Pressable>
+          </View>
+        )}
       </View>
     </ParallaxScrollView>
   );
