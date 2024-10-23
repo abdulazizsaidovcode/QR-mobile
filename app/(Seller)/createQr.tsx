@@ -14,6 +14,7 @@ import { createPayment } from "@/helpers/url";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { RenderQRCode } from "@/components/QRgenerate";
 import { useAuthStore } from "@/helpers/stores/auth/auth-store";
+import { Platform } from "react-native";
 
 const CreateQr = () => {
   const [amount, setAmount] = useState("");
@@ -50,30 +51,34 @@ const CreateQr = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={{}}>
-        <Text style={styles.label}>Введите сумму</Text>
-        <TextInput
-          style={styles.amountInput}
-          value={amount}
-          onChangeText={(text) => setAmount(text.replace(/[^0-9]/g, ""))} // Allow only numbers
-          keyboardType="numeric"
-        />
-        {qrValue ? ( // Render QR code if qrValue is set
-          <View style={styles.qrContainer}>
-            <View style={{ paddingVertical: 10 }}>
-              <Text style={styles.qrTextTop}>
-                {`QR-сумма: ${Messageamount} UZS`}
+      <View style={{ flex: 1 }}>
+        <ScrollView
+          style={{ flex: 1, paddingBottom: Platform.OS === "ios" ? 100 : 0 }}
+        >
+          <Text style={styles.label}>Введите сумму</Text>
+          <TextInput
+            style={styles.amountInput}
+            value={amount}
+            onChangeText={(text) => setAmount(text.replace(/[^0-9]/g, ""))} // Allow only numbers
+            keyboardType="numeric"
+          />
+          {qrValue ? ( // Render QR code if qrValue is set
+            <View style={styles.qrContainer}>
+              <View style={{ paddingVertical: 10 }}>
+                <Text style={styles.qrTextTop}>
+                  {`QR-сумма: ${Messageamount} UZS`}
+                </Text>
+              </View>
+              <ErrorBoundary>
+                <RenderQRCode url={qrValue ? qrValue : null} />
+              </ErrorBoundary>
+              <Text style={styles.qrText}>
+                Отсканируйте этот QR-код, чтобы продолжить
               </Text>
             </View>
-            <ErrorBoundary>
-              <RenderQRCode url={qrValue ? qrValue : null} />
-            </ErrorBoundary>
-            <Text style={styles.qrText}>
-              Отсканируйте этот QR-код, чтобы продолжить
-            </Text>
-          </View>
-        ) : null}
-      </ScrollView>
+          ) : null}
+        </ScrollView>
+      </View>
       <Text style={styles.note}>
         Убедитесь, что номинал, который вы пишете, правильный.
       </Text>
@@ -83,7 +88,9 @@ const CreateQr = () => {
           if (phoneNumber !== "77 308 88 88") {
             paymentCreate.globalDataFunc();
           } else {
-            setQrValue("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIrOTk4OTkzMzkzMzAwIiwiaWF0IjoxNzI5NTE5MDkwLCJleHAiOjE4MTU5MTkwOTB9.KPFsBeSXDMTBKi1f157OYOAIyY_MiZEVXtJLh3rKMVIIv4D5TsPqSvRVAP9cgcERjRSQTPiEUz1G2fQs4_jq2g");
+            setQrValue(
+              "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIrOTk4OTkzMzkzMzAwIiwiaWF0IjoxNzI5NTE5MDkwLCJleHAiOjE4MTU5MTkwOTB9.KPFsBeSXDMTBKi1f157OYOAIyY_MiZEVXtJLh3rKMVIIv4D5TsPqSvRVAP9cgcERjRSQTPiEUz1G2fQs4_jq2g"
+            );
             setMessageAmount(amount);
           }
         }}
@@ -136,6 +143,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "gray",
     marginTop: 10,
+    paddingBottom: 10,
   },
   qrContainer: {
     alignItems: "center",

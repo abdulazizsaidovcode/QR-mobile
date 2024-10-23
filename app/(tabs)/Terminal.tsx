@@ -246,7 +246,7 @@ const Terminal: React.FC = () => {
           }
           <CenteredModal
             btnRedText="Закрывать"
-            btnWhiteText="Редактировать"
+            btnWhiteText={editTerminal.loading ? <ActivityIndicator size="small" color={Colors.light.primary} /> : "Редактировать"}
             isFullBtn
             isModal={isModalVisible}
             toggleModal={() => {

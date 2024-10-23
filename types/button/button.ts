@@ -1,5 +1,5 @@
 export interface IButton {
-    title: string;
+    title: string | JSX.Element;
     backgroundColor?: string;
     textColor?: string;
     textSize?: number;

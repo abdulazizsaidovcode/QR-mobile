@@ -299,7 +299,7 @@ export default function UserTerminal() {
         )}
         <CenteredModal
           btnRedText="Закрывать"
-          btnWhiteText="Сохранять"
+          btnWhiteText={editTerminal?.loading ? <ActivityIndicator size="small" color={Colors.light.primary} /> : "Сохранять"}
           isFullBtn
           isModal={isModalVisible}
           toggleModal={() => {
