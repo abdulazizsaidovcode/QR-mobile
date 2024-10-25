@@ -56,6 +56,7 @@ const ChangeLang = () => {
         <Text style={styles.title}>RU </Text>
       </View>
     </View>
+    
   );
 };
 
