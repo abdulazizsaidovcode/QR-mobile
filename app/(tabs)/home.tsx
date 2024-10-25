@@ -114,7 +114,7 @@ export default function HomeScreen() {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.loader}>
-          <ActivityIndicator size="large" color="#0000ff" />
+          <ActivityIndicator size="large" color={Colors.light.primary} />
         </View>
       </SafeAreaView>
     );

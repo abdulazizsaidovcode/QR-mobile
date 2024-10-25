@@ -346,7 +346,7 @@ const Profile: React.FC = () => {
       {/* Loading Indicator */}
       {updateProfile.loading && (
         <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="large" color="#0000ff" />
+          <ActivityIndicator size="large" color={Colors.light.primary} />
         </View>
       )}
     </View>

@@ -94,7 +94,7 @@ const CreateQr = () => {
       >
         <Text style={styles.sendButtonText}>
           {paymentCreate.loading ? (
-            <ActivityIndicator size="small" color="#0000ff" />
+            <ActivityIndicator size="small" color="#fff" />
           ) : (
             "Создать платеж"
           )}

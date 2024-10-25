@@ -20,6 +20,7 @@ import Welcome from './(welcome)/welcome';
 import Profile from './(Seller)/(profile)/profile';
 import CheckCode from './(auth)/checkCode';
 import PrivacyTermsPage from './(Seller)/(shartlar)/PrivacyTermsPage';
+import InternetCheckModal from './checkInternet';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -45,6 +46,7 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <QueryClientProvider client={queryClient}>
+      <InternetCheckModal />
         <Stack.Navigator initialRouteName="index" screenOptions={{ animation: 'none' }}>
           <Stack.Screen
             name="index"

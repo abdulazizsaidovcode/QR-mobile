@@ -146,7 +146,7 @@ const Notifications = () => {
       </View>
       <ScrollView style={styles.CarsContainer}>
         {loading ? (
-          <ActivityIndicator size="large" color="#0000ff" />
+          <ActivityIndicator size="large" color={Colors.light.primary} />
         ) : sortedNotifications && sortedNotifications.length > 0 ? (
           sortedNotifications.map(
             (item: {

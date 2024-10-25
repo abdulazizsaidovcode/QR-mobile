@@ -109,14 +109,14 @@ const Login = () => {
       <SafeAreaView style={styles.container}>
         {/* <NavigationMenu name='' /> */}
         <View style={{ marginTop: 50 }}>
-          <Text style={styles.title}>Enter your phone number</Text>
-          {/* <Text style={styles.title}>Ваш номер телефона</Text> */}
-          <Text style={styles.des}>
-            We will send you an SMS with a confirmation code.
-          </Text>
+          {/* <Text style={styles.title}>Enter your phone number</Text> */}
+          <Text style={styles.title}>Ваш номер телефона</Text>
           {/* <Text style={styles.des}>
-            Мы отправим вам SMS с кодом подтверждения.
+            We will send you an SMS with a confirmation code.
           </Text> */}
+          <Text style={styles.des}>
+            Мы отправим вам SMS с кодом подтверждения.
+          </Text>
           <View
             style={{
               flexDirection: "row",
@@ -148,18 +148,18 @@ const Login = () => {
               containerStyle={styles.checkboxContainer}
             />
             <View>
-                <Text style={styles.text}>By logging in, you agree to our</Text>
-                {/* <Text style={styles.text}>Авторизуясь, вы соглашаетесь с </Text> */}
+                {/* <Text style={styles.text}>By logging in, you agree to our</Text> */}
+                <Text style={styles.text}>Авторизуясь, вы соглашаетесь с </Text>
               <TouchableOpacity
               style={{ display: "flex", alignItems: "center"}}
                 onPress={() => navigation.navigate("(Seller)/(shartlar)/PrivacyTermsPage")}
               >
-                <Text style={styles.link}>
-                 Terms of use and Privacy Policy.
-                </Text>
                 {/* <Text style={styles.link}>
-                 Условиями использования и Политикой конфиденциальности.
+                 Terms of use and Privacy Policy.
                 </Text> */}
+                <Text style={styles.link}>
+                 Условиями использования и Политикой конфиденциальности.
+                </Text>
               </TouchableOpacity>
               <Text>
                 

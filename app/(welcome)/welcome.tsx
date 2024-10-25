@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { NavigationProp } from "@react-navigation/native";
 import { RootStackParamList } from "@/types/root/root";
-import { FontAwesome } from "@expo/vector-icons";
+// import { FontAwesome } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
 import { useAuthStore } from "@/helpers/stores/auth/auth-store";
 import Buttons from "@/components/buttons/button";
@@ -24,11 +24,11 @@ const Welcome: React.FC = () => {
   const { setIsLoginModal } = useAuthStore();
   const [backPressCount, setBackPressCount] = useState(0);
 
-  const changeLanguage = async (lng: string) => {
-    // i18n.changeLanguage(lng);
-    // await SecureStore.setItemAsync("selectedLanguage", lng);
-    // setLanguage(lng);
-  };
+  // const changeLanguage = async (lng: string) => {
+  //    i18n.changeLanguage(lng);
+  //    await SecureStore.setItemAsync("selectedLanguage", lng);
+  //    setLanguage(lng);
+  // };
 
   useFocusEffect(
     useCallback(() => {
@@ -77,11 +77,11 @@ const Welcome: React.FC = () => {
       {/* <Text style={styles.selectLanguage}>Buu app orqali o'zngizga yoqan ...</Text> */}
       <View style={styles.button}>
         <Buttons
-          title="Login"
-          // title="Войти"
+          // title="Login"
+          title="Войти"
           onPress={() => {
             navigation.navigate("(auth)/login");
-            changeLanguage("ru");
+            // changeLanguage("ru");
             setIsLoginModal(true);
           }}
         />

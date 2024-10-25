@@ -127,17 +127,17 @@ const CheckCode = () => {
           <NavigationMenu name="" />
         </View>
         <View style={{ marginTop: 50 }}>
-          <Text style={styles.title}>Confirmation number</Text>
-          {/* <Text style={styles.title}>Подтверждение номера</Text> */}
+          {/* <Text style={styles.title}>Confirmation number</Text> */}
+          <Text style={styles.title}>Подтверждение номера</Text>
           <Text style={[styles.title, { fontWeight: "500", marginTop: 30 }]}>
             +998 {phoneNumber}
           </Text>
-          <Text style={styles.des}>
-            We will send you an SMS with a confirmation code.
-          </Text>
           {/* <Text style={styles.des}>
-            Мы отправим вам SMS с кодом подтверждения.
+            We will send you an SMS with a confirmation code.
           </Text> */}
+          <Text style={styles.des}>
+            Мы отправим вам SMS с кодом подтверждения.
+          </Text>
           <View
             style={{
               flexDirection: "row",
@@ -170,12 +170,12 @@ const CheckCode = () => {
                 { backgroundColor: canResend ? Colors.dark.primary : "#ccc" },
               ]}
             >
-              <Text style={{ color: "white" }}>Resend code again</Text>
-              {/* <Text style={{ color: "white" }}>Отправить код повторно</Text> */}
+              {/* <Text style={{ color: "white" }}>Resend code again</Text> */}
+              <Text style={{ color: "white" }}>Отправить код повторно</Text>
             </TouchableOpacity>
             {!canResend && (
-              <Text style={styles.timerText}>Resend code again {timer} s</Text>
-              // <Text style={styles.timerText}>Отправить повторно {timer} с</Text>
+              // <Text style={styles.timerText}>Resend code again {timer} s</Text>
+              <Text style={styles.timerText}>Отправить повторно {timer} с</Text>
             )}
           </View>
         </View>
