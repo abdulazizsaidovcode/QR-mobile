@@ -28,17 +28,6 @@ const Index = () => {
   const [role, setRole] = useState<string | null>("");
   const [token, setToken] = useState<string | null>("");
   const navigation = useNavigation<SettingsScreenNavigationProp>();
-  const { selectedLang, setSelectedLang, loadSelectedLang } = langStore();
-
-  useEffect(() => {
-    loadSelectedLang()
-    setSelectedLang(`${AsyncStorage.getItem("selectedLang")}`);
-    // siteSecurity()
-  }, []);
-
-  useEffect(() => {
-    i18n.changeLanguage(selectedLang ? selectedLang : "");
-  }, [selectedLang]);
 
   useEffect(() => {
     const getToken = async () => {

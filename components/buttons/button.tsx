@@ -25,7 +25,6 @@ const Buttons: React.FC<IButton> = ({ title, backgroundColor = Colors.dark.prima
 
 const styles = StyleSheet.create({
     button: {
-        width: '100%',
         paddingVertical: 10,
         borderRadius: 10,
         alignItems: 'center',

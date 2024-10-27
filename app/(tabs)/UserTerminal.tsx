@@ -30,8 +30,8 @@ interface UserTerminal {
   name: string;
   address: string;
   phone: string;
-  lastName: string;
-  firstName: string;
+  // lastName: string;
+  managerFio: string;
   email: string;
   terminalName: string | null;
   inn: string | null;
@@ -54,8 +54,7 @@ export default function UserTerminal() {
   const [TerminalId, setTerminalId] = useState<number | null>(null);
   const [formData, setFormData] = useState({
     terminalId: "",
-    firstName: "",
-    lastName: "",
+    managerFio: "",
     phone: "",
     password: "",
   });
@@ -77,9 +76,8 @@ export default function UserTerminal() {
 
   const editTerminal = useGlobalRequest(`${post_terminal}`, "POST", {
     terminalId: formData.terminalId,
-    firstName: formData.firstName,
-    lastName: formData.lastName,
-    phone: `+998${formData.phone}`,
+    managerFio: formData.managerFio,
+    phone: `998${formData.phone}`,
     password: formData.password,
   });
 
@@ -118,8 +116,8 @@ export default function UserTerminal() {
     }, [terminalDelete?.response, terminalDelete?.error])
 
   const validateForm = () => {
-    const { terminalId, firstName, lastName, phone, password } = formData;
-    if (!terminalId || !firstName || !lastName || !phone || !password) {
+    const { terminalId, managerFio, phone, password } = formData;
+    if (!terminalId || !managerFio || !phone || !password) {
       setErrorMessage("Пожалуйста, заполните все обязательные поля.");
       return false;
     }
@@ -130,8 +128,7 @@ export default function UserTerminal() {
   const resetFormData = () => {
     setFormData({
       terminalId: "",
-      firstName: "",
-      lastName: "",
+      managerFio: "",
       phone: "",
       password: "",
     });
@@ -201,40 +198,41 @@ export default function UserTerminal() {
               <View key={item.id} style={styles.card}>
                 <View style={styles.row}>
                   <Text style={styles.boldText}>Терминал Имя:</Text>
-                  <Text style={styles.cardDetail}>{item.name || "-"}</Text>
+                  <Text style={styles.cardDetail}>{item?.terminalName || "-"}</Text>
                 </View>
+                <View style={styles.row}>
+                  <Text style={styles.boldText}>Ф.И.О:</Text>
+                  <Text style={styles.cardDetail}>{item?.managerFio || "-"}</Text>
+                </View> 
                 <View style={styles.row}>
                   <Text style={styles.boldText}>Телефон:</Text>
-                  <Text style={styles.cardDetail}>{item.phone || "-"}</Text>
+                  <Text style={styles.cardDetail}>
+                    {item?.phone
+                      ? `+${item.phone.replace(/(\d{3})(\d{2})(\d{3})(\d{2})(\d{2})/, '$1 $2 $3 $4 $5')}`
+                      : "-"}
+                  </Text>
                 </View>
-                <View style={styles.row}>
+                {/* <View style={styles.row}>
                   <Text style={styles.boldText}>Терминал:</Text>
                   <Text style={styles.cardDetail}>
                     {item.terminalName || "-"}
                   </Text>
-                </View>
-                <View style={styles.row}>
-                  <Text style={styles.boldText}>Фамилия:</Text>
-                  <Text style={styles.cardDetail}>{item.lastName || "-"}</Text>
-                </View>
-                <View style={styles.row}>
-                  <Text style={styles.boldText}>Имя:</Text>
-                  <Text style={styles.cardDetail}>{item.firstName || "-"}</Text>
-                </View>
-                <View style={styles.row}>
+                </View> */}
+               
+                {/* <View style={styles.row}>
                   <Text style={styles.boldText}>Электронная почта:</Text>
-                  <Text style={styles.cardDetail}>{item.email || "-"}</Text>
-                </View>
-                <View style={styles.row}>
+                  <Text style={styles.cardDetail}>{item?.email || "-"}</Text>
+                </View> */}
+                {/* <View style={styles.row}>
                   <Text style={styles.boldText}>ИНН:</Text>
-                  <Text style={styles.cardDetail}>{item.inn || "-"}</Text>
-                </View>
-                <View style={styles.row}>
+                  <Text style={styles.cardDetail}>{item?.inn || "-"}</Text>
+                </View> */}
+                {/* <View style={styles.row}>
                   <Text style={styles.boldText}>Партнерский код:</Text>
                   <Text style={styles.cardDetail}>
                     {item.filialCode || "-"}
                   </Text>
-                </View>
+                </View> */}
                 <View style={styles.separator} />
                 <View
                   style={{
@@ -333,22 +331,22 @@ export default function UserTerminal() {
             </View>
 
             {/* First Name */}
-            <Text style={styles.label}>Имя</Text>
+            <Text style={styles.label}>Ф.И.О</Text>
             <TextInput
-              placeholder="Имя"
+              placeholder="Ф.И.О"
               style={styles.input}
-              value={formData.firstName}
-              onChangeText={(text) => handleInputChange("firstName", text)}
+              value={formData.managerFio}
+              onChangeText={(text) => handleInputChange("managerFio", text)}
             />
 
             {/* Last Name */}
-            <Text style={styles.label}>Фамилия</Text>
+            {/* <Text style={styles.label}>Фамилия</Text>
             <TextInput
               placeholder="Фамилия"
               style={styles.input}
               value={formData.lastName}
               onChangeText={(text) => handleInputChange("lastName", text)}
-            />
+            /> */}
 
             {/* Phone Number */}
             <Text style={styles.label}>Телефон</Text>

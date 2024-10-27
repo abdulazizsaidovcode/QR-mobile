@@ -37,7 +37,10 @@ export interface TransactionCardProps {
         trx_id: any,
         trx_time: string | null,
         updated_at: string | null,
-        url: string | null
+        url: string | null,
+        sellerName: string | null,
+        currency: string | null,
+        amount: number
     }
 }
 
@@ -55,11 +58,11 @@ const TransactionCard = ({ transaction }: TransactionCardProps) => {
       <View style={styles.card}>
         <View style={styles.textContainer}>
           <View>
-            <Text style={styles.title}>{transaction.partner}</Text>
-            <Text style={styles.date}>{transaction.cheque_created_at}</Text>
+            <Text style={styles.title}>{transaction?.sellerName || "-"}</Text>
+            <Text style={styles.date}>{transaction?.cheque_created_at}</Text>
           </View>
-          <Text style={{ color: transaction.chequeAmount <= 0 ? "red" : "green" }}>
-            {Math.abs(transaction.chequeAmount).toFixed(2)} UZS
+          <Text style={{ color: transaction?.amount <= 0 ? "red" : "green" }}>
+            {(transaction?.amount || 0).toLocaleString('uz-UZ', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {transaction?.currency || "UZS"}
           </Text>
         </View>
       </View>
@@ -83,7 +86,7 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     marginLeft: 10, // Space between icon and text
-    flexDirection: "row",
+    flexDirection: "column",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",

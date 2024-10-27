@@ -27,6 +27,7 @@ const Notifications = () => {
   const [url, setUrl] = useState("");
   const [role, setRole] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false); // State for modal visibility
+  const [expandedId, setExpandedId] = useState<number | null>(null);
 
   useEffect(() => {}, []);
   const [selectedIds, setSelectedIds] = useState([]);
@@ -79,17 +80,21 @@ const Notifications = () => {
   useEffect(() => {
     if (isReadNotification.response) {
       globalDataFunc();
+    } else if (isReadNotification.error) {
+      alert(isReadNotification?.error?.message || "Произошла ошибка");
     }
-  }, [isReadNotification.response]);
+  }, [isReadNotification.response, isReadNotification.error]);
 
   useEffect(() => {
     if (deleteNotification.response) {
       globalDataFunc();
-      alert("Bildirishnomalar tozalandi.");
+      alert("Уведомления удалены.");
 
       setModalVisible(false);
+    } else if (deleteNotification.error) {
+      alert(deleteNotification?.error?.message || "Произошла ошибка");
     }
-  }, [deleteNotification.response]);
+  }, [deleteNotification.response, deleteNotification.error]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -139,7 +144,7 @@ const Notifications = () => {
       <NavigationMenu name="Уведомление" />
       <View style={styles.header}>
         <Text style={styles.headerText}>
-        Уведомления для {role === "ROLE_SELLER" ? "Продавцы" : "Терминалы"}(
+          Уведомления для {role === "ROLE_SELLER" ? "Продавцы" : "Терминалы"}(
           {response?.totalElements ? response?.totalElements : 0})
         </Text>
         <Text style={styles.headerText}>Текущий({page + 1})</Text>
@@ -154,30 +159,102 @@ const Notifications = () => {
               title: string;
               createdAt: string;
               isRead: string;
+              sellerName: string;
+              merchant: string;
+              amount: number;
             }) => (
               <View
                 key={item.id}
                 style={item.isRead ? styles.cards : styles.cards21}
               >
-                {item.isRead ? (
-                  <MaterialIcons name="done-all" size={24} color="#ccc" />
-                ) : (
-                  <MaterialIcons name="done" size={24} color="#828282" />
-                )}
-                <View>
+                <View
+                  style={{
+                    width: "100%",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 10,
+                  }}
+                >
                   <Text
-                    style={item.isRead ? styles.greycolor : styles.Darkcolor}
+                    style={[
+                      item.isRead ? styles.greycolor : styles.Darkcolor,
+                      { width: "80%" },
+                    ]}
                   >
-                    {item.title}
+                    {item?.sellerName}
+                  </Text>
+                  {item.isRead ? (
+                    <MaterialIcons name="done-all" size={24} color="#ccc" />
+                  ) : (
+                    <MaterialIcons
+                      name="done"
+                      size={24}
+                      color={Colors.light.primary}
+                    />
+                  )}
+                </View>
+                <View style={{ width: "100%", marginVertical: 10 }}>
+                  <View
+                    style={{ width: "100%", flexDirection: "row", gap: 10 }}
+                  >
+                    <Text
+                      style={[
+                        item.isRead ? styles.greycolor : styles.Darkcolor,
+                        { fontWeight: "bold" },
+                      ]}
+                    >
+                      Торговец:
+                    </Text>
+                    <Text
+                      style={[
+                        item.isRead ? styles.greycolor : styles.Darkcolor,
+                        // { width: "80%" },
+                      ]}
+                    >
+                      {item?.merchant || "-"}
+                    </Text>
+                  </View>
+                  <View
+                    style={{ width: "100%", flexDirection: "row", gap: 10 }}
+                  >
+                    <Text
+                      style={[
+                        item.isRead ? styles.greycolor : styles.Darkcolor,
+                        { fontWeight: "bold" },
+                      ]}
+                    >
+                      Сумма:
+                    </Text>
+                    <Text
+                      style={[
+                        item.isRead ? styles.greycolor : styles.Darkcolor,
+                        // { width: "80%" },
+                      ]}
+                    >
+                      {item?.amount || "-"} UZS
+                    </Text>
+                  </View>
+                </View>
+
+                <View
+                  style={{
+                    marginTop: 10,
+                    width: "100%",
+                    justifyContent: "flex-end",
+                    alignItems: "flex-end",
+                  }}
+                >
+                  <Text
+                    style={
+                      item.isRead
+                        ? { color: "#ccc", fontSize: 10 }
+                        : styles.date
+                    }
+                  >
+                    {formatDate(item.createdAt)}
                   </Text>
                 </View>
-                <Text
-                  style={
-                    item.isRead ? { color: "#ccc", fontSize: 10 } : styles.date
-                  }
-                >
-                  {formatDate(item.createdAt)}
-                </Text>
               </View>
             )
           )
@@ -252,7 +329,7 @@ const Notifications = () => {
       >
         <View>
           <Text style={{ fontSize: 20 }}>
-          Вы уверены, что хотите удалить все уведомления?
+            Вы уверены, что хотите удалить все уведомления?
           </Text>
         </View>
       </CenteredModal>
@@ -286,7 +363,7 @@ const styles = StyleSheet.create({
   cards: {
     backgroundColor: "#fff",
     padding: 20,
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: 10,
@@ -296,10 +373,10 @@ const styles = StyleSheet.create({
   },
   cards21: {
     borderWidth: 1,
-    borderBlockColor: "#FF5A3A",
+    borderColor: "#FF5A3A",
     backgroundColor: "#fff",
     padding: 20,
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: 10,
@@ -315,7 +392,17 @@ const styles = StyleSheet.create({
   },
   date: {
     fontSize: 10,
-    color: "#666",
+    color: Colors.light.primary,
+  },
+  accordionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+  },
+  accordionContent: {
+    paddingHorizontal: 20,
+    paddingVertical: 15,
   },
   buttonContainer: {
     position: "absolute",
@@ -352,7 +439,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 18,
     fontWeight: "bold",
-    width: 150
+    width: 150,
   },
   paginationContainer: {
     flexDirection: "row",

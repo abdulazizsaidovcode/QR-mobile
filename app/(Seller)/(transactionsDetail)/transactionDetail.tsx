@@ -15,13 +15,16 @@ import OrderStore from "@/helpers/stores/order/orderStore";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import CenteredModal from "@/components/modal/modal-centered";
 import { useGlobalRequest } from "@/helpers/apifunctions/univesalFunc";
-import { cancel_payment } from "@/helpers/url";
+import { cancel_payment, confirm_payment } from "@/helpers/url";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "@/types/root/root";
 import NavigationMenu from "@/components/navigationMenu/NavigationMenu"; // Adjusted path
-import { Ionicons } from '@expo/vector-icons'; // For optional improvements
-import ErrorBoundary from '@/components/ErrorBoundary'; // Import the ErrorBoundary component
+import { Ionicons } from "@expo/vector-icons"; // For optional improvements
+import ErrorBoundary from "@/components/ErrorBoundary"; // Import the ErrorBoundary component
 import { RenderQRCode } from "@/components/QRgenerate";
+import Buttons from "@/components/buttons/button";
+import { Button } from "react-native-elements";
+import { useAuthStore } from "@/helpers/stores/auth/auth-store";
 
 type TransactionDetailNavigationProp = NavigationProp<
   RootStackParamList,
@@ -31,6 +34,8 @@ type TransactionDetailNavigationProp = NavigationProp<
 const TransactionDetail = () => {
   const { paymentDetail } = OrderStore();
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const {phoneNumber} = useAuthStore()
+  const [isModalVisibleConfirm, setIsModalVisibleConfirm] = useState(false);
   const navigation = useNavigation<TransactionDetailNavigationProp>();
 
   // Initialize useGlobalRequest without executing immediately
@@ -40,17 +45,39 @@ const TransactionDetail = () => {
     {}
   );
 
+  const paymentConfirm = useGlobalRequest(
+    `${confirm_payment}${paymentDetail?.transaction?.id}`,
+    "POST",
+    {}
+  );
+
+
+
   const openModal = () => setIsModalVisible(true);
   const closeModal = () => setIsModalVisible(false);
+  const openModalConfirm = () => setIsModalVisibleConfirm(true);
+  const closeModalConfirm = () => setIsModalVisibleConfirm(false);
+
+
 
   useEffect(() => {
     if (paymentCancel?.response) {
       Alert.alert("Успех", "Платеж отменен.");
       navigation.goBack();
-    } else if (paymentCancel.error) {
-      Alert.alert("Ошибка", paymentCancel.error);
+    } else if (paymentCancel?.error?.message) {
+      Alert.alert("Ошибка", paymentCancel?.error?.message || "Ошибка отмены платежа");
     }
   }, [paymentCancel.error, paymentCancel.response]);
+
+  useEffect(() => {
+    if (paymentConfirm?.response) {
+      Alert.alert("Успех", "Платеж подтвержден.");
+      navigation.goBack();
+    } else if (paymentConfirm?.error?.message) {
+      Alert.alert("Ошибка", paymentConfirm?.error?.message || "Ошибка подтверждения платежа");
+    }
+  }, [paymentConfirm.error, paymentConfirm.response]);
+
 
   // Ensure paymentDetail and transaction are defined
   if (!paymentDetail || !paymentDetail?.transaction) {
@@ -66,6 +93,11 @@ const TransactionDetail = () => {
     paymentCancel.globalDataFunc(); // Trigger the cancellation request
     closeModal();
   };
+  const handleConfirmPayment = () => {
+    // Optionally, add confirmation before cancelling
+    paymentConfirm.globalDataFunc(); // Trigger the cancellation request
+    closeModalConfirm();
+  };
 
   return (
     <SafeAreaView style={styles.outerContainer}>
@@ -75,45 +107,62 @@ const TransactionDetail = () => {
       <StatusBar barStyle="dark-content" backgroundColor="#f5f5f5" />
       <ScrollView style={styles.container}>
         <View style={styles.detailCard}>
+          <View style={{ width: "100%", gap: 10 }}>
+            <Text style={styles.title}>Название компании:</Text>
+            <Text style={styles.desc}>
+              {paymentDetail?.transaction?.sellerName || "-"}
+            </Text>
+          </View>
           <View style={styles.detailRow}>
-            <Text style={styles.title}> Партнер:</Text>
+            <Text style={styles.title}>Валюта:</Text>
             <Text style={styles.desc}>
-              {paymentDetail?.transaction?.partner || "-"}
+              {paymentDetail?.transaction?.currency || "-"}
             </Text>
           </View>
-          <View style={{width: "100%", gap: 10}}>
-            <Text style={styles.title}>Цель:</Text>
+          {/* <View style={{width: "100%", gap: 10}}>
+            <Text style={styles.title}>Валюта:</Text>
             <Text style={styles.desc}>
-              {paymentDetail?.transaction?.purpose || "-"}
+              {paymentDetail?.transaction?.currency || "-"}
             </Text>
-          </View>
+          </View> */}
           <View style={styles.detailRow}>
             <Text style={styles.title}>Статус:</Text>
             <Text style={styles.desc}>
-              {paymentDetail?.transaction?.status || "-"}
+              {paymentDetail?.transaction?.paymentStatus || "-"}
             </Text>
           </View>
           <View style={styles.detailRow}>
-            <Text style={styles.title}>Сумма чека (руб.):</Text>
+            <Text style={styles.title}>Номер терминала:</Text>
             <Text style={styles.desc}>
-              {paymentDetail?.transaction?.qrAmount
-                ? `${paymentDetail?.transaction?.qrAmount} RUB`
+              {paymentDetail?.transaction?.posId
+                ? `${paymentDetail?.transaction?.posId}`
                 : "-"}
             </Text>
           </View>
           <View style={styles.detailRow}>
             <Text style={styles.title}>Сумма чека (сум):</Text>
             <Text style={styles.desc}>
-              {paymentDetail?.transaction?.chequeAmount
-                ? `${paymentDetail?.transaction?.chequeAmount} UZS`
-                : "-"}
+              {(paymentDetail?.transaction?.amount || 0).toLocaleString(
+                "uz-UZ",
+                { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+              )}{" "}
+              {paymentDetail?.transaction?.currency || "UZS"}
             </Text>
           </View>
           <View style={styles.detailRow}>
             <Text style={styles.title}>Дата:</Text>
             <Text style={styles.desc}>
-              {paymentDetail?.transaction?.cheque_created_at
-                ? paymentDetail?.transaction?.cheque_created_at.substring(0, 16)
+              {paymentDetail?.transaction?.dateCreate
+                ? paymentDetail?.transaction?.dateCreate.substring(0, 16)
+                : "-"}
+            </Text>
+          </View>
+
+          <View style={styles.detailRow}>
+            <Text style={styles.title}>Срок действия:</Text>
+            <Text style={styles.desc}>
+              {paymentDetail?.transaction?.validtil
+                ? paymentDetail?.transaction?.validtil.substring(0, 16)
                 : "-"}
             </Text>
           </View>
@@ -121,28 +170,59 @@ const TransactionDetail = () => {
           <View style={styles.qrContainer}>
             <View style={{ paddingVertical: 10 }}>
               <Text style={styles.qrTextTop}>
-                {`QR-сумма: ${paymentDetail?.transaction?.qrAmount} RUB`}
+                {`QR-сумма: ${(
+                  paymentDetail?.transaction?.amount || 0
+                ).toLocaleString("uz-UZ", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })} ${paymentDetail?.transaction?.currency || "UZS"}`}
               </Text>
             </View>
             {/* Wrap QRCode with ErrorBoundary */}
             <ErrorBoundary>
-              <RenderQRCode url={paymentDetail?.transaction?.url}/> 
+              <RenderQRCode url={paymentDetail?.transaction?.url} />
             </ErrorBoundary>
-            <Text style={styles.qrText}>Чтобы продолжить, отсканируйте этот QR-код.</Text>
+            <Text style={styles.qrText}>
+              Чтобы продолжить, отсканируйте этот QR-код.
+            </Text>
           </View>
 
-          <Pressable onPress={openModal}>
+          {/* <Pressable onPress={openModal}>
             <View style={styles.cancelPayment}>
               <Text style={styles.cancelPaymentText}>
               Отмена платежа
               </Text>
             </View>
-          </Pressable>
+          </Pressable> */}
+
+          <View
+            style={{
+              width: "100%",
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              gap: 10,
+            }}
+          >
+            <Button
+              loading={paymentCancel.loading}
+              buttonStyle={{ backgroundColor: "red", paddingHorizontal: 16, borderRadius: 10 }}
+              title={"Отмена платежа"}
+              onPress={openModal}
+              
+            />
+            <Button
+              loading={paymentConfirm.loading}
+              buttonStyle={{ backgroundColor: "green", paddingHorizontal: 25, borderRadius: 10 }}
+              title={"Подтвердить"}
+              onPress={openModalConfirm}
+            />
+          </View>
         </View>
 
         <CenteredModal
-          btnRedText="Close"
-          btnWhiteText="Ok"
+          btnRedText="Закрыть"
+          btnWhiteText="Продолжить"
           isFullBtn={true}
           isModal={isModalVisible}
           onConfirm={handleCancelPayment}
@@ -150,7 +230,22 @@ const TransactionDetail = () => {
         >
           <View style={styles.modalContent}>
             <Text style={styles.modalText}>
-            Вы действительно собираетесь отменить этот платеж?
+              Вы действительно собираетесь отменить этот платеж?
+            </Text>
+          </View>
+        </CenteredModal>
+
+        <CenteredModal
+          btnRedText="Закрыть"
+          btnWhiteText="Продолжить"
+          isFullBtn={true}
+          isModal={isModalVisibleConfirm}
+          onConfirm={handleConfirmPayment}
+          toggleModal={closeModalConfirm}
+        >
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>
+              Вы действительно собираетесь подтвердить этот платеж?
             </Text>
           </View>
         </CenteredModal>

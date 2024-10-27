@@ -36,11 +36,11 @@ const CheckCode = () => {
   const [response, setResponse] = useState<any>({});
 
   const userData = {
-    phone: `+998${phoneNumber.split(" ").join("")}`,
+    phone: `998${phoneNumber.split(" ").join("")}`,
   };
 
   const checkCode = useGlobalRequest(loginUrl, "POST", {
-    phone: "+998" + phoneNumber.split(" ").join(""),
+    phone: "998" + phoneNumber.split(" ").join(""),
     code: +code.join(""),
   });
 
@@ -58,6 +58,9 @@ const CheckCode = () => {
         });
     }
   };
+
+  console.log(phoneNumber);
+  
 
   const handleInputChange = (text: string, index: number) => {
     const newCode = [...code];
@@ -103,12 +106,18 @@ const CheckCode = () => {
       }
     }, [checkCode.response, checkCode.error])
   );
+ 
+  
   useFocusEffect(
     useCallback(() => {
       if (response && response?.token) {
         AsyncStorage.setItem("token", response?.token ? response?.token : null);
         AsyncStorage.setItem("role", response?.role ? response?.role : null);
-        navigation.navigate("(tabs)");
+        if (response?.role === "ROLE_SUPER_ADMIN") {
+          alert("Вы не можете войти в приложение");
+        } else {
+          navigation.navigate("(tabs)");
+        }
         setResponse({});
       }
     }, [response])

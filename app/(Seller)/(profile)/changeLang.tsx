@@ -1,26 +1,62 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RadioButton } from "react-native-paper";
 import { Avatar } from "react-native-elements";
+import { useGlobalRequest } from "@/helpers/apifunctions/univesalFunc";
+import { words_get_data, words_get_language, words_post_language } from "@/helpers/url";
+import { useFocusEffect } from "expo-router";
+import { langStore } from "@/helpers/stores/language/languageStore";
 
 const ChangeLang = () => {
   const [selectedLang, setSelectedLang] = useState<string | null>(null);
+  const { langData, setLangData } = langStore();
+  const getLang = useGlobalRequest(`${words_get_language}MOBILE`, "GET");
+  const getLangData = useGlobalRequest(`${words_get_data}MOBILE`, "GET");
+  const changeLang = useGlobalRequest(
+    `${words_post_language}?lang=${
+      selectedLang ? selectedLang.toLowerCase() : "ru"
+    }&webOrMobile=MOBILE`,
+    "POST",
+    {}
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      // Fetch default language from AsyncStorage
+      getLang.globalDataFunc();
+    }, [])
+  );
 
   useEffect(() => {
-    // Fetch default language from AsyncStorage
-    const fetchLang = async () => {
-      const savedLang = await AsyncStorage.getItem("selectedLang");
-      if (savedLang) {
-        setSelectedLang(savedLang);
-      }
-    };
-    fetchLang();
-  }, []);
+    if (getLang.response) {
+      setSelectedLang(getLang.response);
+    } else if (getLang.error) {
+      setSelectedLang("ru");
+      changeLang.globalDataFunc();
+    }
+  }, [getLang.response, getLang.error]);
+
+  useEffect(() => {
+    if (changeLang.response) {
+      getLang.globalDataFunc();
+      getLangData.globalDataFunc();
+    } else if (changeLang.error) {
+      alert(changeLang.error);
+    }
+  }, [changeLang.response, changeLang.error]);
+
+  useEffect(() => {
+    if (getLangData.response) {
+      setLangData(getLangData.response);
+    } else if (getLangData.error) {
+      setLangData(null);
+    }
+  }, [getLangData.response, getLangData.error]);
 
   const handleLangChange = async (lang: string) => {
-    setSelectedLang(lang);
-    await AsyncStorage.setItem("selectedLang", lang);
+    await setSelectedLang(lang);
+    await changeLang.globalDataFunc();
   };
 
   return (
@@ -28,7 +64,9 @@ const ChangeLang = () => {
       <View style={styles.detailRow}>
         <RadioButton
           value="uz"
-          status={selectedLang === "uz" ? "checked" : "unchecked"}
+          status={
+            selectedLang?.toLowerCase() === "uz" ? "checked" : "unchecked"
+          }
           onPress={() => handleLangChange("uz")}
         />
         <Avatar
@@ -38,12 +76,14 @@ const ChangeLang = () => {
             uri: "https://cdn-icons-png.flaticon.com/512/6211/6211657.png",
           }} // Replace with actual flag image path
         />
-        <Text style={styles.title}>Uz </Text>
+        <Text style={styles.title}>UZ </Text>
       </View>
       <View style={styles.detailRow}>
         <RadioButton
           value="ru"
-          status={selectedLang === "ru" ? "checked" : "unchecked"}
+          status={
+            selectedLang?.toLowerCase() === "ru" ? "checked" : "unchecked"
+          }
           onPress={() => handleLangChange("ru")}
         />
         <Avatar
@@ -56,7 +96,6 @@ const ChangeLang = () => {
         <Text style={styles.title}>RU </Text>
       </View>
     </View>
-    
   );
 };
 
@@ -64,7 +103,10 @@ export default ChangeLang;
 
 const styles = StyleSheet.create({
   detailCard: {
+    display: "flex",
+    flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
     padding: 16,
     marginBottom: 12,
     borderRadius: 8,
@@ -76,10 +118,9 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   detailRow: {
-    width: "100%",
     flexDirection: "row",
     alignItems: "center",
-        paddingVertical: 7,
+    paddingVertical: 7,
     marginBottom: 20,
   },
   title: {

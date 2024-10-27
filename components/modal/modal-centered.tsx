@@ -64,7 +64,7 @@ const CenteredModal: React.FC<ICenteredModalProps> = (props) => {
                 ]}
               >
                 <Buttons
-                  backgroundColor={"white"}
+                  backgroundColor={"#e8e8e8"}
                   title={btnWhiteText}
                   textColor={"#FF5A3A"}
                   onPress={isFullBtn ? onConfirm : toggleModal}

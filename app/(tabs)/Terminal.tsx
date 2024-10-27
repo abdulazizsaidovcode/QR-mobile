@@ -26,6 +26,8 @@ interface Terminal {
   inn?: string | null;
   terminalSerialCode?: string;
   phones: string[];
+  merchant: string;
+  phone: string;
 }
 
 const Terminal: React.FC = () => {
@@ -174,36 +176,52 @@ const Terminal: React.FC = () => {
                   toggleModal(terminal);
                 }}
               >
-                <Text style={styles.cardTitle}>{terminal.account || "-"}</Text>
+                {/* <Text style={styles.cardTitle}>{terminal.account || "-"}</Text> */}
                 <View style={styles.row}>
                   <Text style={styles.boldText}>Имя:</Text>
                   <Text style={styles.cardDetail}>{terminal.name || "-"}</Text>
                 </View>
-                <View style={styles.row}>
+                {/* <View style={styles.row}>
                   <Text style={styles.boldText}>Счет:</Text>
                   <Text style={styles.cardDetail}>
                     {" "}
                     {terminal.account || "-"}
                   </Text>
-                </View>
-                <View style={styles.row}>
+                </View> */}
+                {/* <View style={styles.row}>
                   <Text style={styles.boldText}>Партнерский код:</Text>
                   <Text style={styles.cardDetail}>
                     {" "}
                     {terminal.filial_code || "-"}
+                  </Text>
+                </View> */}
+                <View style={styles.row}>
+                  <Text style={styles.boldText}>Серийный код:</Text>
+                  <Text style={styles.cardDetail}>
+                    {" "}
+                    {terminal?.terminalSerialCode || "-"}
+                  </Text>
+                </View>
+                <View style={styles.row}>
+                  <Text style={styles.boldText}>Мерчант:</Text>
+                  <Text style={styles.cardDetail}>
+                    {" "}
+                    {terminal?.merchant || "-"}
                   </Text>
                 </View>
                 <View style={styles.row}>
                   <Text style={styles.boldText}>Телефон:</Text>
                   <Text style={styles.cardDetail}>
                     {" "}
-                    {terminal.phones[0] || "-"}
+                    {terminal?.phone
+                      ? `+${terminal.phone.replace(/(\d{3})(\d{2})(\d{3})(\d{2})(\d{2})/, '$1 $2 $3 $4 $5')}`
+                      : "-"}
                   </Text>
                 </View>
-                <View style={styles.row}>
+                {/* <View style={styles.row}>
                   <Text style={styles.boldText}>ИНН:</Text>
                   <Text style={styles.cardDetail}>{terminal.inn || "-"}</Text>
-                </View>
+                </View> */}
               </TouchableOpacity>
             ))
           ) : (

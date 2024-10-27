@@ -1,5 +1,5 @@
 import { Colors } from "@/constants/Colors";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -14,20 +14,40 @@ import { createPayment } from "@/helpers/url";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { RenderQRCode } from "@/components/QRgenerate";
 import { useAuthStore } from "@/helpers/stores/auth/auth-store";
-import { Platform } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "expo-router";
 
 const CreateQr = () => {
   const [amount, setAmount] = useState("");
-  const { phoneNumber } = useAuthStore();
+  
+  const [phone, setPhone] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [Messageamount, setMessageAmount] = useState("");
   const [alertShown, setAlertShown] = useState(false);
-  const [qrValue, setQrValue] = useState<any>("238cc3c 3 32h3iuhchchew "); // State to hold the QR code value
+  const [qrValue, setQrValue] = useState<any>(null); // State to hold the QR code value
 
   const paymentCreate = useGlobalRequest(
     createPayment,
     "POST",
-    { amount: amount },
+    { 
+      amount: amount,
+      phone: `7${phone}`,
+     },
     "DEFAULT"
+  );
+
+  console.log(phoneNumber);
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchPhoneNumber = async () => {
+        const number = await AsyncStorage.getItem("phoneNumber"); // Await the Promise
+      // if (number === "77 308 88 88") {
+        setPhoneNumber(number || ""); // Set state for conditional rendering
+      // }
+    };
+      fetchPhoneNumber();
+    }, [])
   );
 
   useEffect(() => {
@@ -55,13 +75,28 @@ const CreateQr = () => {
         <ScrollView
           style={{ flex: 1}}
         >
+          <Text style={styles.label}>Введите номер телефона</Text>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            {phoneNumber && phoneNumber === "77 308 88 88" ? (
+              <Text style={{marginRight: 10, fontSize: 30}}>+998</Text>
+            ) : <Text style={{marginRight: 10, fontSize: 30}}>+7</Text>}
+            <TextInput
+              style={[styles.amountInput, {flex: 1}]}
+              value={phone} 
+              maxLength={10}
+              onChangeText={(text) => setPhone(text.replace(/[^0-9]/g, ""))}
+              keyboardType="numeric"
+            />
+          </View>
           <Text style={styles.label}>Введите сумму</Text>
           <TextInput
             style={styles.amountInput}
             value={amount}
             onChangeText={(text) => setAmount(text.replace(/[^0-9]/g, ""))} // Allow only numbers
             keyboardType="numeric"
+            // placeholder="Сумма"
           />
+          
           {qrValue ? ( // Render QR code if qrValue is set
             <View style={styles.qrContainer}>
               <View style={{ paddingVertical: 10 }}>
@@ -118,9 +153,9 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderRadius: 8,
     padding: 10,
-    fontSize: 40,
+    fontSize: 30,
     marginTop: 8,
-    height: 70,
+    height: 60,
   },
   sendButton: {
     backgroundColor: Colors.dark.primary,

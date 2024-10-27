@@ -14,25 +14,25 @@ import { Image } from "react-native-elements";
 
 const InternetCheckModal = () => {
   const [isConnected, setIsConnected] = useState(true);
-  const [modalVisible, setModalVisible] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   // Aloqani dastlabki bor kuzatish
-  //   useEffect(() => {
-  //     const unsubscribe = NetInfo.addEventListener((state) => {
-  //       if (!state.isConnected) {
-  //         setModalVisible(true);
-  //         setIsConnected(false);
-  //       } else {
-  //         setModalVisible(false);
-  //         setIsConnected(true);
-  //       }
-  //     });
+    useEffect(() => {
+      const unsubscribe = NetInfo.addEventListener((state) => {
+        if (!state.isConnected) {
+          setModalVisible(true);
+          setIsConnected(false);
+        } else {
+          setModalVisible(false);
+          setIsConnected(true);
+        }
+      });
 
-  //     return () => {
-  //       unsubscribe();
-  //     };
-  //   }, []);
+      return () => {
+        unsubscribe();
+      };
+    }, []);
 
   // Tugma bosilganda internetni yana tekshirish funksiyasi
   const handleRetry = () => {

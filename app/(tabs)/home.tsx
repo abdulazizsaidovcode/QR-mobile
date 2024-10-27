@@ -24,16 +24,19 @@ import {
   payment_get_seller,
   payment_get_terminal,
   staisticUrl,
+  words_get_data,
 } from "@/helpers/url";
 import { useFocusEffect } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { langStore } from "@/helpers/stores/language/languageStore";
 
 export default function HomeScreen() {
   const [url, setUrl] = useState("");
   const [role, setRole] = useState("");
   const [page, setPage] = useState(0);
   const [backPressCount, setBackPressCount] = useState(0);
+  const { langData, setLangData } = langStore();
   const { response, globalDataFunc, loading } = useGlobalRequest(
     staisticUrl,
     "GET",
@@ -44,6 +47,7 @@ export default function HomeScreen() {
     "GET",
     "DEFAULT"
   );
+  const getLangData = useGlobalRequest(`${words_get_data}MOBILE`, "GET");
 
   useFocusEffect(
     useCallback(() => {
@@ -91,10 +95,19 @@ export default function HomeScreen() {
           setUrl(payment_get_terminal);
         }
       };
+      getLangData.globalDataFunc();
       fetchRole();
       globalDataFunc();
     }, [])
   );
+
+  useEffect(() => {
+    if (getLangData.response) {
+      setLangData(getLangData.response);
+    } else if (getLangData.error) {
+      setLangData(null);
+    }
+  }, [getLangData.response, getLangData.error]);
 
   useFocusEffect(
     useCallback(() => {
@@ -144,7 +157,7 @@ export default function HomeScreen() {
                   color={Colors.light.primary}
                 />
               } // Pass the icon as a prop
-              onPress={() => console.log("Send Money Pressed")}
+              onPress={() => {}}
             />
             <TransactionActionCard
               title="Завершенные транзакции"
@@ -160,7 +173,7 @@ export default function HomeScreen() {
                   color={Colors.light.primary}
                 />
               } // Another icon
-              onPress={() => console.log("Receive Money Pressed")}
+              onPress={() => {}}
             />
           </View>
         )}
@@ -176,7 +189,7 @@ export default function HomeScreen() {
                   color={Colors.light.primary}
                 />
               } // Another icon
-              onPress={() => console.log("Receive Money Pressed")}
+              onPress={() => {}}
             />
             <TransactionActionCard
               title="Ожидающие транзакции"
@@ -188,7 +201,7 @@ export default function HomeScreen() {
                   color={Colors.light.primary}
                 />
               } // Another icon
-              onPress={() => console.log("Receive Money Pressed")}
+              onPress={() => {}}
             />
           </View>
         )}
@@ -208,7 +221,7 @@ export default function HomeScreen() {
                   color={Colors.light.primary}
                 />
               } // Another icon
-              onPress={() => console.log("Receive Money Pressed")}
+              onPress={() => {}}
             />
             <TransactionActionHeadCard
               title="Общая сумма платежа"
@@ -224,7 +237,7 @@ export default function HomeScreen() {
                   color={Colors.light.primary}
                 />
               } // Another icon
-              onPress={() => console.log("Receive Money Pressed")}
+              onPress={() => {}}
             />
             <TransactionActionHeadCard
               title="Ожидающие транзакции"
@@ -238,7 +251,7 @@ export default function HomeScreen() {
                   color={Colors.light.primary}
                 />
               } // Another icon
-              onPress={() => console.log("Receive Money Pressed")}
+              onPress={() => {}}
             />
             <TransactionActionHeadCard
               title="Завершенные транзакции"
@@ -254,7 +267,7 @@ export default function HomeScreen() {
                   color={Colors.light.primary}
                 />
               } // Another icon
-              onPress={() => console.log("Receive Money Pressed")}
+              onPress={() => {}}
             />
           </View>
         )}

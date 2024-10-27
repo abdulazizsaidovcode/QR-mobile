@@ -19,6 +19,7 @@ import { sendCodeUrl } from "@/helpers/url";
 import { Colors } from "@/constants/Colors";
 import axios from "axios";
 import { CheckBox } from "react-native-elements";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type SettingsScreenNavigationProp = NavigationProp<
   RootStackParamList,
@@ -32,7 +33,7 @@ const Login = () => {
   const [policy, setPolicy] = useState(false);
   
   const userData = {
-    phone: `+998${phoneNumber.split(" ").join("")}`,
+    phone: `998${phoneNumber.split(" ").join("")}`,
   };
   // const loginUser = useGlobalRequest(`${sendCodeUrl}`, "POST", userData);
   const loginUser = async () => {
@@ -87,6 +88,7 @@ const Login = () => {
     );
 
     setPhoneNumber(formattedNumber);
+    AsyncStorage.setItem("phoneNumber", formattedNumber);
 
     setIsPhoneNumberComplete(formattedNumber.length == 12);
   };

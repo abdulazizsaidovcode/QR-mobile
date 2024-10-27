@@ -20,49 +20,64 @@ import { get_mee, update_profile } from "@/helpers/url"; // Ensure you have an u
 import { Colors } from "@/constants/Colors";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ChangeLang from "./changeLang";
+import { langStore } from "@/helpers/stores/language/languageStore";
 
 // Define the shape of the profile data
 interface ProfileData {
-  firstName: string;
-  lastName: string;
+  managerFio: string;
   phone: string;
   email: string;
-  inn: string;
-  filial_code: string;
+  tin: string;
+  bankBik: string;
   password: string;
 }
 
 // Define the shape of errors
 interface ProfileErrors {
-  firstName?: string;
-  lastName?: string;
+  managerFio?: string;
   phone?: string;
   email?: string;
-  inn?: string;
-  filial_code?: string;
+  tin?: string;
+  bankBik?: string;
   password?: string;
 }
 
 const Profile: React.FC = () => {
+  const { langData, setLangData } = langStore();
   const [modal, setModal] = useState<boolean>(false);
+  const [role, setRole] = useState<string | null>(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      const getRole = async () => {
+        const roleValue = await AsyncStorage.getItem("role");
+      setRole(roleValue);
+    };
+      getRole();
+    }, [])
+  );
+
   const getMee = useGlobalRequest<ProfileData>(get_mee, "GET");
+
   const [formData, setFormData] = useState<ProfileData>({
-    firstName: "",
-    lastName: "",
+    managerFio: "",
     phone: "",
     email: "",
-    inn: "",
-    filial_code: "",
+    tin: "",
+    bankBik: "",
     password: "",
   });
+
+  console.log(role);
+  
+
   const updateProfile = useGlobalRequest<any>(update_profile, "PUT", {
-    firstName: formData.firstName,
-    lastName: formData.lastName,
-    phone: `+998${formData.phone}`,
+    managerFio: formData.managerFio,
+    phone: `998${formData.phone}`,
     email: formData.email,
-    inn: formData.inn,
-    filial_code: formData.filial_code,
-    ...(formData.password ? { password: formData.password } : {}),
+    tin: formData.tin,
+    bankBik: formData.bankBik,
+    password: formData.password || null
   }); // Adjust the type as per your API response
 
   const [errors, setErrors] = useState<ProfileErrors>({});
@@ -72,12 +87,11 @@ const Profile: React.FC = () => {
   // Open the modal and initialize form data
   const openModal = () => {
     setFormData({
-      firstName: getMee?.response?.firstName || "",
-      lastName: getMee?.response?.lastName || "",
+      managerFio: getMee?.response?.managerFio || "",
       phone: getMee?.response?.phone?.substring(4) || "",
       email: getMee?.response?.email || "",
-      inn: getMee?.response?.inn || "",
-      filial_code: getMee?.response?.filial_code || "",
+      tin: getMee?.response?.tin || "",
+      bankBik: getMee?.response?.bankBik || "",
       password: "",
     });
     setErrors({});
@@ -110,23 +124,24 @@ const Profile: React.FC = () => {
   // Validate the form
   const validate = (): boolean => {
     const newErrors: ProfileErrors = {};
-    if (!formData.firstName.trim()) newErrors.firstName = "Нужно имя";
-    if (!formData.lastName.trim()) newErrors.lastName = "Требуется фамилия";
+    if (!formData.managerFio.trim()) newErrors.managerFio = langData?.NAME_REQUIRED || "Требуется имя";
     if (!formData.phone.trim()) {
-      newErrors.phone = "Требуется номер телефона";
+      newErrors.phone = langData?.PHONE_REQUIRED || "Требуется номер телефона";
     } else if (!/^\d{9}$/.test(formData.phone)) {
-      newErrors.phone = "Номер телефона должен состоять из 9 цифр.";
+      newErrors.phone = langData?.PHONE_INVALID || "Номер телефона должен состоять из 9 цифр.";
     }
     if (!formData.email.trim()) {
-      newErrors.email = "Требуется электронная почта";
+      newErrors.email = langData?.EMAIL_REQUIRED || "Требуется электронная почта";
     } else if (
       !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(formData.email)
     ) {
-      newErrors.email = "Формат электронной почты noto'g'ri";
+      newErrors.email = langData?.EMAIL_INVALID || "Неверный формат электронной почты";
     }
-    if (!formData.inn.trim()) newErrors.inn = "ИНН обязателен";
-    if (!formData.filial_code.trim())
-      newErrors.filial_code = "Требуется партнерский код";
+      if (role !== "ROLE_TERMINAL") {
+        if (!formData.tin.trim()) newErrors.tin = langData?.INN_REQUIRED || "ИНН обязателен";
+        if (!formData.bankBik.trim())
+          newErrors.bankBik = langData?.PARTNER_CODE_REQUIRED || "Требуется МФО";
+      }
     // Password is optional; no validation unless you want to enforce certain rules
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -135,7 +150,7 @@ const Profile: React.FC = () => {
   // Handle form submission
   const handleSubmit = async () => {
     if (!validate()) {
-      Alert.alert("Ошибка", "Пожалуйста, заполните все поля");
+      Alert.alert(langData?.ERROR || "Ошибка", langData?.PLEASE_FILL_ALL_FIELDS || "Пожалуйста, заполните все поля");
       return;
     }
 
@@ -144,21 +159,11 @@ const Profile: React.FC = () => {
     try {
       await updateProfile.globalDataFunc();
 
-      console.log({
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        phone: formData.phone,
-        email: formData.email,
-        inn: formData.inn,
-        filial_code: formData.filial_code,
-        ...(formData.password ? { password: formData.password } : {}),
-      });
-
-      Alert.alert("Успех", "Профиль успешно обновлен.");
+      Alert.alert(langData?.SUCCESS || "Успех", langData?.PROFILE_UPDATED || "Профиль успешно обновлен.");
       closeModal();
       getMee.globalDataFunc(); // Refresh profile data
     } catch (error) {
-      Alert.alert("Ошибка, «Произошла ошибка при обновлении профиля.»");
+      Alert.alert(langData?.ERROR || "Ошибка", langData?.PROFILE_UPDATE_ERROR || "Произошла ошибка при обновлении профиля.");
     } finally {
       setSubmitting(false);
     }
@@ -167,7 +172,7 @@ const Profile: React.FC = () => {
   return (
     <View style={styles.containerView}>
       <View style={styles.navigationContainer}>
-        <NavigationMenu name="Профиль" />
+        <NavigationMenu name={langData?.PROFILE || "Профиль"} />
       </View>
       <StatusBar barStyle="dark-content" backgroundColor="#f5f5f5" />
       <ScrollView contentContainerStyle={styles.scrollView}>
@@ -182,47 +187,50 @@ const Profile: React.FC = () => {
           </View>
           <Pressable onPress={openModal}>
             <View style={styles.editButton}>
-              <Text style={styles.editButtonText}>Редактировать профиль</Text>
+              <Text style={styles.editButtonText}>{langData?.MOBILE_EDIT_PROFILE || "Редактировать профиль"}</Text>
             </View>
           </Pressable>
           {/* Profile Details */}
           <View style={styles.detailRow}>
-            <Text style={styles.title}>Имя: </Text>
+            <Text style={styles.title}>{langData?.MOBILE_NAME || "Ф.И.О"}: </Text>
             <Text style={styles.desc}>
-              {getMee?.response?.firstName || "--"}
+              {getMee?.response?.managerFio || "--"}
             </Text>
           </View>
           <View style={styles.detailRow}>
-            <Text style={styles.title}>Фамилия: </Text>
+            <Text style={styles.title}>{langData?.MOBILE_TELEPHONE || "Номер телефона"}: </Text>
             <Text style={styles.desc}>
-              {getMee?.response?.lastName || "--"}
+              {getMee?.response?.phone
+                ? `+${getMee?.response?.phone.replace(/(\d{3})(\d{2})(\d{3})(\d{2})(\d{2})/, '$1 $2 $3 $4 $5')}`
+                : "--"}
             </Text>
           </View>
+          
+            {role !== "ROLE_TERMINAL" && (
+              <>
+                <View style={styles.detailRow}>
+                  <Text style={styles.title}>{langData?.MOBILE_INN || "ИНН"}: </Text>
+                  <Text style={styles.desc}>{getMee?.response?.tin || "--"}</Text>
+                </View>
+                <View style={styles.detailRow}>
+                  <Text style={styles.title}>{langData?.MOBILE_MFO || "МФО"}: </Text>
+                  <Text style={styles.desc}>
+                    {getMee?.response?.bankBik || "--"}
+                  </Text>
+                </View>
+              </>
+            )}
           <View style={styles.detailRow}>
-            <Text style={styles.title}>Номер телефона: </Text>
-            <Text style={styles.desc}>{getMee?.response?.phone || "--"}</Text>
-          </View>
-          <View style={styles.detailRow}>
-            <Text style={styles.title}>Электронная почта: </Text>
+            <Text style={styles.title}>{langData?.MOBILE_EMAIL || "Электронная почта"}: </Text>
             <Text style={styles.desc}>{getMee?.response?.email || "--"}</Text>
           </View>
-          <View style={styles.detailRow}>
-            <Text style={styles.title}>ИНН: </Text>
-            <Text style={styles.desc}>{getMee?.response?.inn || "--"}</Text>
-          </View>
-          <View style={styles.detailRow}>
-            <Text style={styles.title}>Партнерский код: </Text>
-            <Text style={styles.desc}>
-              {getMee?.response?.filial_code || "--"}
-            </Text>
-          </View>
         </View>
-        {/* <ChangeLang /> */}
+        <ChangeLang />
 
         {/* Edit Profile Modal */}
         <CenteredModal
-          btnRedText={submitting ? "..." : "Отмена"}
-          btnWhiteText={submitting ? "Загрузка..." : "Сохранять"}
+          btnRedText={langData?.MOBILE_CANCEL || "Отмена"}
+          btnWhiteText={submitting ? langData?.MOBILE_LOADING || "Загрузка..." : langData?.MOBILE_SAVE || "Сохранять"}
           isFullBtn={true}
           isModal={modal}
           onConfirm={handleSubmit}
@@ -231,31 +239,20 @@ const Profile: React.FC = () => {
         >
           <ScrollView style={{ width: "100%" }}>
             <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Редактировать профиль</Text>
-              <Text style={{ fontSize: 15, paddingVertical: 3 }}>Имя</Text>
+              <Text style={styles.modalTitle}>{langData?.MOBILE_EDIT_PROFILE || "Редактировать профиль"}</Text>
+              <Text style={{ fontSize: 15, paddingVertical: 3 }}>{langData?.MOBILE_NAME || "Ф.И.О"}</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Имя"
-                value={formData.firstName}
-                onChangeText={(text) => handleInputChange("firstName", text)}
+                placeholder={langData?.MOBILE_NAME || "Ф.И.О"}
+                value={formData.managerFio}
+                onChangeText={(text) => handleInputChange("managerFio", text)}
               />
-              {errors.firstName && (
-                <Text style={styles.errorText}>{errors.firstName}</Text>
-              )}
-
-              <Text style={{ fontSize: 15, paddingVertical: 3 }}>Фамилия</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Фамилия"
-                value={formData.lastName}
-                onChangeText={(text) => handleInputChange("lastName", text)}
-              />
-              {errors.lastName && (
-                <Text style={styles.errorText}>{errors.lastName}</Text>
+              {errors.managerFio && (
+                <Text style={styles.errorText}>{errors.managerFio}</Text>
               )}
 
               <Text style={{ fontSize: 15, paddingVertical: 3 }}>
-                Номер телефона
+                {langData?.MOBILE_PHONE || "Номер телефона"}
               </Text>
               <View style={[styles.passwordContainer, { paddingRight: 0 }]}>
                 <View style={styles.eyeIcon}>
@@ -265,7 +262,7 @@ const Profile: React.FC = () => {
                 </View>
                 <TextInput
                   style={[styles.input, styles.passwordInput]}
-                  placeholder="Номер телефона"
+                  placeholder={langData?.MOBILE_PHONE || "Номер телефона"}
                   keyboardType="numeric"
                   value={formData.phone}
                   onChangeText={(text) => handleInputChange("phone", text)}
@@ -277,10 +274,10 @@ const Profile: React.FC = () => {
                 <Text style={styles.errorText}>{errors.phone}</Text>
               )}
 
-              <Text style={{ fontSize: 15, paddingVertical: 3 }}>Электронная почта</Text>
+              <Text style={{ fontSize: 15, paddingVertical: 3 }}>{langData?.MOBILE_EMAIL || "Электронная почта"}</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Электронная почта"
+                placeholder={langData?.MOBILE_EMAIL || "Электронная почта"}
                 keyboardType="email-address"
                 value={formData.email}
                 onChangeText={(text) => handleInputChange("email", text)}
@@ -290,37 +287,41 @@ const Profile: React.FC = () => {
                 <Text style={styles.errorText}>{errors.email}</Text>
               )}
 
-              <Text style={{ fontSize: 15, paddingVertical: 3 }}>ИНН</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="ИНН"
-                value={formData.inn}
-                keyboardType="numeric"
-                maxLength={14}    
-                onChangeText={(text) => handleInputChange("inn", text)}
-              />
-              {errors.inn && <Text style={styles.errorText}>{errors.inn}</Text>}
+              {role !== "ROLE_TERMINAL" && (
+                <>
+                  <Text style={{ fontSize: 15, paddingVertical: 3 }}>{langData?.MOBILE_INN || "ИНН"}</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder={langData?.MOBILE_INN || "ИНН"}
+                    value={formData.tin}
+                    keyboardType="numeric"
+                    maxLength={14}    
+                    onChangeText={(text) => handleInputChange("tin", text)}
+                  />
+                  {errors.tin && <Text style={styles.errorText}>{errors.tin}</Text>}
 
-              <Text style={{ fontSize: 15, paddingVertical: 3 }}>
-                Партнерский код
-              </Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Партнерский код"
-                value={formData.filial_code}
-                onChangeText={(text) => handleInputChange("filial_code", text)}
-              />
-              {errors.filial_code && (
-                <Text style={styles.errorText}>{errors.filial_code}</Text>
+                  <Text style={{ fontSize: 15, paddingVertical: 3 }}>
+                    {langData?.MOBILE_MFO || "МФО"}
+                  </Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder={langData?.MOBILE_MFO || "МФО"}
+                    value={formData.bankBik}
+                    onChangeText={(text) => handleInputChange("bankBik", text)}
+                  />
+                  {errors.bankBik && (
+                    <Text style={styles.errorText}>{errors.bankBik}</Text>
+                  )}
+                </>
               )}
 
               <Text style={{ fontSize: 15, paddingVertical: 3 }}>
-              Пароль (если пароль не введен, старый пароль будет сохранен)
+                {langData?.MOBILE_PASSWORD || "Пароль"} ({langData?.IF_PASSWORD_NOT_ENTERED || "Если пароль не введен, старый пароль будет сохранен"})
               </Text>
               <View style={styles.passwordContainer}>
                 <TextInput
                   style={[styles.input, styles.passwordInput]}
-                  placeholder="Пароль (необязательно)"
+                  placeholder={langData?.MOBILE_PASSWORD || "Пароль"}
                   secureTextEntry={!passwordVisible}
                   value={formData.password}
                   onChangeText={(text) => handleInputChange("password", text)}
