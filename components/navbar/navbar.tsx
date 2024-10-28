@@ -14,11 +14,13 @@ import {
 } from "@/helpers/url";
 import { MaterialIcons } from "@expo/vector-icons";
 import CenteredModal from "../modal/modal-centered";
+import { langStore } from "@/helpers/stores/language/languageStore";
 type SettingsScreenNavigationProp = NavigationProp<RootStackParamList, "(tabs)">;
 
 const Navbar = () => {
   const navigation = useNavigation<SettingsScreenNavigationProp>();
   const [url, setUrl] = useState("");
+  const {langData} = langStore();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [showSupport, setShowSupport] = useState(false);
 
@@ -98,10 +100,10 @@ const Navbar = () => {
                     <TouchableWithoutFeedback>
                       <View style={styles.supportPopover}>
                         <TouchableOpacity onPress={() => Linking.openURL('mailto:Info@qrpay.uz')}>
-                          <Text style={styles.supportText}>Elektron pochta: Info@qrpay.uz</Text>
+                          <Text style={styles.supportText}>{langData?.MOBILE_EMAIL || "Elektron pochta"}: Info@qrpay.uz</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => Linking.openURL('tel:+998773088888')}>
-                          <Text style={styles.supportText}>Telefon: +998 77 308 88 88</Text>
+                          <Text style={styles.supportText}>{langData?.MOBILE_TELEPHONE || "Телефон"}: +998 77 308 88 88</Text>
                         </TouchableOpacity>
                       </View>
                     </TouchableWithoutFeedback>
@@ -142,8 +144,8 @@ const Navbar = () => {
         </View>
       </View>
         <CenteredModal
-          btnRedText="Close"
-          btnWhiteText="Ok"
+          btnRedText={langData?.MOBILE_CLOSE || "Закрывать"}
+          btnWhiteText={langData?.MOBILE_CONTINUE || "Продолжить"}
           isFullBtn={true}
           isModal={isModalVisible}
           onConfirm={async () => {
@@ -156,7 +158,7 @@ const Navbar = () => {
         >
           <View style={styles.modalContent}>
             <Text style={styles.modalText}>
-            Вы действительно собираетесь выйти из системы?
+            {langData?.MOBILE_CONFIRM_LOGOUT || "Вы действительно собираетесь выйти из системы?"}
             </Text>
           </View>
         </CenteredModal>

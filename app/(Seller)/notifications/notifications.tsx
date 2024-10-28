@@ -22,10 +22,12 @@ import CenteredModal from "@/components/modal/modal-centered";
 import { useFocusEffect } from "expo-router";
 import NavigationMenu from "@/components/navigationMenu/NavigationMenu";
 import { Colors } from "@/constants/Colors";
+import { langStore } from "@/helpers/stores/language/languageStore";
 
 const Notifications = () => {
   const [url, setUrl] = useState("");
   const [role, setRole] = useState<string | null>(null);
+  const { langData } = langStore();
   const [modalVisible, setModalVisible] = useState(false); // State for modal visibility
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
@@ -81,7 +83,7 @@ const Notifications = () => {
     if (isReadNotification.response) {
       globalDataFunc();
     } else if (isReadNotification.error) {
-      alert(isReadNotification?.error?.message || "Произошла ошибка");
+      alert(isReadNotification?.error?.message || langData?.MOBILE_ERROR || "Произошла ошибка");
     }
   }, [isReadNotification.response, isReadNotification.error]);
 
@@ -92,7 +94,7 @@ const Notifications = () => {
 
       setModalVisible(false);
     } else if (deleteNotification.error) {
-      alert(deleteNotification?.error?.message || "Произошла ошибка");
+      alert(deleteNotification?.error?.message || langData?.MOBILE_ERROR || "Произошла ошибка");
     }
   }, [deleteNotification.response, deleteNotification.error]);
 
@@ -121,7 +123,7 @@ const Notifications = () => {
         await setSelectedIds(ids);
         await isReadNotification.globalDataFunc();
       } else {
-        alert("У вас нет уведомлений.");
+        alert(langData?.MOBILE_NOTIFICATIONS_NOT_FOUND || "У вас нет уведомлений.");
       }
     }
   };
@@ -134,20 +136,20 @@ const Notifications = () => {
         await setSelectedIds(ids);
         await deleteNotification.globalDataFunc();
       } else {
-        alert("У вас нет уведомлений.");
+        alert(langData?.MOBILE_NOTIFICATIONS_NOT_FOUND || "У вас нет уведомлений.");
       }
     }
   };
 
   return (
     <View style={styles.container}>
-      <NavigationMenu name="Уведомление" />
+      <NavigationMenu name={langData?.MOBILE_NOTIFICATIONS || "Уведомление"} />
       <View style={styles.header}>
         <Text style={styles.headerText}>
-          Уведомления для {role === "ROLE_SELLER" ? "Продавцы" : "Терминалы"}(
+        {langData?.MOBILE_NOTIFICATIONS || "Уведомление"}(
           {response?.totalElements ? response?.totalElements : 0})
         </Text>
-        <Text style={styles.headerText}>Текущий({page + 1})</Text>
+        <Text style={styles.headerText}>{langData?.MOBILE_CURRENT || "Номер страницы"}({page + 1})</Text>
       </View>
       <ScrollView style={styles.CarsContainer}>
         {loading ? (
@@ -204,7 +206,7 @@ const Notifications = () => {
                         { fontWeight: "bold" },
                       ]}
                     >
-                      Торговец:
+                      {langData?.MOBILE_MERCHANT || "Торговец"}:
                     </Text>
                     <Text
                       style={[
@@ -224,7 +226,7 @@ const Notifications = () => {
                         { fontWeight: "bold" },
                       ]}
                     >
-                      Сумма:
+                      {langData?.MOBILE_AMOUNT || "Количество"}:
                     </Text>
                     <Text
                       style={[
@@ -259,7 +261,7 @@ const Notifications = () => {
             )
           )
         ) : (
-          <Text style={styles.noDataText}>Уведомления не найдены.</Text>
+          <Text style={styles.noDataText}>{langData?.MOBILE_NOTIFICATIONS_NOT_FOUND || "Уведомления не найдены."}</Text>
         )}
         {sortedNotifications && (
           <View style={styles.paginationContainer}>
@@ -275,7 +277,7 @@ const Notifications = () => {
                   page === 0 && styles.disabledButton,
                 ]}
               >
-                Последний
+                {langData?.MOBILE_LAST || "Предыдущий"}
               </Text>
             </Pressable>
             <Pressable
@@ -290,7 +292,7 @@ const Notifications = () => {
                   page + 1 === response?.totalPage && styles.disabledButton,
                 ]}
               >
-                Следующий
+                {langData?.MOBILE_PANEL_CONTROL_NEXT || "Следующий"}
               </Text>
             </Pressable>
           </View>
@@ -304,7 +306,7 @@ const Notifications = () => {
           {isReadNotification.loading ? (
             <ActivityIndicator size="small" color="#fff" />
           ) : (
-            <Text style={styles.buttonText}>Отметить все как прочитанное</Text>
+            <Text style={styles.buttonText}>{langData?.MOBILE_MARK_ALL_AS_READ || "Отметить все как прочитанное"}</Text>
           )}
         </TouchableOpacity>
         <TouchableOpacity
@@ -314,14 +316,14 @@ const Notifications = () => {
           {deleteNotification.loading ? (
             <ActivityIndicator size="small" color="#fff" />
           ) : (
-            <Text style={styles.buttonText}>Удалить все</Text>
+            <Text style={styles.buttonText}>{langData?.MOBILE_DELETE_ALL || "Удалить все"}</Text>
           )}
         </TouchableOpacity>
       </View>
 
       <CenteredModal
-        btnRedText="No"
-        btnWhiteText="Yes"
+        btnRedText={langData?.MOBILE_CANCEL || "Отмена"}
+        btnWhiteText={langData?.MOBILE_CONTINUE || "Продолжить"}
         isFullBtn={true}
         isModal={modalVisible}
         toggleModal={() => setModalVisible(!modalVisible)}
@@ -329,7 +331,7 @@ const Notifications = () => {
       >
         <View>
           <Text style={{ fontSize: 20 }}>
-            Вы уверены, что хотите удалить все уведомления?
+            {langData?.MOBILE_CONFIRM_DELETE_ALL || "Вы уверены, что хотите удалить все уведомления?"}
           </Text>
         </View>
       </CenteredModal>
@@ -423,6 +425,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     flex: 1,
     marginHorizontal: 5,
+    justifyContent: "center",
+    alignItems: "center",
   },
   buttonText: {
     color: "#fff",
@@ -430,6 +434,7 @@ const styles = StyleSheet.create({
   },
 
   header: {
+    width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",

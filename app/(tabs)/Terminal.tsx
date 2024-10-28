@@ -17,6 +17,7 @@ import CenteredModal from "@/components/modal/modal-centered";
 import { useFocusEffect } from "expo-router";
 import { Colors } from "@/constants/Colors";
 import Navbar from "@/components/navbar/navbar";
+import { langStore } from "@/helpers/stores/language/languageStore";
 
 interface Terminal {
   id: number;
@@ -28,6 +29,8 @@ interface Terminal {
   phones: string[];
   merchant: string;
   phone: string;
+  status: string;
+  posId: string | number;
 }
 
 const Terminal: React.FC = () => {
@@ -40,6 +43,7 @@ const Terminal: React.FC = () => {
     inn: "",
     terminalSeriyaKodu: "", // Not required for validation
   });
+  const {langData} = langStore();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [TerminalId, setTerminalId] = useState<number | null>(null);
   const [page, setPage] = useState(0);
@@ -59,9 +63,9 @@ const Terminal: React.FC = () => {
     `${SellerEdit}${TerminalId ? TerminalId : 0}`,
     "PUT",
     {
-      account: formData.hisob,
-      filialCode: formData.filialKod,
-      inn: formData.inn,
+      // account: formData.hisob,
+      // filialCode: formData.filialKod,
+      // inn: formData.inn,
       name: formData.ism,
       terminalSerialCode:
         formData.terminalSeriyaKodu === "" ? null : formData.terminalSeriyaKodu,
@@ -77,7 +81,7 @@ const Terminal: React.FC = () => {
 
   useEffect(() => {
     if (editTerminal?.response) {
-      alert("Терминал успешно отредактирован!");
+      alert(langData?.MOBILE_TERMINAL_SUCCESSFULLY_EDITED || "Терминал успешно отредактирован!");
       setModalVisible(false);
       resetFormData();
       fetchTerminalList()
@@ -94,9 +98,9 @@ const Terminal: React.FC = () => {
   };
 
   const validateForm = () => {
-    const { ism, hisob, filialKod, inn } = formData;
-    if (!ism || !hisob || !filialKod || !inn) {
-      setErrorMessage("Пожалуйста, заполните все обязательные поля.");
+    const { ism } = formData;
+    if (!ism ) {
+      setErrorMessage(langData?.PLEASE_FILL_ALL_FIELDS || "Пожалуйста, заполните все обязательные поля.");
       return false;
     }
     setErrorMessage(null);
@@ -161,9 +165,9 @@ const Terminal: React.FC = () => {
         <View>
           <View style={styles.header}>
             <Text style={styles.headerText}>
-            Терминалы({terminalList?.totalElements})
+            {langData?.MOBILE_TERMINALS || "Терминалы"}({terminalList?.totalElements})
             </Text>
-            <Text style={styles.headerText}>Текущий({page + 1})</Text>
+            <Text style={styles.headerText}>{langData?.MOBILE_CURRENT || "Текущий"}({page + 1})</Text>
           </View>
           {terminalList?.object?.length > 0 ? (
             terminalList?.object?.map((terminal: Terminal, index: number) => (
@@ -178,7 +182,7 @@ const Terminal: React.FC = () => {
               >
                 {/* <Text style={styles.cardTitle}>{terminal.account || "-"}</Text> */}
                 <View style={styles.row}>
-                  <Text style={styles.boldText}>Имя:</Text>
+                  <Text style={styles.boldText}>{langData?.MOBILE_NAME || "Имя"}:</Text>
                   <Text style={styles.cardDetail}>{terminal.name || "-"}</Text>
                 </View>
                 {/* <View style={styles.row}>
@@ -196,21 +200,35 @@ const Terminal: React.FC = () => {
                   </Text>
                 </View> */}
                 <View style={styles.row}>
-                  <Text style={styles.boldText}>Серийный код:</Text>
+                  <Text style={styles.boldText}>{langData?.MOBILE_SERIAL_CODE || "Серийный код"}:</Text>
                   <Text style={styles.cardDetail}>
                     {" "}
                     {terminal?.terminalSerialCode || "-"}
                   </Text>
                 </View>
                 <View style={styles.row}>
-                  <Text style={styles.boldText}>Мерчант:</Text>
+                  <Text style={styles.boldText}>{langData?.MOBILE_MERCHANT || "Мерчант"}:</Text>
                   <Text style={styles.cardDetail}>
                     {" "}
                     {terminal?.merchant || "-"}
                   </Text>
                 </View>
                 <View style={styles.row}>
-                  <Text style={styles.boldText}>Телефон:</Text>
+                  <Text style={styles.boldText}>{langData?.MOBILE_STATUS || "Статус"}:</Text>
+                  <Text style={styles.cardDetail}>
+                    {" "}
+                    {terminal?.status || "-"}
+                  </Text>
+                </View>
+                <View style={styles.row}>
+                  <Text style={styles.boldText}>{langData?.MOBILE_TERMINAL_NUMBER || "Номер терминала"}:</Text>
+                  <Text style={styles.cardDetail}>
+                    {" "}
+                    {terminal?.posId || "-"}
+                  </Text>
+                </View>
+                <View style={styles.row}>
+                  <Text style={styles.boldText}>{langData?.MOBILE_TEL_PHONE || "Телефон"}:</Text>
                   <Text style={styles.cardDetail}>
                     {" "}
                     {terminal?.phone
@@ -225,7 +243,7 @@ const Terminal: React.FC = () => {
               </TouchableOpacity>
             ))
           ) : (
-            <Text style={styles.noDataText}>Терминал не найден.</Text>
+            <Text style={styles.noDataText}>{langData?.MOBILE_TERMINAL_NOT_FOUND || "Терминал не найден."}</Text>
           )}
 
           {terminalList?.object?.length > 0 &&
@@ -242,7 +260,7 @@ const Terminal: React.FC = () => {
                     page === 0 && styles.disabledButton,
                   ]}
                 >
-                  Последний
+                  {langData?.MOBILE_LAST || "Последний"}
                 </Text>
               </Pressable>
               <Pressable
@@ -257,14 +275,14 @@ const Terminal: React.FC = () => {
                     page + 1 === terminalList?.totalPage && styles.disabledButton,
                   ]}
                 >
-                  Следующий
+                  {langData?.MOBILE_PANEL_CONTROL_NEXT || "Следующий"}
                 </Text>
               </Pressable>
             </View>
           }
           <CenteredModal
-            btnRedText="Закрывать"
-            btnWhiteText={editTerminal.loading ? <ActivityIndicator size="small" color={Colors.light.primary} /> : "Редактировать"}
+            btnRedText={langData?.MOBILE_CLOSE || "Закрывать"}
+            btnWhiteText={editTerminal.loading ? <ActivityIndicator size="small" color={Colors.light.primary} /> : langData?.MOBILE_CONTINUE || "Продолжить"}
             isFullBtn
             isModal={isModalVisible}
             toggleModal={() => {
@@ -274,15 +292,15 @@ const Terminal: React.FC = () => {
             onConfirm={handleSubmit}
           >
             <ScrollView>
-              <Text style={{fontSize: 20, paddingVertical: 3}}>Редактировать терминал</Text>
+              <Text style={{fontSize: 20, paddingVertical: 3}}>{langData?.MOBILE_EDIT_TERMINAL || "Редактировать терминал"}</Text>
               {[
-                { key: "ism", label: "Имя" },
-                { key: "hisob", label: "Счет" },
-                { key: "filialKod", label: "Код филиала" },
-                { key: "inn", label: "Инн" },
+                { key: "ism", label: langData?.MOBILE_NAME || "Имя" },
+                // { key: "hisob", label: langData?.MOBILE_ACCOUNT || "Счет" },
+                // { key: "filialKod", label: langData?.MOBILE_FILIAL_CODE || "Код филиала" },
+                // { key: "inn", label: langData?.MOBILE_INN || "Инн" },
                 {
                   key: "terminalSeriyaKodu",
-                  label: "Серийный код терминала (опционально)",
+                  label: langData?.MOBILE_SERIAL_CODE || "Серийный код терминала (опционально)",
                 }, // Optional
               ].map(({ key, label }) => (
                 <>

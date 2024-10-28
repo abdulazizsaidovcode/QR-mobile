@@ -13,10 +13,12 @@ import HomeScreen from "./home";
 import UserTerminal from "./UserTerminal";
 import { useFocusEffect } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { langStore } from "@/helpers/stores/language/languageStore";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const [role, setRole] = useState<string>("");
+  const {langData} = langStore();
 
   useFocusEffect(
     useCallback(() => {
@@ -59,7 +61,7 @@ export default function TabLayout() {
             name="home"
             component={HomeScreen}
             options={{
-              title: "Панель управления",
+              title: langData?.MOBILE_PANEL_CONTROL || "Панель управления",
               tabBarIcon: ({ color, focused }) => (
                 <TabBarIcon
                   name={focused ? "home" : "home-outline"}
@@ -82,7 +84,7 @@ export default function TabLayout() {
           name="PayMent"
           component={PaymentQr}
           options={{
-            title: "Оплата",
+            title: langData?.MOBILE_PAYMENT || "Оплата",
             tabBarIcon: ({ color, focused }) => (
               <AntDesign name="qrcode" size={34} color={color} />
             ),
@@ -105,7 +107,7 @@ export default function TabLayout() {
             name="Terminal"
             component={Terminal}
             options={{
-              title: "Терминал",
+              title: langData?.MOBILE_TERMINAL || "Терминал",
               tabBarIcon: ({ color, focused }) => (
                 <FontAwesome5 name="calculator" size={24} color={color} />
               ),
@@ -127,7 +129,7 @@ export default function TabLayout() {
             name="Terminal users"
             component={UserTerminal}
             options={{
-              title: "Пользователи терминала",
+              title: langData?.MOBILE_USER_TERMINAL || "Пользователи терминала",
               tabBarIcon: ({ color, focused }) => (
                 <FontAwesome5 name="users" size={24} color={color} />
               ),

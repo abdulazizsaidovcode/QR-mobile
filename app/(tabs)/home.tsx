@@ -148,7 +148,7 @@ export default function HomeScreen() {
         {role === "ROLE_SELLER" && (
           <View style={{ flexDirection: "row", gap: 5 }}>
             <TransactionActionCard
-              title="Терминалы"
+              title={langData?.MOBILE_TERMINALS || "Терминалы"}
               desc={response && response.terminalCount}
               icon={
                 <FontAwesome5
@@ -160,7 +160,7 @@ export default function HomeScreen() {
               onPress={() => {}}
             />
             <TransactionActionCard
-              title="Завершенные транзакции"
+              title={langData?.MOBILE_COMPLETED_TRANSACTIONS || "Завершенные транзакции"}
               desc={
                 response &&
                 response?.completedCount &&
@@ -180,7 +180,7 @@ export default function HomeScreen() {
         {role === "ROLE_SELLER" && (
           <View style={{ flexDirection: "row", gap: 5 }}>
             <TransactionActionCard
-              title="Отмененные транзакции"
+              title={langData?.MOBILE_CANCELLED_TRANSACTIONS || "Отмененные транзакции"}
               desc={response && response.cancelCount}
               icon={
                 <MaterialIcons
@@ -192,7 +192,7 @@ export default function HomeScreen() {
               onPress={() => {}}
             />
             <TransactionActionCard
-              title="Ожидающие транзакции"
+              title={langData?.MOBILE_WAITING_TRANSACTIONS || "Ожидающие транзакции"}
               desc={response && response?.waitCount}
               icon={
                 <MaterialIcons
@@ -208,7 +208,7 @@ export default function HomeScreen() {
         {role === "ROLE_SELLER" && (
           <View style={{ flexDirection: "row", gap: 5, flexWrap: "wrap" }}>
             <TransactionActionHeadCard
-              title="Количество пользователей терминала"
+              title={langData?.MOBILE_TERMINAL_USERS || "Количество пользователей терминала"}
               desc={
                 `${response && response?.userCount
                   ? response?.userCount
@@ -224,7 +224,7 @@ export default function HomeScreen() {
               onPress={() => {}}
             />
             <TransactionActionHeadCard
-              title="Общая сумма платежа"
+              title={langData?.MOBILE_CONFIRMED_PAYMENTS || "Подтвержденные платежи"}
               desc={
                 `${response && response?.balanceCompleted
                   ? response?.balanceCompleted.toFixed(2)
@@ -240,7 +240,7 @@ export default function HomeScreen() {
               onPress={() => {}}
             />
             <TransactionActionHeadCard
-              title="Ожидающие транзакции"
+              title={langData?.MOBILE_WAITING_PAYMENTS || "Ожидающие платежи"}
               desc={
                 `${response && response?.balanceWait ? response?.balanceWait.toFixed(2) : 0} UZS`
               }
@@ -254,7 +254,7 @@ export default function HomeScreen() {
               onPress={() => {}}
             />
             <TransactionActionHeadCard
-              title="Завершенные транзакции"
+              title={langData?.MOBILE_CANCELLED_PAYMENTS || "Отмененные платежи"}
               desc={
                 `${response && response?.balanceCancel
                   ? response?.balanceCancel.toFixed(2)
@@ -273,9 +273,9 @@ export default function HomeScreen() {
         )}
         <View style={styles.header}>
           <Text style={styles.headerText}>
-            Платежи({transactionGet?.response?.totalElements})
+            {langData?.MOBILE_PAYMENTS || "Платежи"}({transactionGet?.response?.totalElements})
           </Text>
-          <Text style={styles.headerText}>Текущий({page + 1})</Text>
+          <Text style={styles.headerText}>{langData?.MOBILE_CURRENT || "Текущий"}({page + 1})</Text>
         </View>
 
         {transactionGet?.response?.object.length > 0 ? (
@@ -285,7 +285,7 @@ export default function HomeScreen() {
             renderItem={({ item }) => <TransactionCard transaction={item} />}
           />
         ) : (
-          <Text style={styles.noDataText}>Платеж не найден.</Text>
+          <Text style={styles.noDataText}>{langData?.MOBILE_PAYMENT_NOT_FOUND || "Платеж не найден."}</Text>
         )}
         {transactionGet?.response?.object.length > 0 && (
           <View style={styles.paginationContainer}>
@@ -301,7 +301,7 @@ export default function HomeScreen() {
                   page === 0 && styles.disabledButton,
                 ]}
               >
-                Последний
+                {langData?.MOBILE_LAST || "Последний"}
               </Text>
             </Pressable>
             <Pressable
@@ -318,7 +318,7 @@ export default function HomeScreen() {
                     styles.disabledButton,
                 ]}
               >
-                Следующий
+                {langData?.MOBILE_PANEL_CONTROL_NEXT || "Следующий"}
               </Text>
             </Pressable>
           </View>

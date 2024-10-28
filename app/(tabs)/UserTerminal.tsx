@@ -24,6 +24,7 @@ import {
 } from "react-native";
 import { Picker } from "@react-native-picker/picker"; // Install this package if not already
 import { Ionicons, MaterialIcons } from "@expo/vector-icons"; // For password visibility toggle
+import { langStore } from "@/helpers/stores/language/languageStore";
 
 interface UserTerminal {
   id: number;
@@ -46,6 +47,7 @@ interface UserTerminalResponse {
 
 export default function UserTerminal() {
   const [page, setPage] = useState(0);
+  const {langData} = langStore();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isModalVisible, setModalVisible] = useState<boolean>(false);
   const [isDeleteModalVisible, setDeleteModalVisible] = useState<boolean>(
@@ -97,28 +99,28 @@ export default function UserTerminal() {
   
     useEffect(() => {
       if (editTerminal?.response) {
-        alert("Пользователь терминала добавлен успешно!");
+        alert(langData?.MOBILE_USER_TERMINAL_ADDED_SUCCESSFULLY || "Пользователь терминала добавлен успешно!");
         globalDataFunc();
         terminalList.globalDataFunc();
       } else if (editTerminal?.error) {
-        alert("Ошибка добавления пользователя терминала.");
+        alert(langData?.MOBILE_ERROR_ADDING_USER_TERMINAL || "Ошибка добавления пользователя терминала.");
       }
     }, [editTerminal?.response, editTerminal?.error])
 
     useEffect(() => {
       if (terminalDelete?.response) {
-        alert("Пользователь терминала успешно удален");
+        alert(langData?.MOBILE_USER_TERMINAL_DELETED_SUCCESSFULLY || "Пользователь терминала успешно удален");
         globalDataFunc();
         terminalList.globalDataFunc();
       } else if (terminalDelete?.error) {
-        alert("Произошла ошибка при удалении пользователя терминала.");
+        alert(langData?.MOBILE_ERROR_DELETING_USER_TERMINAL || "Произошла ошибка при удалении пользователя терминала.");
       }
     }, [terminalDelete?.response, terminalDelete?.error])
 
   const validateForm = () => {
     const { terminalId, managerFio, phone, password } = formData;
     if (!terminalId || !managerFio || !phone || !password) {
-      setErrorMessage("Пожалуйста, заполните все обязательные поля.");
+      setErrorMessage(langData?.PLEASE_FILL_ALL_FIELDS || "Пожалуйста, заполните все обязательные поля.");
       return false;
     }
     setErrorMessage(null);
@@ -179,10 +181,10 @@ export default function UserTerminal() {
         <View>
           <View style={styles.header}>
             <Text style={styles.headerText}>
-            Пользователи терминала (
+            {langData?.MOBILE_USER_TERMINAL || "Пользователи терминала"} (
               {response?.totalElements ? response?.totalElements : 0})
             </Text>
-            <Text style={styles.headerText}>Текущий ({page + 1})</Text>
+            <Text style={styles.headerText}>{langData?.MOBILE_CURRENT || "Текущий"} ({page + 1})</Text>
           </View>
           <Pressable
             onPress={() => {
@@ -190,22 +192,22 @@ export default function UserTerminal() {
             }}
           >
             <Text style={[styles.paginationButton]}>
-            Создать пользователя
+            {langData?.MOBILE_CREATE_USER || "Создать пользователя"}
             </Text>
           </Pressable>
           {response && response.object.length > 0 ? (
             response.object.map((item: UserTerminal) => (
               <View key={item.id} style={styles.card}>
                 <View style={styles.row}>
-                  <Text style={styles.boldText}>Терминал Имя:</Text>
+                  <Text style={styles.boldText}>{langData?.MOBILE_TERMINAL_NAME || "Терминал Имя"}:</Text>
                   <Text style={styles.cardDetail}>{item?.terminalName || "-"}</Text>
                 </View>
                 <View style={styles.row}>
-                  <Text style={styles.boldText}>Ф.И.О:</Text>
+                  <Text style={styles.boldText}>{langData?.MOBILE_FULL_NAME || "Ф.И.О"}:</Text>
                   <Text style={styles.cardDetail}>{item?.managerFio || "-"}</Text>
                 </View> 
                 <View style={styles.row}>
-                  <Text style={styles.boldText}>Телефон:</Text>
+                  <Text style={styles.boldText}>{langData?.MOBILE_TELEPHONE || "Телефон"}:</Text>
                   <Text style={styles.cardDetail}>
                     {item?.phone
                       ? `+${item.phone.replace(/(\d{3})(\d{2})(\d{3})(\d{2})(\d{2})/, '$1 $2 $3 $4 $5')}`
@@ -258,7 +260,7 @@ export default function UserTerminal() {
               </View>
             ))
           ) : (
-            <Text style={styles.noDataText}>Пользовательские терминалы не найдены.</Text>
+            <Text style={styles.noDataText}>{langData?.MOBILE_USER_TERMINAL_NOT_FOUND || "Пользовательские терминалы не найдены."}</Text>
           )}
         </View>
         {response && response.object.length > 0 && (
@@ -275,7 +277,7 @@ export default function UserTerminal() {
                   page === 0 && styles.disabledButton,
                 ]}
               >
-                Последний
+                {langData?.MOBILE_LAST || "Последний"}
               </Text>
             </Pressable>
             <Pressable
@@ -290,14 +292,14 @@ export default function UserTerminal() {
                   page + 1 === response.totalPage && styles.disabledButton,
                 ]}
               >
-                Следующий
+                {langData?.MOBILE_PANEL_CONTROL_NEXT || "Следующий"}
               </Text>
             </Pressable>
           </View>
         )}
         <CenteredModal
-          btnRedText="Закрывать"
-          btnWhiteText={editTerminal?.loading ? <ActivityIndicator size="small" color={Colors.light.primary} /> : "Сохранять"}
+          btnRedText={langData?.MOBILE_CLOSE || "Закрывать"}
+          btnWhiteText={editTerminal?.loading ? <ActivityIndicator size="small" color={Colors.light.primary} /> : langData?.MOBILE_SAVE || "Сохранять"}
           isFullBtn
           isModal={isModalVisible}
           toggleModal={() => {
@@ -307,10 +309,10 @@ export default function UserTerminal() {
           onConfirm={handleSubmit}
         >
           <ScrollView style={{ width: "100%" }}>
-            <Text style={styles.modalTitle}>Добавить пользователя</Text>
+            <Text style={styles.modalTitle}>{langData?.MOBILE_ADD_USER || "Добавить пользователя"}</Text>
 
             {/* Terminal Selection */}
-            <Text style={styles.label}>Терминал</Text>
+            <Text style={styles.label}>{langData?.MOBILE_TERMINAL || "Терминал"}</Text>
             <View style={styles.pickerContainer}>
               <Picker
                 selectedValue={formData.terminalId}
@@ -319,7 +321,7 @@ export default function UserTerminal() {
                 }
                 style={styles.picker}
               >
-                <Picker.Item label="Выберите терминал" value={0} />
+                <Picker.Item label={langData?.MOBILE_SELECT_TERMINAL || "Выберите терминал"} value={0} />
                 {terminalList?.response?.map((terminal: UserTerminal) => (
                   <Picker.Item
                     key={terminal.id}
@@ -331,9 +333,9 @@ export default function UserTerminal() {
             </View>
 
             {/* First Name */}
-            <Text style={styles.label}>Ф.И.О</Text>
+            <Text style={styles.label}>{langData?.MOBILE_FULL_NAME || "Ф.И.О"}</Text>
             <TextInput
-              placeholder="Ф.И.О"
+              placeholder={langData?.MOBILE_FULL_NAME || "Ф.И.О"} 
               style={styles.input}
               value={formData.managerFio}
               onChangeText={(text) => handleInputChange("managerFio", text)}
@@ -349,7 +351,7 @@ export default function UserTerminal() {
             /> */}
 
             {/* Phone Number */}
-            <Text style={styles.label}>Телефон</Text>
+            <Text style={styles.label}>{langData?.MOBILE_TELEPHONE || "Телефон"}</Text>
             <View style={styles.phoneContainer}>
               <Text style={styles.phonePrefix}>+998</Text>
               <TextInput
@@ -362,10 +364,10 @@ export default function UserTerminal() {
             </View>
 
             {/* Password */}
-            <Text style={styles.label}>Пароль</Text>
+            <Text style={styles.label}>{langData?.MOBILE_PASSWORD || "Пароль"}</Text>
             <View style={styles.passwordContainer}>
               <TextInput
-                placeholder="Пароль"
+                placeholder={langData?.MOBILE_PASSWORD || "Пароль"}
                 style={styles.passwordInput}
                 secureTextEntry={!passwordVisible}
                 value={formData.password}
@@ -388,8 +390,8 @@ export default function UserTerminal() {
           </ScrollView>
         </CenteredModal>
         <CenteredModal
-          btnRedText="Нет"
-          btnWhiteText="Да"
+          btnRedText={langData?.MOBILE_CANCEL || "Закрывать"}
+          btnWhiteText={langData?.MOBILE_CONTINUE || "Продолжить"}
           isFullBtn
           isModal={isDeleteModalVisible}
           toggleModal={() => {
@@ -401,7 +403,7 @@ export default function UserTerminal() {
           }}
         >
           <ScrollView style={{ width: "100%" }}>
-            <Text style={styles.modalTitle}>Вы уверены, что хотите удалить этого пользователя?</Text>
+            <Text style={styles.modalTitle}>{langData?.MOBILE_CONFIRM_DELETE_USER || "Вы уверены, что хотите удалить этого пользователя?"}</Text>
           </ScrollView>
         </CenteredModal>
       </ScrollView>
@@ -499,11 +501,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   header: {
+    width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     marginVertical: 10,
     marginBottom: 16,
+    gap: 10,
   },
   headerText: {
     fontSize: 18,

@@ -25,6 +25,7 @@ import { RenderQRCode } from "@/components/QRgenerate";
 import Buttons from "@/components/buttons/button";
 import { Button } from "react-native-elements";
 import { useAuthStore } from "@/helpers/stores/auth/auth-store";
+import { langStore } from "@/helpers/stores/language/languageStore";
 
 type TransactionDetailNavigationProp = NavigationProp<
   RootStackParamList,
@@ -34,8 +35,8 @@ type TransactionDetailNavigationProp = NavigationProp<
 const TransactionDetail = () => {
   const { paymentDetail } = OrderStore();
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const {phoneNumber} = useAuthStore()
   const [isModalVisibleConfirm, setIsModalVisibleConfirm] = useState(false);
+  const {langData} = langStore()
   const navigation = useNavigation<TransactionDetailNavigationProp>();
 
   // Initialize useGlobalRequest without executing immediately
@@ -62,19 +63,19 @@ const TransactionDetail = () => {
 
   useEffect(() => {
     if (paymentCancel?.response) {
-      Alert.alert("Успех", "Платеж отменен.");
+      Alert.alert(langData?.SUCCESS || "Успех", langData?.MOBILE_PAYMENT_CANCELLED || "Платеж отменен.");
       navigation.goBack();
     } else if (paymentCancel?.error?.message) {
-      Alert.alert("Ошибка", paymentCancel?.error?.message || "Ошибка отмены платежа");
+      Alert.alert(langData?.ERROR || "Ошибка", paymentCancel?.error?.message || langData?.MOBILE_PAYMENT_CANCELLED_ERROR || "Ошибка отмены платежа");
     }
   }, [paymentCancel.error, paymentCancel.response]);
 
   useEffect(() => {
     if (paymentConfirm?.response) {
-      Alert.alert("Успех", "Платеж подтвержден.");
+      Alert.alert(langData?.SUCCESS || "Успех", langData?.MOBILE_PAYMENT_CONFIRMED || "Платеж подтвержден.");
       navigation.goBack();
     } else if (paymentConfirm?.error?.message) {
-      Alert.alert("Ошибка", paymentConfirm?.error?.message || "Ошибка подтверждения платежа");
+      Alert.alert(langData?.ERROR || "Ошибка", paymentConfirm?.error?.message || langData?.MOBILE_PAYMENT_CONFIRMED_ERROR || "Ошибка подтверждения платежа");
     }
   }, [paymentConfirm.error, paymentConfirm.response]);
 
@@ -83,7 +84,7 @@ const TransactionDetail = () => {
   if (!paymentDetail || !paymentDetail?.transaction) {
     return (
       <SafeAreaView style={styles.container}>
-        <Text style={styles.noDataText}>Платежные реквизиты отсутствуют.</Text>
+        <Text style={styles.noDataText}>{langData?.MOBILE_PAYMENT_DETAILS_MISSING || "  "}</Text>
       </SafeAreaView>
     );
   }
@@ -102,19 +103,19 @@ const TransactionDetail = () => {
   return (
     <SafeAreaView style={styles.outerContainer}>
       <View style={styles.navigationContainer}>
-        <NavigationMenu name="Проверка оплаты" />
+        <NavigationMenu name={langData?.MOBILE_PAYMENT_CHECK || "Проверка оплаты"} />
       </View>
       <StatusBar barStyle="dark-content" backgroundColor="#f5f5f5" />
       <ScrollView style={styles.container}>
         <View style={styles.detailCard}>
           <View style={{ width: "100%", gap: 10 }}>
-            <Text style={styles.title}>Название компании:</Text>
+            <Text style={styles.title}>{langData?.MOBILE_COMPANY_NAME || "Название компании"}:</Text>
             <Text style={styles.desc}>
               {paymentDetail?.transaction?.sellerName || "-"}
             </Text>
           </View>
           <View style={styles.detailRow}>
-            <Text style={styles.title}>Валюта:</Text>
+            <Text style={styles.title}>{langData?.MOBILE_CURRENCY || "Валюта"}:</Text>
             <Text style={styles.desc}>
               {paymentDetail?.transaction?.currency || "-"}
             </Text>
@@ -126,13 +127,13 @@ const TransactionDetail = () => {
             </Text>
           </View> */}
           <View style={styles.detailRow}>
-            <Text style={styles.title}>Статус:</Text>
+            <Text style={styles.title}>{langData?.MOBILE_STATUS || "Статус"}:</Text>
             <Text style={styles.desc}>
               {paymentDetail?.transaction?.paymentStatus || "-"}
             </Text>
           </View>
           <View style={styles.detailRow}>
-            <Text style={styles.title}>Номер терминала:</Text>
+            <Text style={styles.title}>{langData?.MOBILE_TERMINAL_NUMBER || "Номер терминала"}:</Text>
             <Text style={styles.desc}>
               {paymentDetail?.transaction?.posId
                 ? `${paymentDetail?.transaction?.posId}`
@@ -140,7 +141,7 @@ const TransactionDetail = () => {
             </Text>
           </View>
           <View style={styles.detailRow}>
-            <Text style={styles.title}>Сумма чека (сум):</Text>
+            <Text style={styles.title}>{langData?.MOBILE_CHECK_AMOUNT || "Сумма чека (сум)"}:</Text>
             <Text style={styles.desc}>
               {(paymentDetail?.transaction?.amount || 0).toLocaleString(
                 "uz-UZ",
@@ -150,7 +151,7 @@ const TransactionDetail = () => {
             </Text>
           </View>
           <View style={styles.detailRow}>
-            <Text style={styles.title}>Дата:</Text>
+            <Text style={styles.title}>{langData?.MOBILE_DATE || "Дата"}:</Text>
             <Text style={styles.desc}>
               {paymentDetail?.transaction?.dateCreate
                 ? paymentDetail?.transaction?.dateCreate.substring(0, 16)
@@ -159,7 +160,7 @@ const TransactionDetail = () => {
           </View>
 
           <View style={styles.detailRow}>
-            <Text style={styles.title}>Срок действия:</Text>
+            <Text style={styles.title}>{langData?.MOBILE_VALID_TIME || "Срок действия"}:</Text>
             <Text style={styles.desc}>
               {paymentDetail?.transaction?.validtil
                 ? paymentDetail?.transaction?.validtil.substring(0, 16)
@@ -170,7 +171,7 @@ const TransactionDetail = () => {
           <View style={styles.qrContainer}>
             <View style={{ paddingVertical: 10 }}>
               <Text style={styles.qrTextTop}>
-                {`QR-сумма: ${(
+                {`${langData?.MOBILE_QR_AMOUNT || "QR-сумма"}: ${(
                   paymentDetail?.transaction?.amount || 0
                 ).toLocaleString("uz-UZ", {
                   minimumFractionDigits: 2,
@@ -183,7 +184,7 @@ const TransactionDetail = () => {
               <RenderQRCode url={paymentDetail?.transaction?.url} />
             </ErrorBoundary>
             <Text style={styles.qrText}>
-              Чтобы продолжить, отсканируйте этот QR-код.
+              {langData?.MOBILE_SCAN_QR || "Чтобы продолжить, отсканируйте этот QR-код."}
             </Text>
           </View>
 
@@ -207,22 +208,22 @@ const TransactionDetail = () => {
             <Button
               loading={paymentCancel.loading}
               buttonStyle={{ backgroundColor: "red", paddingHorizontal: 16, borderRadius: 10 }}
-              title={"Отмена платежа"}
+              title={langData?.MOBILE_PAYMENT_CANCEL || "Отмена платежа"}
               onPress={openModal}
               
             />
             <Button
               loading={paymentConfirm.loading}
               buttonStyle={{ backgroundColor: "green", paddingHorizontal: 25, borderRadius: 10 }}
-              title={"Подтвердить"}
+              title={langData?.MOBILE_PAYMENT_CONFIRM || "Подтвердить"}
               onPress={openModalConfirm}
             />
           </View>
         </View>
 
         <CenteredModal
-          btnRedText="Закрыть"
-          btnWhiteText="Продолжить"
+          btnRedText={langData?.MOBILE_CLOSE || "Закрыть"}
+          btnWhiteText={langData?.MOBILE_CONTINUE || "Продолжить"}
           isFullBtn={true}
           isModal={isModalVisible}
           onConfirm={handleCancelPayment}
@@ -230,14 +231,14 @@ const TransactionDetail = () => {
         >
           <View style={styles.modalContent}>
             <Text style={styles.modalText}>
-              Вы действительно собираетесь отменить этот платеж?
+              {langData?.MOBILE_PAYMENT_CANCEL_CONFIRM || "Вы действительно собираетесь отменить этот платеж?"}
             </Text>
           </View>
         </CenteredModal>
 
         <CenteredModal
-          btnRedText="Закрыть"
-          btnWhiteText="Продолжить"
+          btnRedText={langData?.MOBILE_CLOSE || "Закрыть"}
+          btnWhiteText={langData?.MOBILE_CONTINUE || "Продолжить"}
           isFullBtn={true}
           isModal={isModalVisibleConfirm}
           onConfirm={handleConfirmPayment}
@@ -245,7 +246,7 @@ const TransactionDetail = () => {
         >
           <View style={styles.modalContent}>
             <Text style={styles.modalText}>
-              Вы действительно собираетесь подтвердить этот платеж?
+              {langData?.MOBILE_PAYMENT_CONFIRM_CONFIRM || "Вы действительно собираетесь подтвердить этот платеж?"}
             </Text>
           </View>
         </CenteredModal>

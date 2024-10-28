@@ -88,7 +88,7 @@ const Profile: React.FC = () => {
   const openModal = () => {
     setFormData({
       managerFio: getMee?.response?.managerFio || "",
-      phone: getMee?.response?.phone?.substring(4) || "",
+      phone: getMee?.response?.phone?.substring(3) || "",
       email: getMee?.response?.email || "",
       tin: getMee?.response?.tin || "",
       bankBik: getMee?.response?.bankBik || "",
@@ -121,7 +121,7 @@ const Profile: React.FC = () => {
     }));
   };
 
-  // Validate the form
+  // Validate the formn
   const validate = (): boolean => {
     const newErrors: ProfileErrors = {};
     if (!formData.managerFio.trim()) newErrors.managerFio = langData?.NAME_REQUIRED || "Требуется имя";
@@ -252,7 +252,7 @@ const Profile: React.FC = () => {
               )}
 
               <Text style={{ fontSize: 15, paddingVertical: 3 }}>
-                {langData?.MOBILE_PHONE || "Номер телефона"}
+                {langData?.MOBILE_TELEPHONE || "Номер телефона"}
               </Text>
               <View style={[styles.passwordContainer, { paddingRight: 0 }]}>
                 <View style={styles.eyeIcon}>
@@ -262,7 +262,7 @@ const Profile: React.FC = () => {
                 </View>
                 <TextInput
                   style={[styles.input, styles.passwordInput]}
-                  placeholder={langData?.MOBILE_PHONE || "Номер телефона"}
+                  placeholder={langData?.MOBILE_TELEPHONE || "Номер телефона"}
                   keyboardType="numeric"
                   value={formData.phone}
                   onChangeText={(text) => handleInputChange("phone", text)}
@@ -414,8 +414,8 @@ const styles = StyleSheet.create({
     color: Colors.dark.primary,
   },
   modalContent: {
-    padding: 20,
-    backgroundColor: "#fff",
+    // padding: 20,
+    // backgroundColor: "#fff",
     borderRadius: 10,
     width: "100%",
   },

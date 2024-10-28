@@ -16,10 +16,11 @@ import { RenderQRCode } from "@/components/QRgenerate";
 import { useAuthStore } from "@/helpers/stores/auth/auth-store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "expo-router";
+import { langStore } from "@/helpers/stores/language/languageStore";
 
 const CreateQr = () => {
   const [amount, setAmount] = useState("");
-  
+  const { langData } = langStore();
   const [phone, setPhone] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [Messageamount, setMessageAmount] = useState("");
@@ -75,7 +76,7 @@ const CreateQr = () => {
         <ScrollView
           style={{ flex: 1}}
         >
-          <Text style={styles.label}>Введите номер телефона</Text>
+          <Text style={styles.label}>{langData?.MOBILE_ENTER_PHONE_NUMBER || "Введите номер телефона"}</Text>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             {phoneNumber && phoneNumber === "77 308 88 88" ? (
               <Text style={{marginRight: 10, fontSize: 30}}>+998</Text>
@@ -88,7 +89,7 @@ const CreateQr = () => {
               keyboardType="numeric"
             />
           </View>
-          <Text style={styles.label}>Введите сумму</Text>
+          <Text style={styles.label}>{langData?.MOBILE_ENTER_AMOUNT || "Введите сумму"}</Text>
           <TextInput
             style={styles.amountInput}
             value={amount}
@@ -101,14 +102,14 @@ const CreateQr = () => {
             <View style={styles.qrContainer}>
               <View style={{ paddingVertical: 10 }}>
                 <Text style={styles.qrTextTop}>
-                  {`QR-сумма: ${Messageamount} UZS`}
+                  {`${langData?.MOBILE_QR_AMOUNT || "QR-сумма"}: ${Messageamount} ${langData?.MOBILE_CURRENCY || "UZS"}`}
                 </Text>
               </View>
               <ErrorBoundary>
                 <RenderQRCode url={qrValue ? qrValue : null} />
               </ErrorBoundary>
               <Text style={styles.qrText}>
-                Отсканируйте этот QR-код, чтобы продолжить
+                {langData?.MOBILE_SCAN_QR || "Отсканируйте этот QR-код, чтобы продолжить"}
               </Text>
             </View>
           ) : null}
@@ -131,7 +132,7 @@ const CreateQr = () => {
           {paymentCreate.loading ? (
             <ActivityIndicator size="small" color="#fff" />
           ) : (
-            "Создать платеж"
+            langData?.MOBILE_CREATE_PAYMENT || "Создать платеж"
           )}
         </Text>
       </TouchableOpacity>

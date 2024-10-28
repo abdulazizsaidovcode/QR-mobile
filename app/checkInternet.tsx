@@ -11,9 +11,11 @@ import NetInfo from "@react-native-community/netinfo";
 import CenteredModal from "@/components/modal/modal-centered";
 import { Colors } from "@/constants/Colors";
 import { Image } from "react-native-elements";
+import { langStore } from "@/helpers/stores/language/languageStore";
 
 const InternetCheckModal = () => {
   const [isConnected, setIsConnected] = useState(true);
+  const { langData } = langStore(); 
   const [modalVisible, setModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -57,7 +59,7 @@ const InternetCheckModal = () => {
           isLoading ? (
             <ActivityIndicator size="small" color={Colors.light.primary} />
           ) : (
-            "Повторить проверку"
+            langData?.MOBILE_RETRY || "Повторить проверку"
           )
         }
         btnWhiteText=""
@@ -84,7 +86,7 @@ const InternetCheckModal = () => {
             />
           </View>
           <Text style={styles.modalText}>
-            Вы действительно собираетесь выйти из системы?
+            {langData?.MOBILE_INTERNET_PROBLEMS || "У вас проблемы с интернетом"}
           </Text>
         </View>
       </CenteredModal>
