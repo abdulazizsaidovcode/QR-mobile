@@ -66,8 +66,8 @@ export default function UserTerminal() {
     UserTerminalResponse
   >(`${UserTerminalGet}?page=${page}`, "GET");
 
-  const terminalList = useGlobalRequest<UserTerminalResponse>(
-    `${UserTerminalListGet}?page=${page}`,
+  const terminalList = useGlobalRequest(
+    UserTerminalListGet,
     "GET"
   );
 
@@ -322,7 +322,7 @@ export default function UserTerminal() {
                 style={styles.picker}
               >
                 <Picker.Item label={langData?.MOBILE_SELECT_TERMINAL || "Выберите терминал"} value={0} />
-                {terminalList?.response?.map((terminal: UserTerminal) => (
+                {terminalList?.response?.map((terminal: any) => (
                   <Picker.Item
                     key={terminal.id}
                     label={terminal.name}
@@ -510,6 +510,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   headerText: {
+    width: "50%",
     fontSize: 18,
     fontWeight: "bold",
   },

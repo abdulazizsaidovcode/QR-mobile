@@ -84,7 +84,7 @@ const TransactionDetail = () => {
   if (!paymentDetail || !paymentDetail?.transaction) {
     return (
       <SafeAreaView style={styles.container}>
-        <Text style={styles.noDataText}>{langData?.MOBILE_PAYMENT_DETAILS_MISSING || "  "}</Text>
+        <Text style={styles.noDataText}>{langData?.MOBILE_PAYMENT_DETAILS_MISSING || ""}</Text>
       </SafeAreaView>
     );
   }

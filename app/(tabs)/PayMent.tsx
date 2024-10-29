@@ -7,11 +7,11 @@ export default function PaymentQr() {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <SafeAreaView style={styles.container}>
+      {/* <SafeAreaView style={styles.container}>
         <StatusBar barStyle="dark-content" backgroundColor="#f5f5f5" />
-        <Navbar />
-        <CreateQr />
-      </SafeAreaView>
+        <Navbar /> */}
+      <CreateQr />
+      {/* </SafeAreaView> */}
     </TouchableWithoutFeedback>
   );
 }
