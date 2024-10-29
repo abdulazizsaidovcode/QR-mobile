@@ -81,7 +81,7 @@ const InternetCheckModal = () => {
             }}
           >
             <Image
-              source={require("@/assets/images/no-wifi.png")}
+              source={require("@/assets/images/no-wifi.svg")}
               style={{ width: 100, height: 100 }}
             />
           </View>

@@ -182,7 +182,7 @@ const Login = () => {
           >
             <Buttons
             isDisebled={policy}
-              title={"Login"}
+              title={"Войти"}
               onPress={() => loginuser()}
               //   loading={sendCode.loading || userFound.loading}
             />

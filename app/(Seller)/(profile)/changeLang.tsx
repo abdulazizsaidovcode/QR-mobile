@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RadioButton } from "react-native-paper";
 import { Avatar } from "react-native-elements";
 import { useGlobalRequest } from "@/helpers/apifunctions/univesalFunc";
 import { words_get_data, words_get_language, words_post_language } from "@/helpers/url";
 import { useFocusEffect } from "expo-router";
 import { langStore } from "@/helpers/stores/language/languageStore";
+import { Image } from "react-native-svg";
 
 const ChangeLang = () => {
   const [selectedLang, setSelectedLang] = useState<string | null>(null);
@@ -71,10 +71,8 @@ const ChangeLang = () => {
         />
         <Avatar
           rounded
-          size="medium"
-          source={{
-            uri: "https://cdn-icons-png.flaticon.com/512/6211/6211657.png",
-          }} // Replace with actual flag image path
+          size="small"
+          source={require("./uzb.png")} // Replace with actual flag image path
         />
         <Text style={styles.title}>UZ </Text>
       </View>
@@ -88,10 +86,8 @@ const ChangeLang = () => {
         />
         <Avatar
           rounded
-          size="medium"
-          source={{
-            uri: "https://cdn-icons-png.flaticon.com/512/6211/6211549.png",
-          }} // Replace with actual flag image path
+          size="small" 
+          source={require("./rus.png")}
         />
         <Text style={styles.title}>RU </Text>
       </View>

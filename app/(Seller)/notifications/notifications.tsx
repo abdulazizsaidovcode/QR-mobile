@@ -102,7 +102,7 @@ const Notifications = () => {
     const date = new Date(dateString);
     const formattedDate = date.toISOString().split("T")[0];
     const formattedTime = date.toTimeString().split(" ")[0].slice(0, 5);
-    return `${formattedDate} T ${formattedTime}`;
+    return `${formattedDate} ${formattedTime}`;
   };
 
   const sortedNotifications = response?.object?.sort(
@@ -452,6 +452,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 20,
     paddingHorizontal: 20,
+    marginBottom: 100,
   },
   paginationButton: {
     fontSize: 18,
