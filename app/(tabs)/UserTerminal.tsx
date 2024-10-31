@@ -151,10 +151,34 @@ export default function UserTerminal() {
     name: keyof typeof formData,
     value: string | number
   ) => {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (name === "phone") {
+        const formattedValue = formatPhoneNumber(value.toString());
+        setFormData((prev) => ({
+            ...prev,
+            [name]: formattedValue.slice(0, 12).split(" ").join(""),
+        }));
+    } else {
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    }
+  };
+
+  const formatPhoneNumber = (text: string) => {
+    let cleaned = ("" + text).replace(/\D/g, "");
+
+    if (cleaned.length > 12) {
+        cleaned = cleaned.slice(0, 12);
+    }
+    const formattedNumber = cleaned.replace(
+        /(\d{2})(\d{3})(\d{2})(\d{2})/,
+        (match, p1, p2, p3, p4) => {
+            return `${p1} ${p2} ${p3} ${p4}`.trim();
+        }
+    );
+
+    return formattedNumber;
   };
 
   if (loading) {
@@ -358,6 +382,7 @@ export default function UserTerminal() {
                 placeholder="YY XXX XX XX"
                 style={styles.phoneInput}
                 keyboardType="number-pad"
+                maxLength={12}
                 value={formData.phone}
                 onChangeText={(text) => handleInputChange("phone", text)}
               />

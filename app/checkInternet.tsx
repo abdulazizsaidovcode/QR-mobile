@@ -2,9 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
-  Modal,
   StyleSheet,
-  Button,
   ActivityIndicator,
 } from "react-native";
 import NetInfo from "@react-native-community/netinfo";

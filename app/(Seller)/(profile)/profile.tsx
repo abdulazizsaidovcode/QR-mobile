@@ -113,13 +113,39 @@ const Profile: React.FC = () => {
     }
   }, [updateProfile.response]);
 
+  
+
   // Handle input changes
   const handleInputChange = (name: keyof ProfileData, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+    if (name === "phone") {
+        const formattedValue = formatPhoneNumber(value);
+        setFormData((prev) => ({
+            ...prev,
+            [name]: formattedValue,
+        }));
+    } else {
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    }
+};
+
+const formatPhoneNumber = (text: string) => {
+    let cleaned = ("" + text).replace(/\D/g, "");
+
+    if (cleaned.length > 12) {
+        cleaned = cleaned.slice(0, 12);
+    }
+    const formattedNumber = cleaned.replace(
+        /(\d{2})(\d{3})(\d{2})(\d{2})/,
+        (match, p1, p2, p3, p4) => {
+            return `${p1} ${p2} ${p3} ${p4}`.trim();
+        }
+    );
+
+    return formattedNumber;
+};
 
   // Validate the formn
   const validate = (): boolean => {
@@ -261,12 +287,12 @@ const Profile: React.FC = () => {
                   </Text>
                 </View>
                 <TextInput
-                  style={[styles.input, styles.passwordInput]}
+                  style={[styles.input, styles.passwordInput, {fontSize: 17}]}
                   placeholder={langData?.MOBILE_TELEPHONE || "Номер телефона"}
                   keyboardType="numeric"
-                  value={formData.phone}
+                  value={formatPhoneNumber(formData.phone)}
                   onChangeText={(text) => handleInputChange("phone", text)}
-                  maxLength={9}
+                  maxLength={12}
                 />
               </View>
 

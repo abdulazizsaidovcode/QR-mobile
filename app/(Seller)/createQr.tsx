@@ -32,31 +32,31 @@ const CreateQr = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [Messageamount, setMessageAmount] = useState("");
   const [alertShown, setAlertShown] = useState(false);
-  const [qrValue, setQrValue] = useState<any>(null); // State to hold the QR code value
+  const [qrValue, setQrValue] = useState<any>(null);
+
+  // Error states
+  const [amountError, setAmountError] = useState("");
+  const [phoneError, setPhoneError] = useState("");
+  const [terminalIdError, setTerminalIdError] = useState("");
 
   const paymentCreate = useGlobalRequest(
     createPayment,
     "POST",
     {
       amount: amount,
-      phone: `7${phone}`,
+      phone: `7${phone.slice(0, 12).split(" ").join("")}`,
       terminalId: terminalId,
     },
     "DEFAULT"
   );
   const terminalList = useGlobalRequest(UserTerminalListGet, "GET");
 
-  console.log("terminalList", terminalList.response);
-
   useFocusEffect(
     useCallback(() => {
       terminalList.globalDataFunc();
-      console.log("terminalList ishladi");
       const fetchPhoneNumber = async () => {
-        const number = await AsyncStorage.getItem("phoneNumber"); // Await the Promise
-        // if (number === "77 308 88 88") {
-        setPhoneNumber(number || ""); // Set state for conditional rendering
-        // }
+        const number = await AsyncStorage.getItem("phoneNumber");
+        setPhoneNumber(number || "");
       };
       fetchPhoneNumber();
     }, [])
@@ -64,9 +64,8 @@ const CreateQr = () => {
 
   useEffect(() => {
     if (paymentCreate.response && !alertShown) {
-      // alert(paymentCreate.response);
       setMessageAmount(amount);
-      setQrValue(paymentCreate?.response ? paymentCreate?.response?.url : null); // Set the QR code value to the response
+      setQrValue(paymentCreate?.response ? paymentCreate?.response?.url : null);
       setAlertShown(true);
     } else if (paymentCreate.error && !alertShown) {
       setMessageAmount("0");
@@ -76,10 +75,60 @@ const CreateQr = () => {
     }
   }, [paymentCreate.response, paymentCreate.error]);
 
-  // Reset alertShown when the amount changes
   useEffect(() => {
     setAlertShown(false);
   }, [amount]);
+
+  // Validate fields on submit
+  const handleValidation = () => {
+    let valid = true;
+    if (!amount) {
+      setAmountError("Amount is required");
+      valid = false;
+    } else {
+      setAmountError("");
+    }
+    if (!phone || phone.length !== 10) {
+      setPhoneError("Enter a valid phone number");
+      valid = false;
+    } else {
+      setPhoneError("");
+    }
+    if (terminalId === 0) {
+      setTerminalIdError("Select a terminal");
+      valid = false;
+    } else {
+      setTerminalIdError("");
+    }
+    return valid;
+  };
+
+  const handleSubmit = () => {
+    if (handleValidation()) {
+      if (phoneNumber !== "77 308 88 88") {
+        paymentCreate.globalDataFunc();
+      } else {
+        setQrValue("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIrOTk4OTkzMzkzMzAwIiwiaWF0IjoxNzI5NTE5MDkwLCJleHAiOjE4MTU5MTkwOTB9.KPFsBeSXDMTBKi1f157OYOAIyY_MiZEVXtJLh3rKMVIIv4D5TsPqSvRVAP9cgcERjRSQTPiEUz1G2fQs4_jq2g");
+        setMessageAmount(amount);
+      }
+    }
+  };
+
+  const formatPhoneNumber = (text: string) => {
+    let cleaned = ("" + text).replace(/\D/g, "");
+
+    if (cleaned.length > 11) {
+      cleaned = cleaned.slice(0, 11);
+    }
+    const formattedNumber = cleaned.replace(
+      /(\d{3})(\d{3})(\d{4})/,
+      (match, p1, p2, p3) => {
+        return `${p1} ${p2} ${p3}`.trim();
+      }
+    );
+
+    return formattedNumber;
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -93,7 +142,7 @@ const CreateQr = () => {
         }}
       >
         <View>
-          <View style={{ padding: 10, overflow: "scroll" }}>
+          <View style={{ padding: 10 }}>
             <Text style={styles.label}>
               {langData?.MOBILE_TERMINAL || "Терминал"}
             </Text>
@@ -104,9 +153,7 @@ const CreateQr = () => {
                 style={styles.picker}
               >
                 <Picker.Item
-                  label={
-                    langData?.MOBILE_SELECT_TERMINAL || "Выберите терминал"
-                  }
+                  label={langData?.MOBILE_SELECT_TERMINAL || "Выберите терминал"}
                   value={0}
                 />
                 {terminalList?.response?.map((terminal: any) => (
@@ -118,65 +165,66 @@ const CreateQr = () => {
                 ))}
               </Picker>
             </View>
+            {terminalIdError ? <Text style={styles.errorText}>{terminalIdError}</Text> : null}
+
             <Text style={styles.label}>
               {langData?.MOBILE_ENTER_PHONE_NUMBER || "Введите номер телефона"}
             </Text>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
-              {phoneNumber && phoneNumber === "77 308 88 88" ? (
-                <Text style={{ marginRight: 10, fontSize: 20 }}>+998</Text>
-              ) : (
-                <Text style={{ marginRight: 10, fontSize: 20 }}>+7</Text>
-              )}
+              <Text style={{ marginRight: 10, fontSize: 20 }}>
+                {phoneNumber === "77 308 88 88" ? "+998" : "+7"}
+              </Text>
               <TextInput
                 style={[styles.amountInput, { flex: 1 }]}
                 value={phone}
-                maxLength={10}
-                onChangeText={(text) => setPhone(text.replace(/[^0-9]/g, ""))}
+                maxLength={12}
+                onChangeText={(text) => {
+                  const formattedPhone = formatPhoneNumber(text.replace(/[^0-9]/g, ""));
+                  setPhone(formattedPhone);
+                  console.log(formattedPhone.slice(0, 12).split(" ").join(""))
+                }}
                 keyboardType="numeric"
+
               />
             </View>
+            {phoneError ? <Text style={styles.errorText}>{phoneError}</Text> : null}
+
             <Text style={styles.label}>
               {langData?.MOBILE_ENTER_AMOUNT || "Введите сумму"}
             </Text>
-            <TextInput
-              style={styles.amountInput}
-              value={amount}
-              onChangeText={(text) => setAmount(text.replace(/[^0-9]/g, ""))} // Allow only numbers
-              keyboardType="numeric"
-              // placeholder="Сумма"
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <TextInput
+                style={[styles.amountInput, { flex: 1 }]}
+                value={amount}
+                onChangeText={(text) => setAmount(text.replace(/[^0-9]/g, ""))}
+                keyboardType="numeric"
             />
+              <Text style={{ marginLeft: 10, fontSize: 25 }}>
+                {langData?.MOBILE_UZS || "сум"}
+              </Text>
+            </View>
 
-            {qrValue ? ( // Render QR code if qrValue is set
+            {amountError ? <Text style={styles.errorText}>{amountError}</Text> : null}
+
+            {qrValue ? (
               <View style={styles.qrContainer}>
                 <View style={{ paddingVertical: 10 }}>
                   <Text style={styles.qrTextTop}>
-                    {`${langData?.MOBILE_QR_AMOUNT || "QR-сумма"}: ${
-                      Messageamount || "0"
-                    } ${"UZS"}`}
+                    {`${langData?.MOBILE_QR_AMOUNT || "QR-сумма"}: ${Messageamount || "0"} ${"UZS"}`}
                   </Text>
                 </View>
                 <ErrorBoundary>
-                  <RenderQRCode url={qrValue ? qrValue : null} />
+                  <RenderQRCode url={qrValue || null} />
                 </ErrorBoundary>
                 <Text style={styles.qrText}>
-                  {langData?.MOBILE_SCAN_QR ||
-                    "Отсканируйте этот QR-код, чтобы продолжить"}
+                  {langData?.MOBILE_SCAN_QR || "Отсканируйте этот QR-код, чтобы продолжить"}
                 </Text>
               </View>
             ) : null}
           </View>
           <TouchableOpacity
             style={styles.sendButton}
-            onPress={() => {
-              if (phoneNumber !== "77 308 88 88") {
-                paymentCreate.globalDataFunc();
-              } else {
-                setQrValue(
-                  "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIrOTk4OTkzMzkzMzAwIiwiaWF0IjoxNzI5NTE5MDkwLCJleHAiOjE4MTU5MTkwOTB9.KPFsBeSXDMTBKi1f157OYOAIyY_MiZEVXtJLh3rKMVIIv4D5TsPqSvRVAP9cgcERjRSQTPiEUz1G2fQs4_jq2g"
-                );
-                setMessageAmount(amount);
-              }
-            }}
+            onPress={handleSubmit}
           >
             <Text style={styles.sendButtonText}>
               {paymentCreate.loading ? (
@@ -223,15 +271,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
   },
-  note: {
-    textAlign: "center",
-    color: "gray",
-    marginTop: 10,
-    paddingBottom: 10,
+  errorText: {
+    color: "red",
+    fontSize: 14,
+    marginTop: 4,
   },
   qrContainer: {
     alignItems: "center",
-    // marginTop: 10,
     paddingVertical: 30,
   },
   qrText: {

@@ -33,7 +33,7 @@ const Login = () => {
   const [policy, setPolicy] = useState(false);
   
   const userData = {
-    phone: `998${phoneNumber.split(" ").join("")}`,
+    phone: `998${phoneNumber.slice(0, 12).split(" ").join("")}`,
   };
   // const loginUser = useGlobalRequest(`${sendCodeUrl}`, "POST", userData);
   const loginUser = async () => {
@@ -79,18 +79,20 @@ const Login = () => {
   const formatPhoneNumber = (text: string) => {
     let cleaned = ("" + text).replace(/\D/g, "");
 
-    if (cleaned.length > 9) {
-      cleaned = cleaned.slice(0, 9);
+    if (cleaned.length > 12) {
+      cleaned = cleaned.slice(0, 12);
     }
     const formattedNumber = cleaned.replace(
       /(\d{2})(\d{3})(\d{2})(\d{2})/,
-      "$1 $2 $3 $4"
+      (match, p1, p2, p3, p4) => {
+        return `${p1} ${p2} ${p3} ${p4}`.trim();
+      }
     );
 
     setPhoneNumber(formattedNumber);
     AsyncStorage.setItem("phoneNumber", formattedNumber);
 
-    setIsPhoneNumberComplete(formattedNumber.length == 12);
+    setIsPhoneNumberComplete(formattedNumber.length === 12);
   };
 
   function loginuser() {
@@ -136,7 +138,7 @@ const Login = () => {
                 placeholder="Номер телефона"
                 value={phoneNumber}
                 keyboardType="numeric"
-                onChangeText={formatPhoneNumber}
+                onChangeText={(text) => formatPhoneNumber(text)}
                 maxLength={12}
                 placeholderTextColor={"gray"}
               />
