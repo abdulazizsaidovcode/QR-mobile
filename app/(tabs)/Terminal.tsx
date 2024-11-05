@@ -110,7 +110,6 @@ const Terminal: React.FC = () => {
   const handleSubmit = () => {
     if (validateForm()) {
       // Handle form submission here
-      // console.log("Form submitted:", { ...formData, terminalNewUsers });
 
       editTerminal.globalDataFunc();
 
@@ -291,7 +290,7 @@ const Terminal: React.FC = () => {
             }}
             onConfirm={handleSubmit}
           >
-            <ScrollView>
+            <ScrollView contentContainerStyle={{width: "100%"}}>
               <Text style={{fontSize: 20, paddingVertical: 3}}>{langData?.MOBILE_EDIT_TERMINAL || "Редактировать терминал"}</Text>
               {[
                 { key: "ism", label: langData?.MOBILE_NAME || "Имя" },

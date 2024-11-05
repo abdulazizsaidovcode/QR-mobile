@@ -19,6 +19,8 @@ import Profile from './(Seller)/(profile)/profile';
 import CheckCode from './(auth)/checkCode';
 import PrivacyTermsPage from './(Seller)/(shartlar)/PrivacyTermsPage';
 import InternetCheckModal from './checkInternet';
+import { langStore } from '@/helpers/stores/language/languageStore';
+import { SocketStore } from '@/helpers/stores/socket/socketStore';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -28,6 +30,43 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
+  const {
+    setSocketData,
+    setSocketLoading,
+    setSocketModal,
+    setSocketModalData,
+    setTimer,
+    socketData,
+    socketLoading,
+    socketModal,
+    socketModalData,
+    timer,
+  } = SocketStore();
+  const { langData } = langStore();
+  
+
+  useEffect(() => {
+    if (socketModalData) {
+      setSocketModal(true);
+      setTimer(60); // 60 senlik sanashni o'qishni bosqichga olish
+    }
+  }, [socketModalData]);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    if (socketModal && timer > 0) {
+      interval = setInterval(() => {
+        setTimer(timer - 1);
+      }, 1000);
+    } else if (timer === 0) {
+      setSocketModal(false);
+      setTimer(0);
+      setSocketModalData(null);
+    }
+
+    return () => clearInterval(interval);
+  }, [socketModal, timer]);
 
   useEffect(() => {
     if (loaded) {
@@ -44,6 +83,7 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <QueryClientProvider client={queryClient}>
+      
       <InternetCheckModal />
         <Stack.Navigator initialRouteName="index" screenOptions={{ animation: 'none' }}>
           <Stack.Screen

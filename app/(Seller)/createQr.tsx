@@ -23,6 +23,7 @@ import { Menu } from "react-native-paper";
 import { Button } from "react-native-elements";
 import { Picker } from "@react-native-picker/picker";
 import Navbar from "@/components/navbar/navbar";
+import PhoneInput, { getCountryByCca2 } from "react-native-international-phone-number";
 
 const CreateQr = () => {
   const [amount, setAmount] = useState("");
@@ -44,7 +45,7 @@ const CreateQr = () => {
     "POST",
     {
       amount: amount,
-      phone: `7${phone.slice(0, 12).split(" ").join("")}`,
+      phone: `7${phone.replace(/[^0-9]/g, "")}`,
       terminalId: terminalId,
     },
     "DEFAULT"
@@ -88,9 +89,14 @@ const CreateQr = () => {
     } else {
       setAmountError("");
     }
-    if (!phone || phone.length !== 10) {
-      setPhoneError("Enter a valid phone number");
-      valid = false;
+    if (!phone) {
+      if (phoneNumber === "77 308 8888" && phoneNumber.replace(/ /g, "").length !== 9) { 
+        setPhoneError("Enter a valid phone number");
+        valid = false;
+      } else if (phoneNumber.replace(/ /g, "").length === 10) {
+        setPhoneError("Enter a valid phone number");
+        valid = false;
+      }
     } else {
       setPhoneError("");
     }
@@ -105,29 +111,13 @@ const CreateQr = () => {
 
   const handleSubmit = () => {
     if (handleValidation()) {
-      if (phoneNumber !== "77 308 88 88") {
+      if (phoneNumber !== "77 308 8888") {
         paymentCreate.globalDataFunc();
       } else {
         setQrValue("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIrOTk4OTkzMzkzMzAwIiwiaWF0IjoxNzI5NTE5MDkwLCJleHAiOjE4MTU5MTkwOTB9.KPFsBeSXDMTBKi1f157OYOAIyY_MiZEVXtJLh3rKMVIIv4D5TsPqSvRVAP9cgcERjRSQTPiEUz1G2fQs4_jq2g");
         setMessageAmount(amount);
       }
     }
-  };
-
-  const formatPhoneNumber = (text: string) => {
-    let cleaned = ("" + text).replace(/\D/g, "");
-
-    if (cleaned.length > 11) {
-      cleaned = cleaned.slice(0, 11);
-    }
-    const formattedNumber = cleaned.replace(
-      /(\d{3})(\d{3})(\d{4})/,
-      (match, p1, p2, p3) => {
-        return `${p1} ${p2} ${p3}`.trim();
-      }
-    );
-
-    return formattedNumber;
   };
 
   return (
@@ -148,9 +138,13 @@ const CreateQr = () => {
             </Text>
             <View style={styles.pickerContainer}>
               <Picker
+                mode="dropdown"
+                dropdownIconColor={Colors.light.primary}
+                dropdownIconRippleColor={Colors.light.primary}
+                style={[styles.picker, Platform.OS === 'ios' ? {height: 150} : null]}
+                itemStyle={Platform.OS === 'ios' ? {height: 150} : null}
                 selectedValue={terminalId}
                 onValueChange={(itemValue: any) => setTerminalId(itemValue)}
-                style={styles.picker}
               >
                 <Picker.Item
                   label={langData?.MOBILE_SELECT_TERMINAL || "Выберите терминал"}
@@ -171,20 +165,15 @@ const CreateQr = () => {
               {langData?.MOBILE_ENTER_PHONE_NUMBER || "Введите номер телефона"}
             </Text>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Text style={{ marginRight: 10, fontSize: 20 }}>
-                {phoneNumber === "77 308 88 88" ? "+998" : "+7"}
-              </Text>
-              <TextInput
-                style={[styles.amountInput, { flex: 1 }]}
+              <PhoneInput
+                selectedCountry={getCountryByCca2(phoneNumber === "77 308 8888" ? "UZ" : "RU")} 
                 value={phone}
-                maxLength={12}
-                onChangeText={(text) => {
-                  const formattedPhone = formatPhoneNumber(text.replace(/[^0-9]/g, ""));
-                  setPhone(formattedPhone);
-                  console.log(formattedPhone.slice(0, 12).split(" ").join(""))
+                onChangePhoneNumber={(text) => {
+                  setPhone(text);
                 }}
-                keyboardType="numeric"
-
+                onChangeSelectedCountry={(country) => {
+                  // Handle country change if needed
+                }}
               />
             </View>
             {phoneError ? <Text style={styles.errorText}>{phoneError}</Text> : null}

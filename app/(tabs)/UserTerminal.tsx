@@ -25,6 +25,8 @@ import {
 import { Picker } from "@react-native-picker/picker"; // Install this package if not already
 import { Ionicons, MaterialIcons } from "@expo/vector-icons"; // For password visibility toggle
 import { langStore } from "@/helpers/stores/language/languageStore";
+import { getCountryByCca2 } from "react-native-international-phone-number";
+import PhoneInput from "react-native-international-phone-number";
 
 interface UserTerminal {
   id: number;
@@ -79,9 +81,10 @@ export default function UserTerminal() {
   const editTerminal = useGlobalRequest(`${post_terminal}`, "POST", {
     terminalId: formData.terminalId,
     managerFio: formData.managerFio,
-    phone: `998${formData.phone}`,
+    phone: `998${formData.phone.replace(/[^0-9]/g, "")}`,
     password: formData.password,
   });
+
 
   useFocusEffect(
     useCallback(() => {
@@ -151,19 +154,12 @@ export default function UserTerminal() {
     name: keyof typeof formData,
     value: string | number
   ) => {
-    if (name === "phone") {
-        const formattedValue = formatPhoneNumber(value.toString());
-        setFormData((prev) => ({
-            ...prev,
-            [name]: formattedValue.slice(0, 12).split(" ").join(""),
-        }));
-    } else {
+    
         setFormData((prev) => ({
             ...prev,
             [name]: value,
         }));
     }
-  };
 
   const formatPhoneNumber = (text: string) => {
     let cleaned = ("" + text).replace(/\D/g, "");
@@ -339,11 +335,15 @@ export default function UserTerminal() {
             <Text style={styles.label}>{langData?.MOBILE_TERMINAL || "Терминал"}</Text>
             <View style={styles.pickerContainer}>
               <Picker
+                mode="dropdown"
+                dropdownIconColor={Colors.light.primary}
+                dropdownIconRippleColor={Colors.light.primary}
+                style={[styles.picker, Platform.OS === 'ios' ? {height: 150} : null]}
+                itemStyle={Platform.OS === 'ios' ? {height: 150} : null}
                 selectedValue={formData.terminalId}
                 onValueChange={(itemValue: any) =>
                   handleInputChange("terminalId", itemValue)
                 }
-                style={styles.picker}
               >
                 <Picker.Item label={langData?.MOBILE_SELECT_TERMINAL || "Выберите терминал"} value={0} />
                 {terminalList?.response?.map((terminal: any) => (
@@ -376,8 +376,8 @@ export default function UserTerminal() {
 
             {/* Phone Number */}
             <Text style={styles.label}>{langData?.MOBILE_TELEPHONE || "Телефон"}</Text>
-            <View style={styles.phoneContainer}>
-              <Text style={styles.phonePrefix}>+998</Text>
+            {/* <View style={styles.phoneContainer}> */}
+              {/* <Text style={styles.phonePrefix}>+998</Text>
               <TextInput
                 placeholder="YY XXX XX XX"
                 style={styles.phoneInput}
@@ -385,8 +385,16 @@ export default function UserTerminal() {
                 maxLength={12}
                 value={formData.phone}
                 onChangeText={(text) => handleInputChange("phone", text)}
+              /> */}
+              <PhoneInput
+                selectedCountry={getCountryByCca2("UZ")} 
+                value={formData.phone}
+                onChangePhoneNumber={(text) => handleInputChange("phone", text)}
+                onChangeSelectedCountry={(country) => {
+                  // Handle country change if needed
+                }}
               />
-            </View>
+            {/* </View> */}
 
             {/* Password */}
             <Text style={styles.label}>{langData?.MOBILE_PASSWORD || "Пароль"}</Text>

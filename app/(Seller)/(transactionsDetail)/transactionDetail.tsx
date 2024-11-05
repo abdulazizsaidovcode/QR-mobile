@@ -196,9 +196,9 @@ const TransactionDetail = () => {
             </View>
           </Pressable> */}
 
-          <View
+          {/* <View
             style={{
-              width: "100%",
+              width: Platform.OS === "ios" ? "110%" : "100%",
               display: "flex",
               flexDirection: "row",
               justifyContent: "space-between",
@@ -218,7 +218,7 @@ const TransactionDetail = () => {
               title={langData?.MOBILE_PAYMENT_CONFIRM || "Подтвердить"}
               onPress={openModalConfirm}
             />
-          </View>
+          </View> */}
         </View>
 
         <CenteredModal

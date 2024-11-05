@@ -8,7 +8,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Buttons from "@/components/buttons/button";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
@@ -20,6 +20,7 @@ import { Colors } from "@/constants/Colors";
 import axios from "axios";
 import { CheckBox } from "react-native-elements";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import PhoneInput, { getCountryByCca2 } from "react-native-international-phone-number";
 
 type SettingsScreenNavigationProp = NavigationProp<
   RootStackParamList,
@@ -33,7 +34,7 @@ const Login = () => {
   const [policy, setPolicy] = useState(false);
   
   const userData = {
-    phone: `998${phoneNumber.slice(0, 12).split(" ").join("")}`,
+    phone: `998${phoneNumber.replace(/ /g, "")}`,
   };
   // const loginUser = useGlobalRequest(`${sendCodeUrl}`, "POST", userData);
   const loginUser = async () => {
@@ -76,37 +77,15 @@ const Login = () => {
     }, [backPressCount])
   );
 
-  const formatPhoneNumber = (text: string) => {
-    let cleaned = ("" + text).replace(/\D/g, "");
-
-    if (cleaned.length > 12) {
-      cleaned = cleaned.slice(0, 12);
-    }
-    const formattedNumber = cleaned.replace(
-      /(\d{2})(\d{3})(\d{2})(\d{2})/,
-      (match, p1, p2, p3, p4) => {
-        return `${p1} ${p2} ${p3} ${p4}`.trim();
-      }
-    );
-
-    setPhoneNumber(formattedNumber);
-    AsyncStorage.setItem("phoneNumber", formattedNumber);
-
-    setIsPhoneNumberComplete(formattedNumber.length === 12);
-  };
+  useEffect(() => {
+    setIsPhoneNumberComplete(phoneNumber.replace(/ /g, "").length === 9);
+  }, [phoneNumber]);
 
   function loginuser() {
     if (isPhoneNumberComplete) {
-      // console.log("ishlab ketdi");
       loginUser();
     }
   }
-
-  useFocusEffect(
-    useCallback(() => {
-      formatPhoneNumber(phoneNumber.split(" ").join(""));
-    }, [])
-  );
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -128,8 +107,7 @@ const Login = () => {
               marginTop: 20,
             }}
           >
-            <View style={styles.phoneCard}>
-              {/* <Image source={require('../../../../assets/images/uzb.png')} /> */}
+            {/* <View style={styles.phoneCard}>
               <Text style={{ fontSize: 17, color: "gray" }}>+998</Text>
             </View>
             <View style={{ width: "69%" }}>
@@ -142,7 +120,15 @@ const Login = () => {
                 maxLength={12}
                 placeholderTextColor={"gray"}
               />
-            </View>
+            </View> */}
+            <PhoneInput
+              onChangeSelectedCountry={(country) => {
+                // Handle country change if needed
+              }}
+              onChangePhoneNumber={(text) => setPhoneNumber(text)}
+              value={phoneNumber}
+              selectedCountry={getCountryByCca2("UZ")}
+            />  
           </View>
           <View style={styles.containerPrifacy}>
             <CheckBox

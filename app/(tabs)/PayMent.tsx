@@ -2,8 +2,49 @@ import { Keyboard, SafeAreaView, StatusBar, StyleSheet, TouchableWithoutFeedback
 import Navbar from '@/components/navbar/navbar';
 import CreateQr from '../(Seller)/createQr';
 import { Platform } from 'react-native';
+import { useEffect, useState } from 'react';
+import { io } from 'socket.io-client';
+import { Socket } from 'socket.io-client';
+import { SocketStore } from '@/helpers/stores/socket/socketStore';
 
 export default function PaymentQr() {
+  const { setSocketData, setSocketLoading, setSocketModal, setSocketModalData, setTimer, socketData, socketLoading, socketModal, socketModalData, timer } = SocketStore()
+
+  const socket = io("http://185.74.4.138:9092");
+
+  useEffect(() => {
+    const reconnectSocket = () => {
+      if (!socketData || (socketData && !(socketData as any)?.connected)) {
+        setSocketData(socket);
+        // console.log("Socket qayta ulashdi");
+        // console.clear();
+      }
+    };
+
+    reconnectSocket();
+
+    return () => {
+      // socket.disconnect(); // Bu yerda socketni uzish jarayoni o'chirildi
+    };
+  }, [socketData]);
+
+  useEffect(() => {
+    socketData?.on('connect', function() {
+      // console.log("Connected to Socket.IO server ID: " + socketData?.id);
+      // consoleClear();
+    });
+
+    socketData?.on('callback-web-or-app', function(data: any) {
+      // console.log("data", data);
+      setSocketModalData(data);
+      // consoleClear();
+    });
+
+    return () => {
+      socketData?.off('connect');
+      socketData?.off('callback-web-or-app');
+    };
+  }, [socketData]);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

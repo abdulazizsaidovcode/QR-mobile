@@ -59,7 +59,6 @@ const CheckCode = () => {
     }
   };
 
-  console.log(phoneNumber);
   
 
   const handleInputChange = (text: string, index: number) => {

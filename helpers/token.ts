@@ -10,11 +10,9 @@ export const getConfig = async () => {
                 },
             };
         } else {
-            // console.log("Token not found");
             return null;
         }
     } catch (error) {
-        console.log(error);
         return null;
     }
 };
@@ -29,11 +27,9 @@ export const getConfigImg = async () => {
                 },
             };
         } else {
-            console.log("Token not found");
             return null;
         }
     } catch (error) {
-        console.log(error);
         return null;
     }
 };

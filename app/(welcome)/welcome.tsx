@@ -18,17 +18,12 @@ import Buttons from "@/components/buttons/button";
 type SettingsScreenNavigationProp = NavigationProp<RootStackParamList, "index">;
 
 const Welcome: React.FC = () => {
-  // const {t, i18n} = useTranslation();
   const navigation = useNavigation<SettingsScreenNavigationProp>();
   // const {language, setLanguage} = langstore();
   const { setIsLoginModal } = useAuthStore();
   const [backPressCount, setBackPressCount] = useState(0);
 
-  // const changeLanguage = async (lng: string) => {
-  //    i18n.changeLanguage(lng);
-  //    await SecureStore.setItemAsync("selectedLanguage", lng);
-  //    setLanguage(lng);
-  // };
+  // socket url http://185.74.4.138:9092   https://socket.qrpay.uz/
 
   useFocusEffect(
     useCallback(() => {
