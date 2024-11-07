@@ -1,157 +1,149 @@
 import Buttons from "@/components/buttons/button";
+import { useGlobalRequest } from "@/helpers/apifunctions/univesalFunc";
 import { langStore } from "@/helpers/stores/language/languageStore";
 import { SocketStore } from "@/helpers/stores/socket/socketStore";
+import { cancel_payment, confirm_payment } from "@/helpers/url";
 import React from "react";
 import { View, Text, StyleSheet, Dimensions } from "react-native";
-import Modal from "react-native-modal";
+import { ReactNativeModal } from "react-native-modal";
 
 const { height, width } = Dimensions.get("window");
 
 const CallBackModal: React.FC = () => {
   const {
-    setSocketData,
-    setSocketLoading,
     setSocketModal,
-    setSocketModalData,
-    setTimer,
-    socketData,
-    socketLoading,
     socketModal,
     socketModalData,
     timer,
   } = SocketStore();
   const { langData } = langStore();
+  const paymentCancel = useGlobalRequest(
+    `${cancel_payment}${socketModalData?.id}`,
+    "POST",
+    {}
+  );
+
+  const paymentConfirm = useGlobalRequest(
+    `${confirm_payment}${socketModalData?.id}`,
+    "POST",
+    {}
+  );
+
   return (
-    <View style={{ flex: 1 }}>
-      <Modal
-        isVisible={socketModal}
-        animationIn="slideInUp"
-        animationOut="slideOutDown"
-        backdropColor="black"
-        coverScreen={true}
-        deviceHeight={height}
-        deviceWidth={width}
-        hasBackdrop={true}
-        hideModalContentWhileAnimating={true}
-        // onBackdropPress={onClose}
-        // onBackButtonPress={onClose}
-        useNativeDriver={true}
-      >
-        <View style={styles.modalView}>
-          <View style={{ width: "100%", gap: 10 }}>
-            <Text style={styles.title}>
-              {langData?.MOBILE_COMPANY_NAME || "Название компании"}:
-            </Text>
-            <Text style={styles.desc}>
-              {socketModalData?.merchant || "-"}
-            </Text>
-          </View>
-          <View style={[styles.buttonContainer, styles.flexRow]}>
-            <Buttons
-              backgroundColor={"#FF5A3A"}
-              title={"Tugma 1"} // Tugma nomini qo'shing
-              textColor={"white"}
-              onPress={() => {}}
-            />
-            <View style={[styles.marginHorizontal]}>
-              <Buttons
-                backgroundColor={"#e8e8e8"}
-                title={"Tugma 2"} // Tugma nomini qo'shing
-                textColor={"#FF5A3A"}
-                onPress={() => {}}
-              />
+    <View>
+        <ReactNativeModal
+          isVisible={socketModal}
+          animationIn="slideInUp"
+          animationOut="slideOutDown"
+          backdropColor="black"
+          coverScreen={true}
+          deviceHeight={height}
+          deviceWidth={width}
+          hasBackdrop={true}
+          hideModalContentWhileAnimating={true}
+          useNativeDriver={true}
+        >
+          <View
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          >
+            <View
+              style={{
+                width: "90%",
+                backgroundColor: "white",
+                borderRadius: 10,
+                padding: 20,
+              }}
+            >
+              <View
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  marginVertical: 5
+                }}
+              >
+                <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+                  {langData?.MOBILE_COMPLATE_PAYMENT || "Завершить платеж"}
+                </Text>
+                <Text style={{ color: "red", fontSize: 20, fontWeight: "700" }}>
+                  {/* Timer logic here */}
+                  {timer}
+                </Text>
+              </View>
+              <View style={{borderColor: "#000", width: "100%", height: 1, borderWidth: 0.5, marginBottom: 10}} ></View>
+              <View style={{ display: "flex", gap: 10 }}>
+                <View style={{ display: "flex", gap: 10 }}>
+                  <Text style={{ fontSize: 18, fontWeight: "600" }}>
+                    {langData?.MOBILE_COMPANY_NAME || "Название компании"}:
+                  </Text>
+                  <Text style={{ fontSize: 15 }}>
+                    {socketModalData?.merchant || "---"}
+                  </Text>
+                </View>
+                <View style={{ display: "flex", gap: 10 }}>
+                  <Text style={{ fontSize: 18, fontWeight: "600"  }}>
+                    {langData?.MOBILE_CLIENT || "Клиент"}:
+                  </Text>
+                  <Text style={{ fontSize: 15 }}>
+                    {socketModalData?.client || "---"}
+                  </Text>
+                </View>
+                <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", gap: 10 }}>
+                  <Text style={{ fontSize: 18, fontWeight: "600"  }}>
+                    {langData?.MOBILE_AMOUNT || "Количество"}:
+                  </Text>
+                  <Text style={{ fontSize: 15 }}>
+                    {socketModalData?.amount || "0"}  {langData?.MOBILE_UZS_SUM || "УЗС"}
+                  </Text>
+                </View>
+              </View>
+              <View
+                style={{
+                  width: "100%",
+                  flexDirection: "column",
+                  // alignItems: "center",
+                  justifyContent: "space-around",
+                  marginTop: 20,
+                  gap: 10,
+                }}
+              >
+                <Buttons
+                  backgroundColor={"#e8e8e8"}
+                  title={
+                    paymentCancel.loading
+                      ? langData?.MOBILE_LOADING || "Загрузка..."
+                      : langData?.MOBILE_PAYMENT_CANCEL || "Отмена платежа"
+                  }
+                  textColor={"red"}
+                  onPress={() => {
+                    paymentCancel.globalDataFunc()
+                    setTimeout(() => {
+                      setSocketModal(false);
+                    }, 2000);
+                  }}
+                />
+                <Buttons
+                  backgroundColor={"#e8e8e8"}
+                  title={
+                    paymentConfirm.loading
+                      ? langData?.MOBILE_LOADING || "Загрузка..."
+                      : langData?.MOBILE_COMPLATE_PAYMENT || "Подтверждение платежа"
+                  }
+                  textColor={"green"}
+                  onPress={() => {
+                    paymentConfirm.globalDataFunc()
+                    setTimeout(() => {
+                      setSocketModal(false);
+                    }, 2000);
+                  }}
+                />
+              </View>
             </View>
           </View>
-        </View>
-        
-        <View style={styles.modalView}>
-          <View style={{ width: "100%", gap: 10 }}>
-            <Text style={styles.title}>
-              {langData?.MOBILE_COMPANY_NAME || "Название компании"}:
-            </Text>
-            <Text style={styles.desc}>
-              {socketModalData?.merchant || "-"}
-            </Text>
-          </View>
-          <View style={[styles.buttonContainer, styles.flexRow]}>
-            <Buttons
-              backgroundColor={"#FF5A3A"}
-              title={"Tugma 1"} // Tugma nomini qo'shing
-              textColor={"white"}
-              onPress={() => {}}
-            />
-            <View style={[styles.marginHorizontal]}>
-              <Buttons
-                backgroundColor={"#e8e8e8"}
-                title={"Tugma 2"} // Tugma nomini qo'shing
-                textColor={"#FF5A3A"}
-                onPress={() => {}}
-              />
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.modalView}>
-          <View style={{ width: "100%", gap: 10 }}>
-            <Text style={styles.title}>
-              {langData?.MOBILE_COMPANY_NAME || "Название компании"}:
-            </Text>
-            <Text style={styles.desc}>
-              {socketModalData?.client || "-"}
-            </Text>
-          </View>
-
-          <View style={[styles.buttonContainer, styles.flexRow]}>
-            <Buttons
-              backgroundColor={"#FF5A3A"}
-              title={"Tugma 1"} // Tugma nomini qo'shing
-              textColor={"white"}
-              onPress={() => {}}
-            />
-            <View style={[styles.marginHorizontal]}>
-              <Buttons
-                backgroundColor={"#e8e8e8"}
-                title={"Tugma 2"} // Tugma nomini qo'shing
-                textColor={"#FF5A3A"}
-                onPress={() => {}}
-              />
-            </View>
-          </View>
-        </View>
-      </Modal>
+        </ReactNativeModal>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  modalView: {
-    // Modal uchun uslublar
-    backgroundColor: "white",
-    borderRadius: 10,
-    padding: 20,
-  },
-  title: {
-    // Sarlavha uslublari
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  desc: {
-    // Tavsif uslublari
-    fontSize: 16,
-  },
-  buttonContainer: {
-    // Tugmalar konteyneri uslublari
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  flexRow: {
-    // Flex uslublari
-    flexDirection: "row",
-  },
-  marginHorizontal: {
-    // Gorizontal margin
-    marginHorizontal: 10,
-  },
-});
 
 export default CallBackModal;

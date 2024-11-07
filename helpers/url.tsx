@@ -5,7 +5,7 @@ export const staisticUrl = `${apiLink}statistics/seller`
 export const loginUrl = `${apiLink}user/login` //
 export const sendCodeUrl = `${apiLink}user/send-code` //
 export const createPayment = `${apiLink}order/create`  //
-export const cancel_payment = `${apiLink}order/cancel/real-terminal`  //
+export const cancel_payment = `${apiLink}order/cancel?orderId=`  //
 export const confirm_payment = `${apiLink}order/confirm?orderId=`  //
 // export const cancel_payment_real_terminal = `${apiLink}order/create/real-terminal`  //
 

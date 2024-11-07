@@ -24,6 +24,7 @@ import { Button } from "react-native-elements";
 import { Picker } from "@react-native-picker/picker";
 import Navbar from "@/components/navbar/navbar";
 import PhoneInput, { getCountryByCca2 } from "react-native-international-phone-number";
+import { SocketStore } from "@/helpers/stores/socket/socketStore";
 
 const CreateQr = () => {
   const [amount, setAmount] = useState("");
@@ -34,6 +35,7 @@ const CreateQr = () => {
   const [Messageamount, setMessageAmount] = useState("");
   const [alertShown, setAlertShown] = useState(false);
   const [qrValue, setQrValue] = useState<any>(null);
+  const { setSocketData, setSocketModalData, socketData, } = SocketStore()
 
   // Error states
   const [amountError, setAmountError] = useState("");
@@ -47,6 +49,7 @@ const CreateQr = () => {
       amount: amount,
       phone: `7${phone.replace(/[^0-9]/g, "")}`,
       terminalId: terminalId,
+      socketId: socketData?.id
     },
     "DEFAULT"
   );

@@ -290,7 +290,7 @@ const Terminal: React.FC = () => {
             }}
             onConfirm={handleSubmit}
           >
-            <ScrollView contentContainerStyle={{width: "100%"}}>
+            <ScrollView style={{width: "100%"}}>
               <Text style={{fontSize: 20, paddingVertical: 3}}>{langData?.MOBILE_EDIT_TERMINAL || "Редактировать терминал"}</Text>
               {[
                 { key: "ism", label: langData?.MOBILE_NAME || "Имя" },

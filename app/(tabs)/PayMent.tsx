@@ -1,50 +1,58 @@
-import { Keyboard, SafeAreaView, StatusBar, StyleSheet, TouchableWithoutFeedback } from 'react-native';
-import Navbar from '@/components/navbar/navbar';
+import { Keyboard, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import CreateQr from '../(Seller)/createQr';
 import { Platform } from 'react-native';
 import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
-import { Socket } from 'socket.io-client';
 import { SocketStore } from '@/helpers/stores/socket/socketStore';
 
+const socket = io("https://socket.qrpay.uz", {
+  secure: true,
+  transports: ['websocket', 'polling'] // WebSocket va Pollingni qo'llash
+});
 export default function PaymentQr() {
-  const { setSocketData, setSocketLoading, setSocketModal, setSocketModalData, setTimer, socketData, socketLoading, socketModal, socketModalData, timer } = SocketStore()
-
-  const socket = io("http://185.74.4.138:9092");
+  const { setSocketData, setSocketModalData, socketData, } = SocketStore()
 
   useEffect(() => {
     const reconnectSocket = () => {
-      if (!socketData || (socketData && !(socketData as any)?.connected)) {
-        setSocketData(socket);
-        // console.log("Socket qayta ulashdi");
-        // console.clear();
+      if (!socket.connected) {
+        // console.log("Socket qayta ulashga harakat qilinmoqda...");
+        socket.connect();
       }
     };
 
-    reconnectSocket();
-
-    return () => {
-      // socket.disconnect(); // Bu yerda socketni uzish jarayoni o'chirildi
-    };
-  }, [socketData]);
-
-  useEffect(() => {
-    socketData?.on('connect', function() {
-      // console.log("Connected to Socket.IO server ID: " + socketData?.id);
-      // consoleClear();
+    socket.on('connect_error', () => {
+      setTimeout(reconnectSocket, 5000); // 5 soniyadan so'ng qayta urinish
     });
 
-    socketData?.on('callback-web-or-app', function(data: any) {
+    // Socket hodisalarini ulash
+    socket.on('connect', function () {
+      // console.log("Connected to Socket.IO server ID: " + socket.id);
+      setSocketData(socket)
+    });
+
+    socket.on('callback-web-or-app', function (data) {
       // console.log("data", data);
       setSocketModalData(data);
-      // consoleClear();
     });
 
     return () => {
-      socketData?.off('connect');
-      socketData?.off('callback-web-or-app');
+      // socket.off('connect'); // Socket hodisasini o'chirish
+      // socket.off('callback-web-or-app'); // Socket hodisasini o'chirish
+      // socket.disconnect(); // Socketni uzish
     };
   }, [socketData]);
+
+  socketData?.on('connect', function () {
+    // console.log("Connected to Socket.IO server ID: " + socketData?.id);
+    setSocketData(socket)
+  });
+
+  socketData?.on('callback-web-or-app', function (data: any) {
+    // console.log("data", data);
+    setSocketModalData(data)
+  });
+  console.log(socketData);
+  
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
