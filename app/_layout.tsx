@@ -56,7 +56,7 @@ export default function RootLayout() {
     if (socketModal && timer > 0) {
       interval = setInterval(() => {
         setTimer(timer - 1);
-      }, 1000);
+      }, 900);
     } else if (timer === 0) {
       setSocketModal(false);
       setTimer(0);
