@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   ScrollView,
   Pressable,
+  Alert,
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { useGlobalRequest } from "@/helpers/apifunctions/univesalFunc";
@@ -83,18 +84,26 @@ const Notifications = () => {
     if (isReadNotification.response) {
       globalDataFunc();
     } else if (isReadNotification.error) {
-      alert(isReadNotification?.error?.message || langData?.MOBILE_ERROR || "Произошла ошибка");
+      Alert.alert("QR - Pay",
+        isReadNotification?.error?.message ||
+          langData?.MOBILE_ERROR ||
+          "Произошла ошибка"
+      );
     }
   }, [isReadNotification.response, isReadNotification.error]);
 
   useEffect(() => {
     if (deleteNotification.response) {
+      setPage(0)
+      Alert.alert("QR - Pay","Уведомления удалены.");
       globalDataFunc();
-      alert("Уведомления удалены.");
-
       setModalVisible(false);
     } else if (deleteNotification.error) {
-      alert(deleteNotification?.error?.message || langData?.MOBILE_ERROR || "Произошла ошибка");
+      Alert.alert("QR - Pay",
+        deleteNotification?.error?.message ||
+          langData?.MOBILE_ERROR ||
+          "Произошла ошибка"
+      );
     }
   }, [deleteNotification.response, deleteNotification.error]);
 
@@ -123,7 +132,9 @@ const Notifications = () => {
         await setSelectedIds(ids);
         await isReadNotification.globalDataFunc();
       } else {
-        alert(langData?.MOBILE_NOTIFICATIONS_NOT_FOUND || "У вас нет уведомлений.");
+        Alert.alert("QR - Pay",
+          langData?.MOBILE_NOTIFICATIONS_NOT_FOUND || "У вас нет уведомлений."
+        );
       }
     }
   };
@@ -136,7 +147,9 @@ const Notifications = () => {
         await setSelectedIds(ids);
         await deleteNotification.globalDataFunc();
       } else {
-        alert(langData?.MOBILE_NOTIFICATIONS_NOT_FOUND || "У вас нет уведомлений.");
+        Alert.alert("QR - Pay",
+          langData?.MOBILE_NOTIFICATIONS_NOT_FOUND || "У вас нет уведомлений."
+        );
       }
     }
   };
@@ -145,17 +158,27 @@ const Notifications = () => {
     <View style={styles.container}>
       <NavigationMenu name={langData?.MOBILE_NOTIFICATIONS || "Уведомление"} />
       <View style={styles.header}>
-        <Text style={styles.headerText}>
-        {langData?.MOBILE_NOTIFICATIONS || "Уведомление"}(
-          {response?.totalElements ? response?.totalElements : 0})
+        <View style={{ flexDirection: "row", justifyContent: "flex-start", gap: 5 }}>
+          <Text style={styles.headerText}>
+            {langData?.MOBILE_NOTIFICATIONS || "Уведомление"}
+          </Text>
+          <Text style={styles.headerText}>
+            ({response?.totalElements ? response?.totalElements : 0})
+          </Text>
+        </View>
+        {/* <View
+          style={{ display: "flex", justifyContent: "flex-end" }}
+        > */}
+        <Text style={{ fontSize: 17, fontWeight: "bold" }}>
+          ({page * 10} - {page * 10 + 10})
         </Text>
-        <Text style={styles.headerText}>{langData?.MOBILE_CURRENT || "Номер страницы"}({page + 1})</Text>
+        {/* </View> */}
       </View>
       <ScrollView style={styles.CarsContainer}>
         {loading ? (
           <ActivityIndicator size="large" color={Colors.light.primary} />
         ) : sortedNotifications && sortedNotifications.length > 0 ? (
-          sortedNotifications.map(
+          sortedNotifications?.map(
             (item: {
               id: number;
               title: string;
@@ -261,7 +284,10 @@ const Notifications = () => {
             )
           )
         ) : (
-          <Text style={styles.noDataText}>{langData?.MOBILE_NOTIFICATIONS_NOT_FOUND || "Уведомления не найдены."}</Text>
+          <Text style={styles.noDataText}>
+            {langData?.MOBILE_NOTIFICATIONS_NOT_FOUND ||
+              "Уведомления не найдены."}
+          </Text>
         )}
         {sortedNotifications && (
           <View style={styles.paginationContainer}>
@@ -306,7 +332,10 @@ const Notifications = () => {
           {isReadNotification.loading ? (
             <ActivityIndicator size="small" color="#fff" />
           ) : (
-            <Text style={styles.buttonText}>{langData?.MOBILE_MARK_ALL_AS_READ || "Отметить все как прочитанное"}</Text>
+            <Text style={styles.buttonText}>
+              {langData?.MOBILE_MARK_ALL_AS_READ ||
+                "Отметить все как прочитанное"}
+            </Text>
           )}
         </TouchableOpacity>
         <TouchableOpacity
@@ -316,7 +345,9 @@ const Notifications = () => {
           {deleteNotification.loading ? (
             <ActivityIndicator size="small" color="#fff" />
           ) : (
-            <Text style={styles.buttonText}>{langData?.MOBILE_DELETE_ALL || "Удалить все"}</Text>
+            <Text style={styles.buttonText}>
+              {langData?.MOBILE_DELETE_ALL || "Удалить все"}
+            </Text>
           )}
         </TouchableOpacity>
       </View>
@@ -329,9 +360,10 @@ const Notifications = () => {
         toggleModal={() => setModalVisible(!modalVisible)}
         onConfirm={() => handleSelectAllIds()}
       >
-        <View>
+        <View style={{width: "100%", marginVertical :10}}>
           <Text style={{ fontSize: 20 }}>
-            {langData?.MOBILE_CONFIRM_DELETE_ALL || "Вы уверены, что хотите удалить все уведомления?"}
+            {langData?.MOBILE_CONFIRM_DELETE_ALL ||
+              "Вы уверены, что хотите удалить все уведомления?"}
           </Text>
         </View>
       </CenteredModal>
@@ -444,7 +476,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 18,
     fontWeight: "bold",
-    width: 150,
+    // width: 130,
   },
   paginationContainer: {
     flexDirection: "row",

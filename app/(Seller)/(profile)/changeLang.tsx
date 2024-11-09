@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, Text, View } from "react-native";
 import { RadioButton } from "react-native-paper";
 import { Avatar } from "react-native-elements";
 import { useGlobalRequest } from "@/helpers/apifunctions/univesalFunc";
@@ -42,7 +42,7 @@ const ChangeLang = () => {
       getLang.globalDataFunc();
       getLangData.globalDataFunc();
     } else if (changeLang.error) {
-      alert(changeLang.error);
+      Alert.alert("QR - Pay",changeLang.error);
     }
   }, [changeLang.response, changeLang.error]);
 

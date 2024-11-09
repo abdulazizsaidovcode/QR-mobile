@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   SafeAreaView,
   Platform,
+  Alert,
 } from "react-native";
 import { useGlobalRequest } from "@/helpers/apifunctions/univesalFunc";
 import { createPayment, UserTerminalListGet } from "@/helpers/url";
@@ -73,7 +74,7 @@ const CreateQr = () => {
       setAlertShown(true);
     } else if (paymentCreate.error && !alertShown) {
       setMessageAmount("0");
-      alert(paymentCreate.error);
+      Alert.alert("QR - Pay",paymentCreate.error);
       setQrValue(null);
       setAlertShown(true);
     }
@@ -169,6 +170,7 @@ const CreateQr = () => {
             </Text>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <PhoneInput
+              placeholder={langData?.MOBILE_PHONE_PLASEHOLDER || "Введите номер телефона"}
                 selectedCountry={getCountryByCca2(phoneNumber === "77 308 8888" ? "UZ" : "RU")} 
                 value={phone}
                 onChangePhoneNumber={(text) => {

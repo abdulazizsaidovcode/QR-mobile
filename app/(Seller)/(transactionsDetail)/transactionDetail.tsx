@@ -63,19 +63,19 @@ const TransactionDetail = () => {
 
   useEffect(() => {
     if (paymentCancel?.response) {
-      Alert.alert(langData?.SUCCESS || "Успех", langData?.MOBILE_PAYMENT_CANCELLED || "Платеж отменен.");
+      Alert.alert("QR - Pay",langData?.SUCCESS || "Успех", langData?.MOBILE_PAYMENT_CANCELLED || "Платеж отменен.");
       navigation.goBack();
     } else if (paymentCancel?.error?.message) {
-      Alert.alert(langData?.ERROR || "Ошибка", paymentCancel?.error?.message || langData?.MOBILE_PAYMENT_CANCELLED_ERROR || "Ошибка отмены платежа");
+      Alert.alert("QR - Pay",langData?.ERROR || "Ошибка", paymentCancel?.error?.message || langData?.MOBILE_PAYMENT_CANCELLED_ERROR || "Ошибка отмены платежа");
     }
   }, [paymentCancel.error, paymentCancel.response]);
 
   useEffect(() => {
     if (paymentConfirm?.response) {
-      Alert.alert(langData?.SUCCESS || "Успех", langData?.MOBILE_PAYMENT_CONFIRMED || "Платеж подтвержден.");
+      Alert.alert("QR - Pay",langData?.SUCCESS || "Успех", langData?.MOBILE_PAYMENT_CONFIRMED || "Платеж подтвержден.");
       navigation.goBack();
     } else if (paymentConfirm?.error?.message) {
-      Alert.alert(langData?.ERROR || "Ошибка", paymentConfirm?.error?.message || langData?.MOBILE_PAYMENT_CONFIRMED_ERROR || "Ошибка подтверждения платежа");
+      Alert.alert("QR - Pay",langData?.ERROR || "Ошибка", paymentConfirm?.error?.message || langData?.MOBILE_PAYMENT_CONFIRMED_ERROR || "Ошибка подтверждения платежа");
     }
   }, [paymentConfirm.error, paymentConfirm.response]);
 
@@ -120,12 +120,12 @@ const TransactionDetail = () => {
               {paymentDetail?.transaction?.currency || "-"}
             </Text>
           </View>
-          {/* <View style={{width: "100%", gap: 10}}>
-            <Text style={styles.title}>Валюта:</Text>
+          <View style={styles.detailRow}>
+            <Text style={styles.title}>{langData?.MOBILE_RATE || "Курс"}:</Text>
             <Text style={styles.desc}>
-              {paymentDetail?.transaction?.currency || "-"}
+              {paymentDetail?.transaction?.rate || "-"}
             </Text>
-          </View> */}
+          </View>
           <View style={styles.detailRow}>
             <Text style={styles.title}>{langData?.MOBILE_STATUS || "Статус"}:</Text>
             <Text style={styles.desc}>
@@ -141,7 +141,7 @@ const TransactionDetail = () => {
             </Text>
           </View>
           <View style={styles.detailRow}>
-            <Text style={styles.title}>{langData?.MOBILE_CHECK_AMOUNT || "Сумма чека (сум)"}:</Text>
+            <Text style={styles.title}>{langData?.MOBILE_CHECK_AMOUNT || "Сумма чека"}:</Text>
             <Text style={styles.desc}>
               {(paymentDetail?.transaction?.amount || 0).toLocaleString(
                 "uz-UZ",

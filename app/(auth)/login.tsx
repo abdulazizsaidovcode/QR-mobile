@@ -21,6 +21,7 @@ import axios from "axios";
 import { CheckBox } from "react-native-elements";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import PhoneInput, { getCountryByCca2 } from "react-native-international-phone-number";
+import { Alert } from "react-native";
 
 type SettingsScreenNavigationProp = NavigationProp<
   RootStackParamList,
@@ -44,10 +45,10 @@ const Login = () => {
         .then((res) => {
           if (res.data.data) navigation.navigate("(auth)/checkCode");
           else if (res.data.error && res.data.error.message)
-            alert(res.data.error.message);
+            Alert.alert("QR - Pay",res.data.error.message);
         })
         .catch((err) => {
-          alert("произошла ошибка");
+          Alert.alert("QR - Pay","произошла ошибка");
         });
     }
   };
@@ -122,6 +123,7 @@ const Login = () => {
               />
             </View> */}
             <PhoneInput
+            placeholder="Введите номер телефона"
               onChangeSelectedCountry={(country) => {
                 // Handle country change if needed
               }}

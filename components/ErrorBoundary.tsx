@@ -23,7 +23,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
 
   componentDidCatch(error: any, errorInfo: any) {
     // You can log the error to an error reporting service here
-    Alert.alert("Error", "QR yaratib bo'lmadi"); // Display the alert
+    Alert.alert("QR - Pay", "QR yaratib bo'lmadi"); // Display the alert
   }
 
   render() {

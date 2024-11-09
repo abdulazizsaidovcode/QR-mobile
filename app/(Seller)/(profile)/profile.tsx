@@ -70,7 +70,7 @@ const Profile: React.FC = () => {
     email: "",
     tin: "",
     bankBik: "",
-    password: "",
+    password: "12345",
   });
 
 
@@ -96,7 +96,7 @@ const Profile: React.FC = () => {
       email: getMee?.response?.email || "",
       tin: getMee?.response?.tin || "",
       bankBik: getMee?.response?.bankBik || "",
-      password: "",
+      password: "12345",
     });
     setDefaultPhone(getMee?.response?.phone || "");
     setErrors({});
@@ -132,22 +132,6 @@ const Profile: React.FC = () => {
       [name]: value,
     }));
     // }
-  };
-
-  const formatPhoneNumber = (text: string) => {
-    let cleaned = ("" + text).replace(/\D/g, "");
-
-    if (cleaned.length > 12) {
-      cleaned = cleaned.slice(0, 12);
-    }
-    const formattedNumber = cleaned.replace(
-      /(\d{2})(\d{3})(\d{2})(\d{2})/,
-      (match, p1, p2, p3, p4) => {
-        return `${p1} ${p2} ${p3} ${p4}`.trim();
-      }
-    );
-
-    return formattedNumber;
   };
 
   // Validate the formn
@@ -404,7 +388,7 @@ const Profile: React.FC = () => {
                   </>
                 )}
 
-                <Text style={{ fontSize: 15, paddingVertical: 3 }}>
+                {/* <Text style={{ fontSize: 15, paddingVertical: 3 }}>
                   {langData?.MOBILE_PASSWORD || "Пароль"} (
                   {langData?.IF_PASSWORD_NOT_ENTERED ||
                     "Если пароль не введен, старый пароль будет сохранен"}
@@ -431,7 +415,7 @@ const Profile: React.FC = () => {
                 </View>
                 {errors.password && (
                   <Text style={styles.errorText}>{errors.password}</Text>
-                )}
+                )} */}
               </View>
             </ScrollView>
           </CenteredModal>

@@ -275,7 +275,8 @@ export default function HomeScreen() {
           <Text style={styles.headerText}>
             {langData?.MOBILE_PAYMENTS || "Платежи"}({transactionGet?.response?.totalElements})
           </Text>
-          <Text style={styles.headerText}>{langData?.MOBILE_CURRENT || "Текущий"}({page + 1})</Text>
+          <Text style={styles.headerText}>({((page) * 10)} - { ((page) * 10 +10)})</Text>
+          {/* <Text style={styles.headerText}>{langData?.MOBILE_CURRENT || "Текущий"}({page + 1})</Text> */}
         </View>
 
         {transactionGet?.response?.object.length > 0 ? (

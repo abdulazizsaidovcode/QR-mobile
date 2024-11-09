@@ -13,7 +13,7 @@ export const RenderQRCode = ({url}: {url: string | null}) => {
       />
     );
   } catch (error) {
-    Alert.alert("Error", "QR yaratib bo'lmadi");
+    Alert.alert("QR - Pay", "QR yaratib bo'lmadi");
     return null;
   }
 };

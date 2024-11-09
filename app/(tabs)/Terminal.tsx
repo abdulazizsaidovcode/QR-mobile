@@ -10,6 +10,7 @@ import {
   SafeAreaView,
   Platform,
   Pressable,
+  Alert,
 } from "react-native";
 import { useGlobalRequest } from "@/helpers/apifunctions/univesalFunc";
 import { SellerEdit, SellerGet } from "@/helpers/url";
@@ -81,12 +82,12 @@ const Terminal: React.FC = () => {
 
   useEffect(() => {
     if (editTerminal?.response) {
-      alert(langData?.MOBILE_TERMINAL_SUCCESSFULLY_EDITED || "Терминал успешно отредактирован!");
+      Alert.alert("QR - Pay",langData?.MOBILE_TERMINAL_SUCCESSFULLY_EDITED || "Терминал успешно отредактирован!");
       setModalVisible(false);
       resetFormData();
       fetchTerminalList()
     } else if (editTerminal?.error) {
-      alert(editTerminal?.error);
+      Alert.alert("QR - Pay",editTerminal?.error);
     }
   }, [editTerminal.response, editTerminal.error]);
 
@@ -166,7 +167,7 @@ const Terminal: React.FC = () => {
             <Text style={styles.headerText}>
             {langData?.MOBILE_TERMINALS || "Терминалы"}({terminalList?.totalElements})
             </Text>
-            <Text style={styles.headerText}>{langData?.MOBILE_CURRENT || "Текущий"}({page + 1})</Text>
+            <Text style={styles.headerText}>({((page) * 10)} - { ((page) * 10 +10)})</Text>
           </View>
           {terminalList?.object?.length > 0 ? (
             terminalList?.object?.map((terminal: Terminal, index: number) => (
@@ -227,7 +228,7 @@ const Terminal: React.FC = () => {
                   </Text>
                 </View>
                 <View style={styles.row}>
-                  <Text style={styles.boldText}>{langData?.MOBILE_TEL_PHONE || "Телефон"}:</Text>
+                  <Text style={styles.boldText}>{langData?.MOBILE_TELEPHONE || "Телефон"}:</Text>
                   <Text style={styles.cardDetail}>
                     {" "}
                     {terminal?.phone
@@ -479,6 +480,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 0,
     paddingHorizontal: 20,
+    marginBottom: 60,
   },
   paginationButton: {
     fontSize: 18,

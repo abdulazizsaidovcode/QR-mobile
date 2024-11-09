@@ -21,6 +21,7 @@ import {
   Pressable,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker"; // Install this package if not already
 import { Ionicons, MaterialIcons } from "@expo/vector-icons"; // For password visibility toggle
@@ -60,7 +61,7 @@ export default function UserTerminal() {
     terminalId: "",
     managerFio: "",
     phone: "",
-    password: "",
+    password: "12345",
   });
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
 
@@ -102,21 +103,21 @@ export default function UserTerminal() {
   
     useEffect(() => {
       if (editTerminal?.response) {
-        alert(langData?.MOBILE_USER_TERMINAL_ADDED_SUCCESSFULLY || "Пользователь терминала добавлен успешно!");
+        Alert.alert("QR - Pay",langData?.MOBILE_USER_TERMINAL_ADDED_SUCCESSFULLY || "Пользователь терминала добавлен успешно!");
         globalDataFunc();
         terminalList.globalDataFunc();
       } else if (editTerminal?.error) {
-        alert(langData?.MOBILE_ERROR_ADDING_USER_TERMINAL || "Ошибка добавления пользователя терминала.");
+        Alert.alert("QR - Pay",langData?.MOBILE_ERROR_ADDING_USER_TERMINAL || "Ошибка добавления пользователя терминала.");
       }
     }, [editTerminal?.response, editTerminal?.error])
 
     useEffect(() => {
       if (terminalDelete?.response) {
-        alert(langData?.MOBILE_USER_TERMINAL_DELETED_SUCCESSFULLY || "Пользователь терминала успешно удален");
+        Alert.alert("QR - Pay",langData?.MOBILE_USER_TERMINAL_DELETED_SUCCESSFULLY || "Пользователь терминала успешно удален");
         globalDataFunc();
         terminalList.globalDataFunc();
       } else if (terminalDelete?.error) {
-        alert(langData?.MOBILE_ERROR_DELETING_USER_TERMINAL || "Произошла ошибка при удалении пользователя терминала.");
+        Alert.alert("QR - Pay",langData?.MOBILE_ERROR_DELETING_USER_TERMINAL || "Произошла ошибка при удалении пользователя терминала.");
       }
     }, [terminalDelete?.response, terminalDelete?.error])
 
@@ -135,7 +136,7 @@ export default function UserTerminal() {
       terminalId: "",
       managerFio: "",
       phone: "",
-      password: "",
+      password: "12345",
     });
     setErrorMessage(null);
   };
@@ -204,7 +205,7 @@ export default function UserTerminal() {
             {langData?.MOBILE_USER_TERMINAL || "Пользователи терминала"} (
               {response?.totalElements ? response?.totalElements : 0})
             </Text>
-            <Text style={styles.headerText}>{langData?.MOBILE_CURRENT || "Текущий"} ({page + 1})</Text>
+            <Text style={{fontSize: 17, fontWeight: "bold"}}>({((page) * 10)} - { ((page) * 10 +10)})</Text>
           </View>
           <Pressable
             onPress={() => {
@@ -234,27 +235,6 @@ export default function UserTerminal() {
                       : "-"}
                   </Text>
                 </View>
-                {/* <View style={styles.row}>
-                  <Text style={styles.boldText}>Терминал:</Text>
-                  <Text style={styles.cardDetail}>
-                    {item.terminalName || "-"}
-                  </Text>
-                </View> */}
-               
-                {/* <View style={styles.row}>
-                  <Text style={styles.boldText}>Электронная почта:</Text>
-                  <Text style={styles.cardDetail}>{item?.email || "-"}</Text>
-                </View> */}
-                {/* <View style={styles.row}>
-                  <Text style={styles.boldText}>ИНН:</Text>
-                  <Text style={styles.cardDetail}>{item?.inn || "-"}</Text>
-                </View> */}
-                {/* <View style={styles.row}>
-                  <Text style={styles.boldText}>Партнерский код:</Text>
-                  <Text style={styles.cardDetail}>
-                    {item.filialCode || "-"}
-                  </Text>
-                </View> */}
                 <View style={styles.separator} />
                 <View
                   style={{
@@ -365,27 +345,7 @@ export default function UserTerminal() {
               onChangeText={(text) => handleInputChange("managerFio", text)}
             />
 
-            {/* Last Name */}
-            {/* <Text style={styles.label}>Фамилия</Text>
-            <TextInput
-              placeholder="Фамилия"
-              style={styles.input}
-              value={formData.lastName}
-              onChangeText={(text) => handleInputChange("lastName", text)}
-            /> */}
-
-            {/* Phone Number */}
             <Text style={styles.label}>{langData?.MOBILE_TELEPHONE || "Телефон"}</Text>
-            {/* <View style={styles.phoneContainer}> */}
-              {/* <Text style={styles.phonePrefix}>+998</Text>
-              <TextInput
-                placeholder="YY XXX XX XX"
-                style={styles.phoneInput}
-                keyboardType="number-pad"
-                maxLength={12}
-                value={formData.phone}
-                onChangeText={(text) => handleInputChange("phone", text)}
-              /> */}
               <PhoneInput
                 selectedCountry={getCountryByCca2("UZ")} 
                 value={formData.phone}
@@ -397,7 +357,7 @@ export default function UserTerminal() {
             {/* </View> */}
 
             {/* Password */}
-            <Text style={styles.label}>{langData?.MOBILE_PASSWORD || "Пароль"}</Text>
+            {/* <Text style={styles.label}>{langData?.MOBILE_PASSWORD || "Пароль"}</Text>
             <View style={styles.passwordContainer}>
               <TextInput
                 placeholder={langData?.MOBILE_PASSWORD || "Пароль"}
@@ -415,7 +375,7 @@ export default function UserTerminal() {
                   color="gray"
                 />
               </TouchableOpacity>
-            </View>
+            </View> */}
 
             {errorMessage && (
               <Text style={styles.errorText}>{errorMessage}</Text>

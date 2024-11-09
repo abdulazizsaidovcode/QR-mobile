@@ -3,8 +3,8 @@ import { useGlobalRequest } from "@/helpers/apifunctions/univesalFunc";
 import { langStore } from "@/helpers/stores/language/languageStore";
 import { SocketStore } from "@/helpers/stores/socket/socketStore";
 import { cancel_payment, confirm_payment } from "@/helpers/url";
-import React from "react";
-import { View, Text, StyleSheet, Dimensions } from "react-native";
+import React, { useEffect } from "react";
+import { View, Text, StyleSheet, Dimensions, Alert } from "react-native";
 import { ReactNativeModal } from "react-native-modal";
 
 const { height, width } = Dimensions.get("window");
@@ -28,6 +28,22 @@ const CallBackModal: React.FC = () => {
     "POST",
     {}
   );
+
+  useEffect(() => {
+    if (paymentCancel?.response) {
+      Alert.alert("QR - Pay", langData?.MOBILE_PAYMENT_CANCELLED || "Платеж отменен.");
+    } else if (paymentCancel?.error) {
+      Alert.alert("QR - Pay", paymentCancel?.error);
+    }
+  }, [paymentCancel.response, paymentCancel.error]);
+
+  useEffect(() => {
+    if (paymentConfirm?.response) {
+      Alert.alert("QR - Pay", langData?.MOBILE_PAYMENT_CONFIRMED || "Платеж подтвержден.");
+    } else if (paymentConfirm?.error) {
+      Alert.alert("QR - Pay", paymentConfirm?.error);
+    }
+  }, [paymentConfirm.response, paymentConfirm.error]);
 
   return (
     <View>

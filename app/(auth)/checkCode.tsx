@@ -20,6 +20,7 @@ import { useGlobalRequest } from "@/helpers/apifunctions/univesalFunc";
 import { Colors } from "@/constants/Colors";
 import NavigationMenu from "@/components/navigationMenu/NavigationMenu";
 import axios from "axios";
+import { Alert } from "react-native";
 
 type SettingsScreenNavigationProp = NavigationProp<
   RootStackParamList,
@@ -51,10 +52,10 @@ const CheckCode = () => {
         .then((res) => {
           if (res.data.data) navigation.navigate("(auth)/checkCode");
           else if (res.data.error && res.data.error.message)
-            alert(res.data.error.message);
+            Alert.alert("QR - Pay",res.data.error.message);
         })
         .catch((err) => {
-          alert("произошла ошибка");
+          Alert.alert("QR - Pay","произошла ошибка");
         });
     }
   };
@@ -101,7 +102,7 @@ const CheckCode = () => {
       if (checkCode.response) {
         setResponse(checkCode.response);
       } else if (checkCode.error) {
-        alert(checkCode.error?.message);
+        Alert.alert("QR - Pay",checkCode.error?.message);
       }
     }, [checkCode.response, checkCode.error])
   );
@@ -113,7 +114,7 @@ const CheckCode = () => {
         AsyncStorage.setItem("token", response?.token ? response?.token : null);
         AsyncStorage.setItem("role", response?.role ? response?.role : null);
         if (response?.role === "ROLE_SUPER_ADMIN") {
-          alert("Вы не можете войти в приложение");
+          Alert.alert("QR - Pay","Вы не можете войти в приложение");
         } else {
           navigation.navigate("(tabs)");
         }
